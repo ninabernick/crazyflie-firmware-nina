@@ -1,7 +1,6 @@
 # Crazyflie Firmware  [![Build Status](https://api.travis-ci.org/bitcraze/crazyflie-firmware.svg)](https://travis-ci.org/bitcraze/crazyflie-firmware)
 
-This project contains the source code for the firmware used in the Crazyflie range of platforms, including
-the Crazyflie 2.X and the Roadrunner.
+This project is copied from crazyflie-firmware, I modify it for personal research use.
 
 ### Crazyflie 1.0 support
 
