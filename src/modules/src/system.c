@@ -162,7 +162,8 @@ void systemTask(void *arg)
 
   StateEstimatorType estimator = anyEstimator;
   deckInit();
-  estimator = deckGetRequiredEstimator();
+  // estimator = deckGetRequiredEstimator();
+  estimator = kalmanEstimator; // leo: force use kalman
   stabilizerInit(estimator);
   if (deckGetRequiredLowInterferenceRadioMode() && platformConfigPhysicalLayoutAntennasAreClose())
   {

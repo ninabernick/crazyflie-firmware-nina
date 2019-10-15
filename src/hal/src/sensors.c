@@ -52,6 +52,8 @@
 #endif
 
 
+
+
 typedef struct {
   SensorImplementation_t implements;
   void (*init)(void);

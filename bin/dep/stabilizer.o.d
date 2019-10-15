@@ -75,7 +75,8 @@ stabilizer.o: src/modules/src/stabilizer.c \
  src/modules/interface/sitaw.h src/modules/interface/controller.h \
  src/modules/interface/power_distribution.h \
  src/modules/interface/estimator.h src/deck/drivers/interface/usddeck.h \
- src/modules/interface/quatcompress.h
+ src/modules/interface/quatcompress.h \
+ src/deck/drivers/interface/zranger.h src/deck/interface/deck_core.h
 
 /usr/arm-none-eabi/include/math.h:
 
@@ -272,3 +273,7 @@ src/modules/interface/estimator.h:
 src/deck/drivers/interface/usddeck.h:
 
 src/modules/interface/quatcompress.h:
+
+src/deck/drivers/interface/zranger.h:
+
+src/deck/interface/deck_core.h:

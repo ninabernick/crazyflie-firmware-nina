@@ -50,6 +50,8 @@
 #include "usddeck.h"
 #include "quatcompress.h"
 
+#include "zranger.h"
+
 static bool isInit;
 static bool emergencyStop = false;
 static int emergencyStopTimeout = EMERGENCY_STOP_TIMEOUT_DISABLED;
@@ -180,6 +182,9 @@ void stabilizerInit(StateEstimatorType estimator)
     return;
 
   sensorsInit();
+
+  zRangerInit(NULL);
+
   stateEstimatorInit(estimator);
   controllerInit(ControllerTypeAny);
   powerDistributionInit();
@@ -274,8 +279,8 @@ static void stabilizerTask(void* param)
       stateEstimator(&state, &sensorData, &control, tick);
       compressState();
       
-      if (tick % 500 == 0)
-        DEBUG_PRINT("%f\n", (double)sensorData.acc.x);
+      // if (tick % 500 == 0)
+      //   DEBUG_PRINT("%f\n", (double)sensorData.acc.x);
 
       // get pitch, roll, yaw, thrust from commander line
       commanderGetSetpoint(&setpoint, &state);
@@ -290,6 +295,7 @@ static void stabilizerTask(void* param)
       if (emergencyStop) {
         powerStop();
       } else {
+        // driver the motor
         powerDistribution(&control);
       }
 

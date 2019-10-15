@@ -18,7 +18,9 @@ controller_pid.o: src/modules/src/controller_pid.c \
  src/modules/interface/sensfusion6.h \
  src/modules/interface/position_controller.h \
  src/modules/interface/controller_pid.h src/modules/interface/log.h \
- src/modules/interface/param.h
+ src/modules/interface/param.h src/utils/interface/debug.h \
+ src/modules/interface/console.h src/utils/interface/eprintf.h \
+ /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h
 
 src/modules/interface/stabilizer.h:
 
@@ -69,3 +71,11 @@ src/modules/interface/controller_pid.h:
 src/modules/interface/log.h:
 
 src/modules/interface/param.h:
+
+src/utils/interface/debug.h:
+
+src/modules/interface/console.h:
+
+src/utils/interface/eprintf.h:
+
+/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h:

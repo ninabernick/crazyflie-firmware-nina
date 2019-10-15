@@ -34,7 +34,7 @@ static uint16_t ranges[RANGE_T_END] = {0,};
 
 void rangeSet(rangeDirection_t direction, float range_m)
 {
-  if (direction > (RANGE_T_END-1)) return;
+  if (direction > (RANGE_T_END - 1)) return;
 
   ranges[direction] = range_m * 1000;
 }

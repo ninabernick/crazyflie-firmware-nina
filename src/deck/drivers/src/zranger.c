@@ -98,12 +98,18 @@ void zRangerTask(void* arg)
   
   xLastWakeTime = xTaskGetTickCount();
 
+  DEBUG_PRINT("Run zranger with estimator: %d.\n", getStateEstimator());
+
+  uint32_t tick = 1; // leo: add tick
   while (1) {
+    tick++;
     vTaskDelayUntil(&xLastWakeTime, M2T(dev.measurement_timing_budget_ms));
 
     range_last = vl53l0xReadRangeContinuousMillimeters(&dev);
     rangeSet(rangeDown, range_last / 1000.0f);
-
+    // leo add print
+    if (tick % 20 == 0)
+      DEBUG_PRINT("Read zrange: %dmm\n", range_last);
     // check if range is feasible and push into the kalman filter
     // the sensor should not be able to measure >3 [m], and outliers typically
     // occur as >8 [m] measurements
@@ -145,6 +151,12 @@ static const DeckDriver zranger_deck = {
 
 DECK_DRIVER(zranger_deck);
 
+LOG_GROUP_START(deck)
+LOG_ADD(LOG_UINT16, range, &range_last)
+LOG_GROUP_STOP(deck)
+
 PARAM_GROUP_START(deck)
 PARAM_ADD(PARAM_UINT8 | PARAM_RONLY, bcZRanger, &isInit)
 PARAM_GROUP_STOP(deck)
+
+

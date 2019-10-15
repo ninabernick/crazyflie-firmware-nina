@@ -481,7 +481,7 @@ static bool stateEstimatorEnqueueExternalMeasurement(xQueueHandle queue, void *m
   } else {
     result = xQueueSend(queue, measurement, 0);
   }
-  return (result==pdTRUE);
+  return (result == pdTRUE);
 }
 
 bool estimatorKalmanEnqueueTDOA(const tdoaMeasurement_t *uwb)
