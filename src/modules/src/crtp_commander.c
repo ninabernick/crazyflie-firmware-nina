@@ -29,6 +29,7 @@
 
 #include "commander.h"
 #include "crtp.h"
+#include "log.h"
 
 
 static bool isInit;
@@ -47,6 +48,7 @@ void crtpCommanderInit(void)
   isInit = true;
 }
 
+static int flag = 0; // leonana: add log
 
 static void commanderCrtpCB(CRTPPacket* pk)
 {
@@ -60,3 +62,8 @@ static void commanderCrtpCB(CRTPPacket* pk)
     commanderSetSetpoint(&setpoint, COMMANDER_PRIORITY_CRTP);
   }
 }
+
+// leonana: add log
+LOG_GROUP_START(crtp)
+LOG_ADD(LOG_INT8, flag, &flag)
+LOG_GROUP_STOP(crtp)

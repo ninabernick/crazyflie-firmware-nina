@@ -20,7 +20,7 @@ Generic setpoint packet format:
 
 |  Byte  | Value    | Note|
 |  ------| ---------| ---------------------------|
-|  0      |ID       | ID of the setpoint packet|
+|  0     | ID       | ID of the setpoint packet|
 |  1..   | Payload  | Format defined per ID|
 
 Defined IDs:
@@ -29,7 +29,7 @@ Defined IDs:
  | ----| -----------------------------------------------------------------------|
  | 0   | [stop](#stop)|
  | 1   | [Velocity World](#velocity-world)|
-  |2   | [Z Distance](#z-distance)|
+ | 2   | [Z Distance](#z-distance)|
  | 3   | [CPPM Emulation](#cppm-emulation)|
  | 4   | [Altitude Hold](#altitude-hold)|
  | 5   | [Hover](#hover)|
@@ -53,7 +53,7 @@ struct velocityPacket_s {
   float vx;        // m in the world frame of reference
   float vy;        // ...
   float vz;        // ...
-  float yawrate;  // deg/s
+  float yawrate;   // deg/s
 } __attribute__((packed));
 ```
 
@@ -69,7 +69,7 @@ struct zDistancePacket_s {
   float roll;            // deg
   float pitch;           // ...
   float yawrate;         // deg/s
-  float zDistance;        // m in the world frame of reference
+  float zDistance;       // m in the world frame of reference
 } __attribute__((packed));
 ```
 

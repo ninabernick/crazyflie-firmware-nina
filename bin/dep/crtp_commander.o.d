@@ -12,7 +12,8 @@ crtp_commander.o: src/modules/src/crtp_commander.c \
  src/modules/interface/crtp.h src/modules/interface/commander.h \
  src/config/config.h src/drivers/interface/nrf24l01.h \
  src/drivers/interface/nRF24L01reg.h src/config/trace.h \
- src/hal/interface/usec_time.h src/modules/interface/crtp.h
+ src/hal/interface/usec_time.h src/modules/interface/crtp.h \
+ src/modules/interface/log.h
 
 /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdbool.h:
 
@@ -51,3 +52,5 @@ src/config/trace.h:
 src/hal/interface/usec_time.h:
 
 src/modules/interface/crtp.h:
+
+src/modules/interface/log.h:

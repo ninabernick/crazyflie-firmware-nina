@@ -183,7 +183,7 @@ void stabilizerInit(StateEstimatorType estimator)
 
   sensorsInit();
 
-  zRangerInit(NULL);
+  // zRangerInit(NULL);
 
   stateEstimatorInit(estimator);
   controllerInit(ControllerTypeAny);

@@ -100,7 +100,7 @@ void zRangerTask(void* arg)
 
   DEBUG_PRINT("Run zranger with estimator: %d.\n", getStateEstimator());
 
-  uint32_t tick = 1; // leo: add tick
+  uint32_t tick = 1; // leonana: add tick
   while (1) {
     tick++;
     vTaskDelayUntil(&xLastWakeTime, M2T(dev.measurement_timing_budget_ms));
@@ -151,9 +151,9 @@ static const DeckDriver zranger_deck = {
 
 DECK_DRIVER(zranger_deck);
 
-LOG_GROUP_START(deck)
-LOG_ADD(LOG_UINT16, range, &range_last)
-LOG_GROUP_STOP(deck)
+// LOG_GROUP_START(deck)
+// LOG_ADD(LOG_UINT16, range, &range_last)
+// LOG_GROUP_STOP(deck)
 
 PARAM_GROUP_START(deck)
 PARAM_ADD(PARAM_UINT8 | PARAM_RONLY, bcZRanger, &isInit)

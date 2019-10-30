@@ -121,7 +121,7 @@ struct zDistancePacket_s {
   float roll;            // deg
   float pitch;           // ...
   float yawrate;         // deg/s
-  float zDistance;        // m in the world frame of reference
+  float zDistance;       // m in the world frame of reference
 } __attribute__((packed));
 static void zDistanceDecoder(setpoint_t *setpoint, uint8_t type, const void *data, size_t datalen)
 {
@@ -386,7 +386,7 @@ void crtpCommanderGenericDecodeSetpoint(setpoint_t *setpoint, CRTPPacket *pk)
 
   ASSERT(pk->size > 0);
 
-  if (nTypes<0) {
+  if (nTypes < 0) {
     nTypes = sizeof(packetDecoders)/sizeof(packetDecoders[0]);
   }
 
