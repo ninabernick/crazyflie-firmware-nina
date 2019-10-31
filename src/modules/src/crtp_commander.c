@@ -48,13 +48,12 @@ void crtpCommanderInit(void)
   isInit = true;
 }
 
-static int flag = 0; // leonana: add log
-
 static void commanderCrtpCB(CRTPPacket* pk)
 {
   static setpoint_t setpoint;
 
   if(pk->port == CRTP_PORT_SETPOINT && pk->channel == 0) {
+    // leonana: the _cf.commander.send_setpoint(0, 0, 0, 0) will go through here
     crtpCommanderRpytDecodeSetpoint(&setpoint, pk);
     commanderSetSetpoint(&setpoint, COMMANDER_PRIORITY_CRTP);
   } else if (pk->port == CRTP_PORT_SETPOINT_GENERIC && pk->channel == 0) {
@@ -62,8 +61,3 @@ static void commanderCrtpCB(CRTPPacket* pk)
     commanderSetSetpoint(&setpoint, COMMANDER_PRIORITY_CRTP);
   }
 }
-
-// leonana: add log
-LOG_GROUP_START(crtp)
-LOG_ADD(LOG_INT8, flag, &flag)
-LOG_GROUP_STOP(crtp)

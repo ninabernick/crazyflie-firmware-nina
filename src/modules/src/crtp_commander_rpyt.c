@@ -116,6 +116,7 @@ static void yawModeUpdate(setpoint_t *setpoint)
   }
 }
 
+// leonana: _cf.commander.send_setpoint(0, 0, 0, 0) will be decoded here
 void crtpCommanderRpytDecodeSetpoint(setpoint_t *setpoint, CRTPPacket *pk)
 {
   struct CommanderCrtpLegacyValues *values = (struct CommanderCrtpLegacyValues*)pk->data;
@@ -123,6 +124,8 @@ void crtpCommanderRpytDecodeSetpoint(setpoint_t *setpoint, CRTPPacket *pk)
   if (commanderGetActivePriority() == COMMANDER_PRIORITY_DISABLE) {
     thrustLocked = true;
   }
+
+  // need a thrust = 0 to unlock the drone
   if (values->thrust == 0) {
     thrustLocked = false;
   }
