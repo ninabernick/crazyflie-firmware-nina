@@ -19,10 +19,10 @@ Physical carriers
 Currently CRTP is supported over Crazyradio and USB (currently only for
 Crazyflie 2.0).
 
- | Carrier          | Supports|
- | -----------------| -------------------|
- | Crazyradio (PA)  | Crazyflie 1.0/2.0|
- | USB              | Crazyflie 2.0|
+ | Carrier          | Supports			|
+ | -----------------| ------------------|
+ | Crazyradio (PA)  | Crazyflie 1.0/2.0	|
+ | USB              | Crazyflie 2.0 	|
 
 Header
 ------
@@ -47,23 +47,21 @@ Port allocation
 
 Current port allocation:
 
- | **Port** |  **Target**                                                |          **Used for**|
- | ----------| --------------| ----------------------------------------------------------------|
-|  0       |   [Console](/ctrp_console/)                     |         Read console text that is printed to the console on the Crazyflie using consoleprintf|
-|  2      |    [Parameters](/ctrp_parameters/)          |                   Get/set parameters from the Crazyflie. Parameters are defined using a [macro in the Crazyflie source-code](/logparam/)|
-|  3      |    [Commander](/ctrp_commander/)   |                       Sending control set-points for the roll/pitch/yaw/thrust regulators|
-|  4     |     [Memory access](/ctrp_mem/)      |                      Accessing non-volatile memories like 1-wire and I2C (only supported for Crazyflie 2.0)|
-|  5     |     [Data logging](/ctrp_log/)        |                     Set up log blocks with variables that will be sent back to the Crazyflie at a specified period. Log variables are defined using a [macro in the Crazyflie source-code](/logparam/)|
-|  6      |    [Localization](/ctrp_localization/) |                   Packets related to localization|
-|  7     |     [Generic Setpoint](/ctrp_generic_setpoint/) |           Allows to send setpoint and control modes|
-|  13     |    Platform |                    Used for misc platform control, like debugging and power off| 
-
-|  14     |    Client-side debugging |  Debugging the UI and exists only in the Crazyflie Python API and not in the Crazyflie itself.| 
-
-|  15     |    Link layer     |              Used to control and query the communication link| 
+| **Port** |  **Target**                                |  **Used for** 																			|
+| ---------| -------------------------------------------| ------------------------------------------------------------------------------------------|
+|  0       | [Console](/ctrp_console/)            		|  Read console text that is printed to the console on the Crazyflie using consoleprintf	|
+|  2       | [Parameters](/ctrp_parameters/)      		|  Get/set parameters from the Crazyflie. Parameters are defined using a [macro in the Crazyflie source-code](/logparam/)|
+|  3       | [Commander](/ctrp_commander/)  			|  Sending control set-points for the roll/pitch/yaw/thrust regulators 						|
+|  4       | [Memory access](/ctrp_mem/)      			|  Accessing non-volatile memories like 1-wire and I2C (only supported for Crazyflie 2.0)	|
+|  5       | [Data logging](/ctrp_log/)        			|  Set up log blocks with variables that will be sent back to the Crazyflie at a specified period. Log variables are defined using a [macro in the Crazyflie source-code](/logparam/)|
+|  6       | [Localization](/ctrp_localization/) 		|  Packets related to localization 															|
+|  7       | [Generic Setpoint](/ctrp_generic_setpoint/)|  Allows to send setpoint and control modes 												|
+|  13      | Platform 									|  Used for misc platform control, like debugging and power off 							| 
+|  14      | Client-side debugging 						|  Debugging the UI and exists only in the Crazyflie Python API and not in the Crazyflie itself.| 
+|  15      | Link layer     							|  Used to control and query the communication link 										|
 
 [comment]:/doc/crazyflie/crtp/platform
-[comment]: /projects/crazyflie/pc_utils/debugdriver
+[comment]:/projects/crazyflie/pc_utils/debugdriver
 [comment]:/projects/crazyflie/crtp/linklayer
 
 Connection procedure

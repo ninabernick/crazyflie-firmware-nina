@@ -10,8 +10,8 @@ such this is a generic port that has one channel and one main packet
 format:
 
 |  Port  | Channel  | Name|
-|  ------| ---------| --------------------------------------------------|
-|  7     | 0        | [Generic setpoint](#generic-setpoint)|
+|  ------| ---------| --------------------------------------|
+|  7     | 0        | [Generic setpoint](#generic-setpoint) |
 
 Generic setpoint
 ----------------
@@ -19,22 +19,22 @@ Generic setpoint
 Generic setpoint packet format:
 
 |  Byte  | Value    | Note|
-|  ------| ---------| ---------------------------|
-|  0     | ID       | ID of the setpoint packet|
-|  1..   | Payload  | Format defined per ID|
+|  ------| ---------| ----------------------------|
+|  0     | ID       | ID of the setpoint packet   |
+|  1..   | Payload  | Format defined per ID       |
 
 Defined IDs:
 
  | ID  | Type|
- | ----| -----------------------------------------------------------------------|
- | 0   | [stop](#stop)|
+ | ----| ---------------------------------|
+ | 0   | [stop](#stop)                    |
  | 1   | [Velocity World](#velocity-world)|
- | 2   | [Z Distance](#z-distance)|
+ | 2   | [Z Distance](#z-distance)        |
  | 3   | [CPPM Emulation](#cppm-emulation)|
- | 4   | [Altitude Hold](#altitude-hold)|
- | 5   | [Hover](#hover)|
- | 6   | [Full State](#full-state)|
- | 7   | [Position](#position)|
+ | 4   | [Altitude Hold](#altitude-hold)  |
+ | 5   | [Hover](#hover)                  |
+ | 6   | [Full State](#full-state)        |
+ | 7   | [Position](#position)            |
 
 ### Stop
 

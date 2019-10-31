@@ -19,11 +19,11 @@ Communication protocol
 
 The log port is separated in 3 channels:
 
- | **Port**  | **Channel**  | **Function**|
- | ----------| -------------| ------------------
-|  5         | 0            | Table of content access: Used for reading out the TOC|
-|  5         | 1            | Log control: Used for adding/removing/starting/pausing log blocks|
-|  5         | 2            | Log data: Used to send log data from the Crazyflie to the client|
+| **Port**  | **Channel**  | **Function**|
+| ----------| -------------| ------------------
+|  5        | 0            | Table of content access: Used for reading out the TOC|
+|  5        | 1            | Log control: Used for adding/removing/starting/pausing log blocks|
+|  5        | 2            | Log data: Used to send log data from the Crazyflie to the client|
 
 Table of content access
 -----------------------
@@ -35,10 +35,10 @@ The first byte of each messages correspond a command. All communication
 on this port are initated by the client and all answer from the copter
 will contain the same command byte.
 
-|  TOC command byte   |Command    | Operation|
-|  ------------------ |----------- |-----------------------------|
-|  0                  |GET\_ITEM  | Get an item from the TOC|
-|  1                  |GET\_INFO  | Get information about the TOC and the LOG subsystem| implementation
+| TOC command byte   | Command     | Operation|
+| ------------------ | ----------- |-----------------------------|
+| 0                  | GET\_ITEM   | Get an item from the TOC|
+| 1                  | GET\_INFO   | Get information about the TOC and the LOG subsystem| implementation
 
 ### Get TOC item
 
