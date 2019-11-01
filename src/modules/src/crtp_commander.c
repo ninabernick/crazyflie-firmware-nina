@@ -30,6 +30,7 @@
 #include "commander.h"
 #include "crtp.h"
 #include "log.h"
+#include "debug.h"
 
 
 static bool isInit;
@@ -54,9 +55,11 @@ static void commanderCrtpCB(CRTPPacket* pk)
 
   if(pk->port == CRTP_PORT_SETPOINT && pk->channel == 0) {
     // leonana: the _cf.commander.send_setpoint(0, 0, 0, 0) will go through here
+    // DEBUG_PRINT("Enter PORT_SETPOINT\n");
     crtpCommanderRpytDecodeSetpoint(&setpoint, pk);
     commanderSetSetpoint(&setpoint, COMMANDER_PRIORITY_CRTP);
   } else if (pk->port == CRTP_PORT_SETPOINT_GENERIC && pk->channel == 0) {
+    // leonana: packets like altHold or hover go through here
     crtpCommanderGenericDecodeSetpoint(&setpoint, pk);
     commanderSetSetpoint(&setpoint, COMMANDER_PRIORITY_CRTP);
   }

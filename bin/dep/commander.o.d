@@ -37,7 +37,7 @@ commander.o: src/modules/src/commander.c \
  src/modules/interface/crtp_commander.h src/modules/interface/crtp.h \
  src/modules/interface/crtp_commander_high_level.h \
  src/modules/interface/math3d.h /usr/arm-none-eabi/include/math.h \
- src/modules/interface/param.h
+ src/modules/interface/param.h src/utils/interface/debug.h
 
 /usr/arm-none-eabi/include/string.h:
 
@@ -142,3 +142,5 @@ src/modules/interface/math3d.h:
 /usr/arm-none-eabi/include/math.h:
 
 src/modules/interface/param.h:
+
+src/utils/interface/debug.h:

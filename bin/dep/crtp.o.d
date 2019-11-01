@@ -31,7 +31,8 @@ crtp.o: src/modules/src/crtp.c \
  src/lib/FreeRTOS/include/queue.h src/lib/FreeRTOS/include/queue.h \
  src/config/config.h src/modules/interface/crtp.h \
  src/modules/interface/info.h src/modules/interface/crtp.h \
- src/modules/interface/queuemonitor.h src/modules/interface/log.h
+ src/modules/interface/queuemonitor.h src/modules/interface/log.h \
+ src/utils/interface/debug.h
 
 /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdbool.h:
 
@@ -124,3 +125,5 @@ src/modules/interface/crtp.h:
 src/modules/interface/queuemonitor.h:
 
 src/modules/interface/log.h:
+
+src/utils/interface/debug.h:

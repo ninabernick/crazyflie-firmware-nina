@@ -52,5 +52,3 @@ programming cable
 
     make flash
 
-
-

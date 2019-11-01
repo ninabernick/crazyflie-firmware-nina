@@ -119,7 +119,7 @@ static void yawModeUpdate(setpoint_t *setpoint)
 // leonana: _cf.commander.send_setpoint(0, 0, 0, 0) will be decoded here
 void crtpCommanderRpytDecodeSetpoint(setpoint_t *setpoint, CRTPPacket *pk)
 {
-  struct CommanderCrtpLegacyValues *values = (struct CommanderCrtpLegacyValues*)pk->data;
+  struct CommanderCrtpLegacyValues *values = (struct CommanderCrtpLegacyValues*) pk->data;
 
   if (commanderGetActivePriority() == COMMANDER_PRIORITY_DISABLE) {
     thrustLocked = true;

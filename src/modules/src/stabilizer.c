@@ -255,6 +255,7 @@ static void stabilizerTask(void* param)
 
     if (startPropTest != false) {
       // TODO: What happens with estimator when we run tests after startup?
+      DEBUG_PRINT("## Enter propTest ##\n");
       testState = configureAcc;
       startPropTest = false;
     }
@@ -264,6 +265,7 @@ static void stabilizerTask(void* param)
       sensorsAcquire(&sensorData, tick);
       testProps(&sensorData);
     } else {
+      ///////////////////////////////////////////////////////////////////////////
       // normal fly loop
       // allow to update estimator dynamically
       if (getStateEstimator() != estimatorType) {
@@ -276,14 +278,16 @@ static void stabilizerTask(void* param)
         controllerType = getControllerType();
       }
 
+      // 
       stateEstimator(&state, &sensorData, &control, tick);
-      compressState();
-      
-      // if (tick % 500 == 0)
-      //   DEBUG_PRINT("%f\n", (double)sensorData.acc.x);
 
-      // get pitch, roll, yaw, thrust from commander line
+      // compress the state for LOG
+      compressState();
+
+      // get pitch, roll, yaw, thrust from commander line or high level plan
       commanderGetSetpoint(&setpoint, &state);
+
+      // compress the setpoint for LOG
       compressSetpoint();
 
       sitAwUpdateSetpoint(&setpoint, &sensorData, &state);
@@ -291,6 +295,10 @@ static void stabilizerTask(void* param)
       controller(&control, &setpoint, &sensorData, &state, tick);
 
       checkEmergencyStopTimeout();
+
+      if (tick % 500 == 0) {
+        DEBUG_PRINT("LOOP:%f\n", (double)setpoint.thrust);
+      }
 
       if (emergencyStop) {
         powerStop();
@@ -300,11 +308,12 @@ static void stabilizerTask(void* param)
       }
 
       // Log data to uSD card if configured
-      if (   usddeckLoggingEnabled()
+      if (usddeckLoggingEnabled()
           && usddeckLoggingMode() == usddeckLoggingMode_SynchronousStabilizer
           && RATE_DO_EXECUTE(usddeckFrequency(), tick)) {
         usddeckTriggerLogging();
       }
+      ///////////////////////////////////////////////////////////////////////////
     }
     calcSensorToOutputLatency(&sensorData);
     tick++;

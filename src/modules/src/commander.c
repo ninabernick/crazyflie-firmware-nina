@@ -34,6 +34,7 @@
 #include "crtp_commander_high_level.h"
 
 #include "param.h"
+#include "debug.h"
 
 static bool isInit;
 const static setpoint_t nullSetpoint;

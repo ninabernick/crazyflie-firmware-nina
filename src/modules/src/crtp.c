@@ -23,6 +23,7 @@
  *
  * crtp.c - CrazyRealtimeTransferProtocol stack
  */
+#define DEBUG_MODULE "CRPT"
 
 #include <stdbool.h>
 #include <errno.h>
@@ -41,6 +42,7 @@
 #include "queuemonitor.h"
 
 #include "log.h"
+#include "debug.h"
 
 
 static bool isInit;
@@ -172,23 +174,22 @@ void crtpRxTask(void *param)
 {
   CRTPPacket p;
 
-  while (true)
-  {
-    if (link != &nopLink)
-    {
-      if (!link->receivePacket(&p))
-      {
-        if (queues[p.port])
-        {
-          if (xQueueSend(queues[p.port], &p, 0) == errQUEUE_FULL)
-          {
+  while (true) {
+    if (link != &nopLink) {
+      if (!link->receivePacket(&p)) {
+        
+        // leonana: debug port
+        // if (p.port != 0xf)
+        //   DEBUG_PRINT("RP: %x\n", p.port);
+
+        if (queues[p.port]) {
+          if (xQueueSend(queues[p.port], &p, 0) == errQUEUE_FULL) {
             // We should never drop packet
             ASSERT(0);
           }          
         }
 
-        if (callbacks[p.port])
-        {
+        if (callbacks[p.port]) {
           callbacks[p.port](&p);
         }
 
@@ -196,8 +197,7 @@ void crtpRxTask(void *param)
         updateStats();
       }
     }
-    else
-    {
+    else {
       vTaskDelay(M2T(10));
     }
   }
@@ -205,7 +205,7 @@ void crtpRxTask(void *param)
 
 void crtpRegisterPortCB(int port, CrtpCallback cb)
 {
-  if (port>CRTP_NBR_OF_PORTS)
+  if (port > CRTP_NBR_OF_PORTS)
     return;
   
   callbacks[port] = cb;

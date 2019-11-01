@@ -247,16 +247,11 @@ static void altHoldDecoder(setpoint_t *setpoint, uint8_t type, const void *data,
 
   ASSERT(datalen == sizeof(struct altHoldPacket_s));
 
-
   setpoint->mode.z = modeVelocity;
-
   setpoint->velocity.z = values->zVelocity;
 
-
   setpoint->mode.yaw = modeVelocity;
-
   setpoint->attitudeRate.yaw = -values->yawrate;
-
 
   setpoint->mode.roll = modeAbs;
   setpoint->mode.pitch = modeAbs;
@@ -283,10 +278,8 @@ static void hoverDecoder(setpoint_t *setpoint, uint8_t type, const void *data, s
   setpoint->mode.z = modeAbs;
   setpoint->position.z = values->zDistance;
 
-
   setpoint->mode.yaw = modeVelocity;
   setpoint->attitudeRate.yaw = -values->yawrate;
-
 
   setpoint->mode.x = modeVelocity;
   setpoint->mode.y = modeVelocity;
@@ -361,7 +354,6 @@ static void positionDecoder(setpoint_t *setpoint, uint8_t type, const void *data
   setpoint->position.y = values->y;
   setpoint->position.z = values->z;
 
-
   setpoint->mode.yaw = modeAbs;
 
   setpoint->attitude.yaw = values->yaw;
@@ -394,8 +386,8 @@ void crtpCommanderGenericDecodeSetpoint(setpoint_t *setpoint, CRTPPacket *pk)
 
   memset(setpoint, 0, sizeof(setpoint_t));
 
-  if (type<nTypes && (packetDecoders[type] != NULL)) {
-    packetDecoders[type](setpoint, type, ((char*)pk->data)+1, pk->size-1);
+  if (type < nTypes && (packetDecoders[type] != NULL)) {
+    packetDecoders[type](setpoint, type, ((char*)pk->data) + 1, pk->size - 1);
   }
 }
 

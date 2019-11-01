@@ -35,6 +35,7 @@ crtp_localization_service.o: src/modules/src/crtp_localization_service.c \
  src/modules/interface/crtp_localization_service.h \
  src/modules/interface/stabilizer_types.h src/hal/interface/imu_types.h \
  src/modules/interface/log.h src/modules/interface/param.h \
+ src/utils/interface/debug.h src/config/config.h \
  src/modules/interface/stabilizer_types.h \
  src/modules/interface/stabilizer.h src/modules/interface/estimator.h \
  src/utils/interface/configblock.h src/deck/drivers/interface/locodeck.h \
@@ -136,6 +137,10 @@ src/hal/interface/imu_types.h:
 src/modules/interface/log.h:
 
 src/modules/interface/param.h:
+
+src/utils/interface/debug.h:
+
+src/config/config.h:
 
 src/modules/interface/stabilizer_types.h:
 
