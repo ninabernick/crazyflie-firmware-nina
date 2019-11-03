@@ -74,7 +74,7 @@
 #define configUSE_IDLE_HOOK			1
 #define configUSE_TICK_HOOK			0
 #define configCPU_CLOCK_HZ			( ( unsigned long ) FREERTOS_MCU_CLOCK_HZ )
-#define configTICK_RATE_HZ_RAW  1000
+#define configTICK_RATE_HZ_RAW      1000
 #define configTICK_RATE_HZ			( ( portTickType ) configTICK_RATE_HZ_RAW )
 #define configMINIMAL_STACK_SIZE	( ( unsigned short ) FREERTOS_MIN_STACK_SIZE )
 #define configTOTAL_HEAP_SIZE		( ( size_t ) ( FREERTOS_HEAP_SIZE ) )

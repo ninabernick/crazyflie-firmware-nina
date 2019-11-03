@@ -146,7 +146,7 @@ static void extPositionHandler(CRTPPacket* pk)
 static void genericLocHandle(CRTPPacket* pk)
 {
   // leonana: debug function
-  // DEBUG_PRINT("Enter genericLocHandle\n");
+  DEBUG_PRINT("Enter genericLocHandle\n");
   uint8_t type = pk->data[0];
   if (pk->size < 1) return;
 

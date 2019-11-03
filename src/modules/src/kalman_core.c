@@ -798,7 +798,7 @@ void kalmanCorePredict(kalmanCoreData_t* this, float cmdThrust, Axis3f *acc, Axi
 
 void kalmanCoreAddProcessNoise(kalmanCoreData_t* this, float dt)
 {
-  if (dt>0)
+  if (dt > 0)
   {
     this->P[KC_STATE_X][KC_STATE_X] += powf(procNoiseAcc_xy*dt*dt + procNoiseVel*dt + procNoisePos, 2);  // add process noise on position
     this->P[KC_STATE_Y][KC_STATE_Y] += powf(procNoiseAcc_xy*dt*dt + procNoiseVel*dt + procNoisePos, 2);  // add process noise on position
@@ -813,12 +813,12 @@ void kalmanCoreAddProcessNoise(kalmanCoreData_t* this, float dt)
     this->P[KC_STATE_D2][KC_STATE_D2] += powf(measNoiseGyro_yaw * dt + procNoiseAtt, 2);
   }
 
-  for (int i=0; i<KC_STATE_DIM; i++) {
-    for (int j=i; j<KC_STATE_DIM; j++) {
-      float p = 0.5f*this->P[i][j] + 0.5f*this->P[j][i];
+  for (int i = 0; i < KC_STATE_DIM; i++) {
+    for (int j = i; j < KC_STATE_DIM; j++) {
+      float p = 0.5f * this->P[i][j] + 0.5f * this->P[j][i];
       if (isnan(p) || p > MAX_COVARIANCE) {
         this->P[i][j] = this->P[j][i] = MAX_COVARIANCE;
-      } else if ( i==j && p < MIN_COVARIANCE ) {
+      } else if ( i == j && p < MIN_COVARIANCE ) {
         this->P[i][j] = this->P[j][i] = MIN_COVARIANCE;
       } else {
         this->P[i][j] = this->P[j][i] = p;

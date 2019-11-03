@@ -39,6 +39,7 @@ void controllerPid(control_t *control, setpoint_t *setpoint,
                                          const state_t *state,
                                          const uint32_t tick)
 {
+  // 500Hz
   if (RATE_DO_EXECUTE(ATTITUDE_RATE, tick)) {
     // Rate-controled YAW is moving YAW angle setpoint
     if (setpoint->mode.yaw == modeVelocity) {
@@ -48,6 +49,7 @@ void controllerPid(control_t *control, setpoint_t *setpoint,
       while (attitudeDesired.yaw < -180.0f)
         attitudeDesired.yaw += 360.0f;
     } else {
+      // abs mode
       attitudeDesired.yaw = setpoint->attitude.yaw;
     }
   }
@@ -93,17 +95,14 @@ void controllerPid(control_t *control, setpoint_t *setpoint,
     control->yaw = -control->yaw;
   }
 
-  if (tiltCompensationEnabled)
-  {
+  if (tiltCompensationEnabled) {
     control->thrust = actuatorThrust / sensfusion6GetInvThrustCompensationForTilt();
-  }
-  else
-  {
+  } else {
     control->thrust = actuatorThrust;
   }
 
-  if (control->thrust == 0)
-  {
+  // if no control input
+  if (control->thrust == 0) {
     control->thrust = 0;
     control->roll = 0;
     control->pitch = 0;

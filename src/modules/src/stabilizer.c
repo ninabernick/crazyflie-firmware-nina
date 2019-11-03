@@ -186,6 +186,7 @@ void stabilizerInit(StateEstimatorType estimator)
   // zRangerInit(NULL);
 
   stateEstimatorInit(estimator);
+  // the actual controller type is PID
   controllerInit(ControllerTypeAny);
   powerDistributionInit();
   if (estimator == kalmanEstimator)
@@ -278,13 +279,15 @@ static void stabilizerTask(void* param)
         controllerType = getControllerType();
       }
 
-      // 
+      // here only use the control->thrust and will not change the control
+      // update the current state
       stateEstimator(&state, &sensorData, &control, tick);
 
       // compress the state for LOG
       compressState();
 
       // get pitch, roll, yaw, thrust from commander line or high level plan
+      // the state is only used for high level plan
       commanderGetSetpoint(&setpoint, &state);
 
       // compress the setpoint for LOG
@@ -292,13 +295,11 @@ static void stabilizerTask(void* param)
 
       sitAwUpdateSetpoint(&setpoint, &sensorData, &state);
 
+
       controller(&control, &setpoint, &sensorData, &state, tick);
 
+      // emergencyStopTimeout = -1, this feature is disabled in setpoint mode
       checkEmergencyStopTimeout();
-
-      if (tick % 500 == 0) {
-        DEBUG_PRINT("LOOP:%f\n", (double)setpoint.thrust);
-      }
 
       if (emergencyStop) {
         powerStop();

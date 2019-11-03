@@ -55,6 +55,7 @@
  * 2019.04.12, Kristoffer Richardsson: Refactored, separated kalman implementation from OS related functionality
  *
  */
+#define DEBUG_MODULE "ESTKALMAN"
 
 #include "kalman_core.h"
 #include "estimator_kalman.h"
@@ -71,7 +72,6 @@
 #include "param.h"
 #include "physicalConstants.h"
 
-#define DEBUG_MODULE "ESTKALMAN"
 #include "debug.h"
 
 
@@ -261,7 +261,8 @@ void estimatorKalman(state_t *state, sensorData_t *sensors, control_t *control, 
   thrustAccumulatorCount++;
 
   // Run the system dynamics to predict the state forward.
-  if ((osTick-lastPrediction) >= configTICK_RATE_HZ/PREDICT_RATE // update at the PREDICT_RATE
+  // leonana: here max count is 1000/100 = 10
+  if ((osTick - lastPrediction) >= configTICK_RATE_HZ/PREDICT_RATE // update at the PREDICT_RATE
       && gyroAccumulatorCount > 0
       && accAccumulatorCount > 0
       && thrustAccumulatorCount > 0)
@@ -297,9 +298,9 @@ void estimatorKalman(state_t *state, sensorData_t *sensors, control_t *control, 
         takeoffTime = lastFlightCmd;
       }
     }
-    quadIsFlying = (xTaskGetTickCount()-lastFlightCmd) < IN_FLIGHT_TIME_THRESHOLD;
+    quadIsFlying = (xTaskGetTickCount() - lastFlightCmd) < IN_FLIGHT_TIME_THRESHOLD;
 
-    float dt = (float)(osTick-lastPrediction)/configTICK_RATE_HZ;
+    float dt = (float)(osTick - lastPrediction)/configTICK_RATE_HZ;
     kalmanCorePredict(&coreData, thrustAccumulator, &accAccumulator, &gyroAccumulator, dt, quadIsFlying);
 
     lastPrediction = osTick;
@@ -318,7 +319,7 @@ void estimatorKalman(state_t *state, sensorData_t *sensors, control_t *control, 
   /**
    * Add process noise every loop, rather than every prediction
    */
-  kalmanCoreAddProcessNoise(&coreData, (float)(osTick-lastPNUpdate)/configTICK_RATE_HZ);
+  kalmanCoreAddProcessNoise(&coreData, (float)(osTick - lastPNUpdate) / configTICK_RATE_HZ);
   lastPNUpdate = osTick;
 
 
@@ -333,7 +334,7 @@ void estimatorKalman(state_t *state, sensorData_t *sensors, control_t *control, 
     baroAccumulatorCount++;
   }
 
-  if ((osTick-lastBaroUpdate) >= configTICK_RATE_HZ/BARO_RATE // update at BARO_RATE
+  if ((osTick - lastBaroUpdate) >= configTICK_RATE_HZ/BARO_RATE // update at BARO_RATE
       && baroAccumulatorCount > 0)
   {
     baroAccumulator.asl /= baroAccumulatorCount;
@@ -353,6 +354,7 @@ void estimatorKalman(state_t *state, sensorData_t *sensors, control_t *control, 
    */
 
   tofMeasurement_t tof;
+
   while (stateEstimatorHasTOFPacket(&tof))
   {
     kalmanCoreUpdateWithTof(&coreData, &tof);
@@ -411,7 +413,7 @@ void estimatorKalman(state_t *state, sensorData_t *sensors, control_t *control, 
   if (doneUpdate)
   {
     kalmanCoreFinalize(&coreData, sensors, osTick);
-    if (! kalmanSupervisorIsStateWithinBounds(&coreData)) {
+    if (!kalmanSupervisorIsStateWithinBounds(&coreData)) {
       coreData.resetEstimation = true;
       DEBUG_PRINT("State out of bounds, resetting\n");
     }
