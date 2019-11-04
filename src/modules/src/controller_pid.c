@@ -4,7 +4,6 @@
 
 #include "attitude_controller.h"
 #include "sensfusion6.h"
-// #include "position_controller.h"
 #include "poshold_controller.h"
 #include "controller_pid.h"
 
@@ -24,7 +23,6 @@ static float actuatorThrust;
 void controllerPidInit(void)
 {
   attitudeControllerInit(ATTITUDE_UPDATE_DT);
-  // positionControllerInit();
   posHoldControllerInit(POSHOLD_UPDATE_DT);
 }
 
