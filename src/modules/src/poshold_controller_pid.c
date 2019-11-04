@@ -42,19 +42,20 @@ static const float thrustScale = 1000.0f;
 #define thrustBase  36000
 #define thrustMin   20000
 
+// PID coefficiencies
 #define PID_X_RATE_KP  25.0
-#define PID_X_RATE_KI  1.0
+#define PID_X_RATE_KI  2.0
 #define PID_X_RATE_KD  0.0
 #define PID_X_RATE_INTEGRATION_LIMIT    25.0
 
 #define PID_Y_RATE_KP  25.0
-#define PID_Y_RATE_KI  1.0
+#define PID_Y_RATE_KI  2.0
 #define PID_Y_RATE_KD  0.0
 #define PID_Y_RATE_INTEGRATION_LIMIT   25.0
 
 #define PID_Z_RATE_KP  25.0
 #define PID_Z_RATE_KI  15.0
-#define PID_Z_RATE_KD  0.0
+#define PID_Z_RATE_KD  1.0
 #define PID_Z_RATE_INTEGRATION_LIMIT     (UINT16_MAX / 2000)
 
 #define PID_X_KP  2.0
@@ -81,6 +82,10 @@ PidObject pidZ;
 
 static bool isInit;
 
+bool posHoldControllerTest()
+{
+  return isInit;
+}
 
 void posHoldControllerInit(const float updateDt)
 {
@@ -107,42 +112,45 @@ void posHoldControllerInit(const float updateDt)
   pidSetIntegralLimit(&pidX,  PID_X_INTEGRATION_LIMIT);
   pidSetIntegralLimit(&pidY,  PID_Y_INTEGRATION_LIMIT);
   pidSetIntegralLimit(&pidZ,  PID_Z_INTEGRATION_LIMIT);
+  isInit = true;
 }
 
 void posHoldController(float* thrust, attitude_t *attitude, setpoint_t *setpoint, const state_t *state)
 {
-  float cosyaw = cosf(state->attitude.yaw * (float)M_PI / 180.0f);
-  float sinyaw = sinf(state->attitude.yaw * (float)M_PI / 180.0f);
-  float bodyvx = setpoint->velocity.x;
-  float bodyvy = setpoint->velocity.y;
+  float cos_yaw = cosf(state->attitude.yaw * (float)M_PI / 180.0f);
+  float sin_yaw = sinf(state->attitude.yaw * (float)M_PI / 180.0f);
+  float body_vx = setpoint->velocity.x;
+  float body_vy = setpoint->velocity.y;
 
   // X, Y
   if (setpoint->mode.x == modeAbs) {
+    // set world axis absolute x velocity
     pidSetDesired(&pidX, setpoint->position.x);
     setpoint->velocity.x = pidUpdate(&pidX, state->position.x, true);
   } else if (setpoint->velocity_body) {
-    setpoint->velocity.x = bodyvx * cosyaw - bodyvy * sinyaw;
+    // convert body axis to world axis
+    setpoint->velocity.x = body_vx * cos_yaw - body_vy * sin_yaw;
   }
+
   if (setpoint->mode.y == modeAbs) {
+    // set world axis absolute y velocity
     pidSetDesired(&pidY, setpoint->position.y);
     setpoint->velocity.y = pidUpdate(&pidY, state->position.y, true);
   } else if (setpoint->velocity_body) {
-    setpoint->velocity.y = bodyvy * cosyaw + bodyvx * sinyaw;
+    // convert body axis to world axis
+    setpoint->velocity.y = body_vy * cos_yaw + body_vx * sin_yaw;
   }
+
   if (setpoint->mode.z == modeAbs) {
+    // keep height stable
     pidSetDesired(&pidZ, setpoint->position.z);
     setpoint->velocity.z = pidUpdate(&pidZ, state->position.z, true);
   }
 
-  velocityController(thrust, attitude, setpoint, state);
-}
-
-void velocityController(float* thrust, attitude_t *attitude, setpoint_t *setpoint, const state_t *state)
-{
   // Roll and Pitch (X and Y)
   pidSetDesired(&pidXRate, setpoint->velocity.x);
-  pidSetDesired(&pidYRate, setpoint->velocity.y);
   float rollRaw  = pidUpdate(&pidXRate, state->velocity.x, true);
+  pidSetDesired(&pidYRate, setpoint->velocity.y);
   float pitchRaw = pidUpdate(&pidYRate, state->velocity.y, true);
 
   float yawRad = state->attitude.yaw * (float)M_PI / 180;

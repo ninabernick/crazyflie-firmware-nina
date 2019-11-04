@@ -57,10 +57,6 @@ void controllerPid(control_t *control, setpoint_t *setpoint,
     }
   }
 
-  // if (RATE_DO_EXECUTE(POSITION_RATE, tick)) {
-  //   positionController(&actuatorThrust, &attitudeDesired, setpoint, state);
-  // }
-
   // guojun: add position hold control
   if (RATE_DO_EXECUTE(POSHOLD_RATE, tick)) {
     posHoldController(&actuatorThrust, &attitudeDesired, setpoint, state);

@@ -21,18 +21,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
+ * Add by Guojun Chen
  */
 #ifndef POSHOLD_CONTROLLER_H_
 #define POSHOLD_CONTROLLER_H_
 
 #include "stabilizer_types.h"
 
-// A position hold controller calculate the thrust, roll, pitch to approach
-// a 3D position setpoint
+bool posHoldControllerTest();
 void posHoldControllerInit(const float updateDt);
 void posHoldControllerResetAllPID();
 void posHoldController(float* thrust, attitude_t *attitude, setpoint_t *setpoint, const state_t *state);
-void velocityController(float* thrust, attitude_t *attitude, setpoint_t *setpoint, const state_t *state);
 
 #endif /* POSHOLD_CONTROLLER_H_ */
