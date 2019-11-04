@@ -178,7 +178,7 @@ void crtpRxTask(void *param)
     if (link != &nopLink) {
       if (!link->receivePacket(&p)) {
         
-        // leonana: debug port
+        // guojun: debug port
         // if (p.port != 0xf)
         //   DEBUG_PRINT("RP: %x\n", p.port);
 

@@ -100,7 +100,7 @@ void zRangerTask(void* arg)
 
   DEBUG_PRINT("Run zranger with estimator: %d.\n", getStateEstimator());
 
-  uint32_t tick = 1; // leonana: add tick
+  uint32_t tick = 1; // guojun: add tick for debug
   while (1) {
     tick++;
     vTaskDelayUntil(&xLastWakeTime, M2T(dev.measurement_timing_budget_ms));

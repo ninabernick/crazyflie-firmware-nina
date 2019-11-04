@@ -16,7 +16,7 @@ controller_pid.o: src/modules/src/controller_pid.c \
  src/drivers/interface/nrf24l01.h src/drivers/interface/nRF24L01reg.h \
  src/config/trace.h src/hal/interface/usec_time.h \
  src/modules/interface/sensfusion6.h \
- src/modules/interface/position_controller.h \
+ src/modules/interface/poshold_controller.h \
  src/modules/interface/controller_pid.h src/modules/interface/log.h \
  src/modules/interface/param.h src/utils/interface/debug.h \
  src/modules/interface/console.h src/utils/interface/eprintf.h \
@@ -64,7 +64,7 @@ src/hal/interface/usec_time.h:
 
 src/modules/interface/sensfusion6.h:
 
-src/modules/interface/position_controller.h:
+src/modules/interface/poshold_controller.h:
 
 src/modules/interface/controller_pid.h:
 

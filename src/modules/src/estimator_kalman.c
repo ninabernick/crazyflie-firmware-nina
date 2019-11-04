@@ -261,7 +261,7 @@ void estimatorKalman(state_t *state, sensorData_t *sensors, control_t *control, 
   thrustAccumulatorCount++;
 
   // Run the system dynamics to predict the state forward.
-  // leonana: here max count is 1000/100 = 10
+  // guojun: here max count is 1000/100 = 10
   if ((osTick - lastPrediction) >= configTICK_RATE_HZ/PREDICT_RATE // update at the PREDICT_RATE
       && gyroAccumulatorCount > 0
       && accAccumulatorCount > 0

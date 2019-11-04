@@ -155,7 +155,7 @@ void systemTask(void *arg)
   uart2Init(115200);
 #endif
 
-  //Init the high-levels modules
+  // Init the high-levels modules
   systemInit();
   commInit();
   commanderInit();
@@ -163,7 +163,7 @@ void systemTask(void *arg)
   StateEstimatorType estimator = anyEstimator;
   deckInit();
   estimator = deckGetRequiredEstimator();
-  //estimator = kalmanEstimator; // leonana: force use kalman
+  // estimator = kalmanEstimator; // guojun: force use kalman
   stabilizerInit(estimator);
   if (deckGetRequiredLowInterferenceRadioMode() && platformConfigPhysicalLayoutAntennasAreClose())
   {

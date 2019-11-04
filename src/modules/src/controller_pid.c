@@ -4,7 +4,8 @@
 
 #include "attitude_controller.h"
 #include "sensfusion6.h"
-#include "position_controller.h"
+// #include "position_controller.h"
+#include "poshold_controller.h"
 #include "controller_pid.h"
 
 #include "log.h"
@@ -12,6 +13,7 @@
 #include "debug.h"
 
 #define ATTITUDE_UPDATE_DT    (float)(1.0f/ATTITUDE_RATE)
+#define POSHOLD_UPDATE_DT     (float)(1.0f/POSHOLD_RATE)
 
 static bool tiltCompensationEnabled = false;
 
@@ -22,7 +24,8 @@ static float actuatorThrust;
 void controllerPidInit(void)
 {
   attitudeControllerInit(ATTITUDE_UPDATE_DT);
-  positionControllerInit();
+  // positionControllerInit();
+  posHoldControllerInit(POSHOLD_UPDATE_DT);
 }
 
 bool controllerPidTest(void)
@@ -54,8 +57,13 @@ void controllerPid(control_t *control, setpoint_t *setpoint,
     }
   }
 
-  if (RATE_DO_EXECUTE(POSITION_RATE, tick)) {
-    positionController(&actuatorThrust, &attitudeDesired, setpoint, state);
+  // if (RATE_DO_EXECUTE(POSITION_RATE, tick)) {
+  //   positionController(&actuatorThrust, &attitudeDesired, setpoint, state);
+  // }
+
+  // guojun: add position hold control
+  if (RATE_DO_EXECUTE(POSHOLD_RATE, tick)) {
+    posHoldController(&actuatorThrust, &attitudeDesired, setpoint, state);
   }
 
   if (RATE_DO_EXECUTE(ATTITUDE_RATE, tick)) {
@@ -109,7 +117,8 @@ void controllerPid(control_t *control, setpoint_t *setpoint,
     control->yaw = 0;
 
     attitudeControllerResetAllPID();
-    positionControllerResetAllPID();
+    // positionControllerResetAllPID();
+    posHoldControllerResetAllPID();
 
     // Reset the calculated YAW angle for rate control
     attitudeDesired.yaw = state->attitude.yaw;

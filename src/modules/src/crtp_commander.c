@@ -44,6 +44,8 @@ void crtpCommanderInit(void)
   }
 
   crtpInit();
+
+  crtpRegisterPortCB(CRTP_PORT_SETPOSITION, commanderCrtpCB); // guojun: add set position port
   crtpRegisterPortCB(CRTP_PORT_SETPOINT, commanderCrtpCB);
   crtpRegisterPortCB(CRTP_PORT_SETPOINT_GENERIC, commanderCrtpCB);
   isInit = true;
@@ -54,13 +56,16 @@ static void commanderCrtpCB(CRTPPacket* pk)
   static setpoint_t setpoint;
 
   if(pk->port == CRTP_PORT_SETPOINT && pk->channel == 0) {
-    // leonana: the _cf.commander.send_setpoint(0, 0, 0, 0) will go through here
+    // guojun: the _cf.commander.send_setpoint(0, 0, 0, 0) will go through here
     // DEBUG_PRINT("Enter PORT_SETPOINT\n");
     crtpCommanderRpytDecodeSetpoint(&setpoint, pk);
     commanderSetSetpoint(&setpoint, COMMANDER_PRIORITY_CRTP);
   } else if (pk->port == CRTP_PORT_SETPOINT_GENERIC && pk->channel == 0) {
-    // leonana: packets like altHold or hover go through here
+    // guojun: packets like altHold or hover go through here
     crtpCommanderGenericDecodeSetpoint(&setpoint, pk);
+    commanderSetSetpoint(&setpoint, COMMANDER_PRIORITY_CRTP);
+  } else if (pk->port == CRTP_PORT_SETPOSITION && pk->channel == 0) {
+    crtpCommanderPosHoldDecodeSetpoint(&setpoint, pk);
     commanderSetSetpoint(&setpoint, COMMANDER_PRIORITY_CRTP);
   }
 }
