@@ -149,13 +149,12 @@ void posHoldController(float* thrust, attitude_t *attitude, setpoint_t *setpoint
 
   // Roll and Pitch (X and Y)
   pidSetDesired(&pidXRate, setpoint->velocity.x);
-  float rollRaw  = pidUpdate(&pidXRate, state->velocity.x, true);
+  float XRaw  = pidUpdate(&pidXRate, state->velocity.x, true);
   pidSetDesired(&pidYRate, setpoint->velocity.y);
-  float pitchRaw = pidUpdate(&pidYRate, state->velocity.y, true);
+  float YRaw = pidUpdate(&pidYRate, state->velocity.y, true);
 
-  float yawRad = state->attitude.yaw * (float)M_PI / 180;
-  attitude->pitch = -(rollRaw  * cosf(yawRad)) - (pitchRaw * sinf(yawRad));
-  attitude->roll  = -(pitchRaw * cosf(yawRad)) + (rollRaw  * sinf(yawRad));
+  attitude->pitch = -(XRaw  * cos_yaw) - (YRaw * sin_yaw);
+  attitude->roll  = -(YRaw * cos_yaw) + (XRaw  * sin_yaw);
 
   // Thrust
   pidSetDesired(&pidZRate, setpoint->velocity.z);
