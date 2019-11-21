@@ -67,7 +67,7 @@ struct posHoldPackets {
 
 void crtpCommanderPosHoldDecodeSetpoint(setpoint_t *setpoint, CRTPPacket *pk) {
   memset(setpoint, 0, sizeof(setpoint_t));
-  struct posHoldPackets *values =  (struct posHoldPackets *)(((char*)pk->data) + 1);
+  struct posHoldPackets *values = (struct posHoldPackets *)(((char*)pk->data) + 1);
   ASSERT(pk->size - 1 == sizeof(struct posHoldPackets));
   // set absolute height
   setpoint->mode.z = modeAbs;
