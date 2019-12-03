@@ -42,7 +42,10 @@
 
 /* The generic commander format contains a packet type and data that has to be
  * decoded into a setpoint_t structure. The aim is to make it future-proof
- * by easily allowing the addition of new packets for future use cases.
+ * by easily allowing        # while thrust < 10000:
+        #     self._cf.commander.send_position(0, 0, start_height + (target_height - start_height) * (thrust / 20000.0))
+        #     thrust += thrust_step * thrust_mult
+        #     time.sleep(0.05) the addition of new packets for future use cases.
  *
  * The packet format is:
  * +------+==========================+
@@ -59,8 +62,8 @@
  * Set the Crazyflie absolute height and velocity in the body coordinate system
  */
 struct posHoldPackets {
-  float vx;           // m/s in the body frame of reference
-  float vy;           // m/s in the body frame of reference
+  float xDistance;    // relative distance
+  float yDistance;    // relative distance
   float yawrate;      // deg/s
   float zDistance;    // m in the world frame of reference
 } __attribute__((packed));
@@ -76,10 +79,41 @@ void crtpCommanderPosHoldDecodeSetpoint(setpoint_t *setpoint, CRTPPacket *pk) {
   setpoint->mode.yaw = modeVelocity;
   setpoint->attitudeRate.yaw = -values->yawrate;
 
+  // setpoint->mode.x = modeVelocity;
+  // setpoint->mode.y = modeVelocity;
+  // setpoint->velocity.x = values->xDistance;
+  // setpoint->velocity.y = values->yDistance;
+  
+  setpoint->mode.x = modeAbs;
+  setpoint->mode.y = modeAbs;
+  setpoint->position.x = values->xDistance;
+  setpoint->position.y = values->yDistance;
+
+  setpoint->velocity_body = false;
+}
+
+struct heightHoldPackets {
+  float xVelocity;    // relative distance
+  float yVelocity;    // relative distance
+  float yawrate;      // deg/s
+  float zDistance;    // m in the world frame of reference
+} __attribute__((packed));
+
+void crtpCommanderHeightHoldDecodeSetpoint(setpoint_t *setpoint, CRTPPacket *pk) {
+  memset(setpoint, 0, sizeof(setpoint_t));
+  struct heightHoldPackets *values = (struct heightHoldPackets *)(((char*)pk->data) + 1);
+  ASSERT(pk->size - 1 == sizeof(struct heightHoldPackets));
+  // set absolute height
+  setpoint->mode.z = modeAbs;
+  setpoint->position.z = values->zDistance;
+
+  setpoint->mode.yaw = modeVelocity;
+  setpoint->attitudeRate.yaw = -values->yawrate;
+
   setpoint->mode.x = modeVelocity;
   setpoint->mode.y = modeVelocity;
-  setpoint->velocity.x = values->vx;
-  setpoint->velocity.y = values->vy;
+  setpoint->velocity.x = values->xVelocity;
+  setpoint->velocity.y = values->yVelocity;
 
   setpoint->velocity_body = true;
 }

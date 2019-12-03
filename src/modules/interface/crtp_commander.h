@@ -34,5 +34,6 @@ void crtpCommanderInit(void);
 void crtpCommanderRpytDecodeSetpoint(setpoint_t *setpoint, CRTPPacket *pk);
 void crtpCommanderGenericDecodeSetpoint(setpoint_t *setpoint, CRTPPacket *pk);
 void crtpCommanderPosHoldDecodeSetpoint(setpoint_t *setpoint, CRTPPacket *pk);
+void crtpCommanderHeightHoldDecodeSetpoint(setpoint_t *setpoint, CRTPPacket *pk);
 
 #endif /* CRTP_COMMANDER_H_ */
