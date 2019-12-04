@@ -58,8 +58,9 @@
  */
 
 
-/* position hold mode Decoder
- * Set the Crazyflie absolute height and velocity in the body coordinate system
+/* 
+ * position hold mode Decoder
+ * Set the Crazyflie absolute height and relative distance in the world coordinate system
  */
 struct posHoldPackets {
   float xDistance;    // relative distance
@@ -78,11 +79,6 @@ void crtpCommanderPosHoldDecodeSetpoint(setpoint_t *setpoint, CRTPPacket *pk) {
 
   setpoint->mode.yaw = modeVelocity;
   setpoint->attitudeRate.yaw = -values->yawrate;
-
-  // setpoint->mode.x = modeVelocity;
-  // setpoint->mode.y = modeVelocity;
-  // setpoint->velocity.x = values->xDistance;
-  // setpoint->velocity.y = values->yDistance;
   
   setpoint->mode.x = modeAbs;
   setpoint->mode.y = modeAbs;
@@ -92,9 +88,14 @@ void crtpCommanderPosHoldDecodeSetpoint(setpoint_t *setpoint, CRTPPacket *pk) {
   setpoint->velocity_body = false;
 }
 
+/* 
+ * height hold mode Decoder
+ * Set the Crazyflie absolute height and velocity in the body coordinate system
+ */
+
 struct heightHoldPackets {
-  float xVelocity;    // relative distance
-  float yVelocity;    // relative distance
+  float xVelocity;    // relative velocity
+  float yVelocity;    // relative velocity
   float yawrate;      // deg/s
   float zDistance;    // m in the world frame of reference
 } __attribute__((packed));
