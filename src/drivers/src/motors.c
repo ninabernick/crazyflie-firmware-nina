@@ -147,7 +147,8 @@ void motorsInit(const MotorPerifDef** motorMapSelect)
     // PWM channels configuration (All identical!)
     TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-    TIM_OCInitStructure.TIM_Pulse = 0;
+    // leo: test the pulse value
+    TIM_OCInitStructure.TIM_Pulse = 0; // TIM_Pulse / TIM_Period = duty cycle
     TIM_OCInitStructure.TIM_OCPolarity = motorMap[i]->timPolarity;
     TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
 

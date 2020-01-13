@@ -71,9 +71,7 @@ static bool useFlowDisabled = false;
 
 #define NCS_PIN DECK_GPIO_IO3
 
-
-static void flowdeckTask(void *param)
-{
+static void flowdeckTask(void *param) {
   systemWaitStart();
 
   while(1) {
@@ -124,6 +122,7 @@ static void flowdeckTask(void *param)
       // Push measurements into the estimator
       if (!useFlowDisabled) {
         estimatorEnqueueFlow(&flowData);
+        // guojun: if we can add the data to position estimation
       }
     } else {
       outlierCount++;

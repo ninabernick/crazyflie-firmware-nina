@@ -53,12 +53,10 @@ void pidInit(PidObject* pid, const float desired, const float kp,
   }
 }
 
-float pidUpdate(PidObject* pid, const float measured, const bool updateError)
-{
+float pidUpdate(PidObject* pid, const float measured, const bool updateError) {
     float output = 0.0f;
 
-    if (updateError)
-    {
+    if (updateError) {
         pid->error = pid->desired - measured;
     }
 
@@ -66,8 +64,7 @@ float pidUpdate(PidObject* pid, const float measured, const bool updateError)
     output += pid->outP;
 
     float deriv = (pid->error - pid->prevError) / pid->dt;
-    if (pid->enableDFilter)
-    {
+    if (pid->enableDFilter) {
       pid->deriv = lpf2pApply(&pid->dFilter, deriv);
     } else {
       pid->deriv = deriv;
@@ -81,8 +78,7 @@ float pidUpdate(PidObject* pid, const float measured, const bool updateError)
     pid->integ += pid->error * pid->dt;
 
     // Constrain the integral (unless the iLimit is zero)
-    if(pid->iLimit != 0)
-    {
+    if(pid->iLimit != 0) {
     	pid->integ = constrain(pid->integ, -pid->iLimit, pid->iLimit);
     }
 

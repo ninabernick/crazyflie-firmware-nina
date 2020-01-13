@@ -59,13 +59,13 @@ static const float thrustScale = 1000.0f;
 #define PID_Z_RATE_INTEGRATION_LIMIT     (UINT16_MAX / 2000)
 
 #define PID_X_KP  2.0
-#define PID_X_KI  1.0
-#define PID_X_KD  0.0
+#define PID_X_KI  0.5
+#define PID_X_KD  0.35
 #define PID_X_INTEGRATION_LIMIT    2.0
 
 #define PID_Y_KP  2.0
-#define PID_Y_KI  1.0
-#define PID_Y_KD  0.0
+#define PID_Y_KI  0.5
+#define PID_Y_KD  0.35
 #define PID_Y_INTEGRATION_LIMIT   2.0
 
 #define PID_Z_KP  2.0
@@ -149,7 +149,7 @@ void posHoldController(float* thrust, attitude_t *attitude, setpoint_t *setpoint
 
   // Roll and Pitch (X and Y)
   pidSetDesired(&pidXRate, setpoint->velocity.x);
-  float XRaw  = pidUpdate(&pidXRate, state->velocity.x, true);
+  float XRaw = pidUpdate(&pidXRate, state->velocity.x, true);
   pidSetDesired(&pidYRate, setpoint->velocity.y);
   float YRaw = pidUpdate(&pidYRate, state->velocity.y, true);
 

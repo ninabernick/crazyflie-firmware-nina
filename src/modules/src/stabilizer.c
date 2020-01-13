@@ -295,7 +295,7 @@ static void stabilizerTask(void* param)
 
       sitAwUpdateSetpoint(&setpoint, &sensorData, &state);
 
-
+      // use PID to generate control result
       controller(&control, &setpoint, &sensorData, &state, tick);
 
       // emergencyStopTimeout = -1, this feature is disabled in setpoint mode
