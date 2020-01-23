@@ -44,8 +44,9 @@
 // The following defines gives a PWM of 8 bits at ~328KHz for a sysclock of 168MHz
 // CF2 PWM ripple is filtered better at 328kHz. At 168kHz the NCP702 regulator is affected.
 #define TIM_CLOCK_HZ 84000000
-#define MOTORS_PWM_BITS           8
-#define MOTORS_PWM_PERIOD         ((1<<MOTORS_PWM_BITS) - 1)
+#define MOTORS_PWM_BITS           8//8
+// #define MOTORS_PWM_PERIOD         ((1<<MOTORS_PWM_BITS) - 1)
+#define MOTORS_PWM_PERIOD         93 // leo: change freq
 #define MOTORS_PWM_PRESCALE       0
 #define MOTORS_TIM_BEEP_CLK_FREQ  (84000000L / 5)
 #define MOTORS_POLARITY           TIM_OCPolarity_High
@@ -92,7 +93,7 @@
   #define BLMC_PERIOD 0.0025   // 2.5ms = 400Hz
   #define MOTORS_BL_PWM_PRESCALE_RAW   (uint32_t)((TIM_CLOCK_HZ/0xFFFF) * BLMC_PERIOD + 1) // +1 is to not end up above 0xFFFF in the end
   #define MOTORS_BL_PWM_CNT_FOR_PERIOD (uint32_t)(TIM_CLOCK_HZ * BLMC_PERIOD / MOTORS_BL_PWM_PRESCALE_RAW)
-  #define MOTORS_BL_PWM_CNT_FOR_HIGH    (uint32_t)(TIM_CLOCK_HZ * 0.001 / MOTORS_BL_PWM_PRESCALE_RAW)
+  #define MOTORS_BL_PWM_CNT_FOR_HIGH   (uint32_t)(TIM_CLOCK_HZ * 0.001 / MOTORS_BL_PWM_PRESCALE_RAW)
   #define MOTORS_BL_PWM_PERIOD         MOTORS_BL_PWM_CNT_FOR_PERIOD
   #define MOTORS_BL_PWM_PRESCALE       (uint16_t)(MOTORS_BL_PWM_PRESCALE_RAW - 1)
   #define MOTORS_BL_POLARITY           TIM_OCPolarity_Low
@@ -233,6 +234,11 @@ bool motorsTest(void);
  * Set the PWM ratio of the motor 'id'
  */
 void motorsSetRatio(uint32_t id, uint16_t ratio);
+
+/**
+ * leo: control iflight esc: send 16bits number
+ */
+void motorsSetRatioB(uint32_t id, uint16_t ratio);
 
 /**
  * Get the PWM ratio of the motor 'id'. Return -1 if wrong ID.

@@ -165,6 +165,7 @@ void systemTask(void *arg)
   estimator = deckGetRequiredEstimator();
   // estimator = kalmanEstimator; // guojun: force use kalman
   stabilizerInit(estimator);
+
   if (deckGetRequiredLowInterferenceRadioMode() && platformConfigPhysicalLayoutAntennasAreClose())
   {
     platformSetLowInterferenceRadioMode();

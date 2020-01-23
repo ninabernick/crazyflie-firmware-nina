@@ -361,6 +361,8 @@ static float variance(float *buffer, uint32_t length)
  */
 static bool evaluateTest(float low, float high, float value, uint8_t motor)
 {
+  // leo: disable the propTest
+  return true;
   if (value < low || value > high)
   {
     DEBUG_PRINT("Propeller test on M%d [FAIL]. low: %0.2f, high: %0.2f, measured: %0.2f\n",
