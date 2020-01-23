@@ -195,7 +195,7 @@ void motorsInit(const MotorPerifDef** motorMapSelect) {
   // DMA_DeInit(DMA2_Stream1);
   
   DMA_InitStructure.DMA_Channel = DMA_Channel_7;
-  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&GPIOD->BSRRL);
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&GPIOC->BSRRL);
   DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)gpio_bsrr;
   DMA_InitStructure.DMA_DIR = DMA_DIR_MemoryToPeripheral;
   DMA_InitStructure.DMA_BufferSize = 222;
@@ -210,6 +210,13 @@ void motorsInit(const MotorPerifDef** motorMapSelect) {
   DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
   DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
   DMA_Init(DMA2_Stream1, &DMA_InitStructure);
+
+  NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream1_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+  DMA_ITConfig(DMA2_Stream1, DMA_IT_TC, ENABLE);
 
   motorMap = motorMapSelect;
   //leo: try the PA1
@@ -291,12 +298,13 @@ void motorsInit(const MotorPerifDef** motorMapSelect) {
   TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
 
 
-  NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
-  TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
+  // use dma interrupt instead (DMA2_Stream1_IRQn)
+  // NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
+  // NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  // NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  // NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  // NVIC_Init(&NVIC_InitStructure);
+  // TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
 
   TIM_Cmd(TIM2, ENABLE);
   TIM_Cmd(TIM8, ENABLE);
@@ -305,15 +313,24 @@ void motorsInit(const MotorPerifDef** motorMapSelect) {
   isInit = true;
 }
 
+void DMA2_Stream1_IRQHandler() {
+  static int i = 0;
+  if (i == 1) {
+    GPIO_ToggleBits(GPIOD, GPIO_Pin_2);
+    i = 0;
+  } else i++;
+  // clean the intertupt
+  // its not right
+  DMA2_Stream1->CR &= ~DMA_IT_TC;
+}
 
 void TIM2_IRQHandler() {
-  // DMA_Cmd(DMA2_Stream1, DISABLE);
-
-  // while (DMA_GetCmdStatus(DMA2_Stream1));
-  // DMA_ClearFlag(DMA2_Stream1, DMA_FLAG_TCIF0);
-
-  // DMA_Cmd(DMA2_Stream1, ENABLE);
-
+  static int i = 0;
+  if (i == 1) {
+    GPIO_ToggleBits(GPIOD, GPIO_Pin_2);
+    i = 0;
+  } else i++;
+  
   // clean the intertupt
   TIM2->SR &= ~TIM_SR_UIF;
   return;
