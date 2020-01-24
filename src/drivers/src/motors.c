@@ -320,8 +320,7 @@ void DMA2_Stream1_IRQHandler() {
     i = 0;
   } else i++;
   // clean the intertupt
-  // its not right
-  DMA2_Stream1->CR &= ~DMA_IT_TC;
+  DMA_ClearITPendingBit(DMA2_Stream1, DMA_IT_TCIF1);
 }
 
 void TIM2_IRQHandler() {
