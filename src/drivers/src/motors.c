@@ -69,18 +69,18 @@ uint32_t gpio_bsrr[222] =
   0x4, 0x4 << 16, 0x4 << 16, 
   0x4, 0x4 << 16, 0x4 << 16, 
   0x4, 0x4 << 16, 0x4 << 16, 
-  0x4, 0x4, 0x4 << 16, 
-  0x4, 0x4, 0x4 << 16, 
+  0x4, 0x4 << 16, 0x4 << 16, //
+  0x4, 0x4 << 16, 0x4 << 16, //
   0x4, 0x4 << 16, 0x4 << 16, 
-  0x4, 0x4, 0x4 << 16, 
+  0x4, 0x4 << 16, 0x4 << 16, //
   0x4, 0x4 << 16, 0x4 << 16, 
-  0x4, 0x4, 0x4 << 16, 
-  0x4, 0x4 << 16, 0x4 << 16, 
-  0x4, 0x4 << 16, 0x4 << 16, 
-  0x4, 0x4, 0x4 << 16, 
+  0x4, 0x4 << 16, 0x4 << 16, //
   0x4, 0x4 << 16, 0x4 << 16, 
   0x4, 0x4 << 16, 0x4 << 16, 
-  0x4, 0x4, 0x4 << 16, 
+  0x4, 0x4 << 16, 0x4 << 16, //
+  0x4, 0x4 << 16, 0x4 << 16, 
+  0x4, 0x4 << 16, 0x4 << 16, 
+  0x4, 0x4 << 16, 0x4 << 16,
 
   0x4 << 16, 0x4 << 16, 0x4 << 16, 
   0x4 << 16, 0x4 << 16, 0x4 << 16, 
@@ -195,7 +195,7 @@ void motorsInit(const MotorPerifDef** motorMapSelect) {
   // DMA_DeInit(DMA2_Stream1);
   
   DMA_InitStructure.DMA_Channel = DMA_Channel_7;
-  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&GPIOC->BSRRL);
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&GPIOD->BSRRL);
   DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)gpio_bsrr;
   DMA_InitStructure.DMA_DIR = DMA_DIR_MemoryToPeripheral;
   DMA_InitStructure.DMA_BufferSize = 222;
@@ -315,10 +315,22 @@ void motorsInit(const MotorPerifDef** motorMapSelect) {
 
 void DMA2_Stream1_IRQHandler() {
   static int i = 0;
-  if (i == 1) {
-    GPIO_ToggleBits(GPIOD, GPIO_Pin_2);
+  // if (i == 1) {
+  //   GPIO_ToggleBits(GPIOD, GPIO_Pin_2);
+  //   i = 0;
+  // } else i++;
+  
+
+  if (i == 80000) {
+    gpio_bsrr[13] = gpio_bsrr[16] = gpio_bsrr[22] = 0x4;
+    gpio_bsrr[28] = gpio_bsrr[37] = gpio_bsrr[46] = 0x4;
+  } else if (i == 80000 + 24000) {
+    gpio_bsrr[13] = gpio_bsrr[16] = gpio_bsrr[22] = 0x4 << 16;
+    gpio_bsrr[28] = gpio_bsrr[37] = gpio_bsrr[46] = 0x4 << 16;
     i = 0;
-  } else i++;
+  }
+  i++;
+
   // clean the intertupt
   DMA_ClearITPendingBit(DMA2_Stream1, DMA_IT_TCIF1);
 }
