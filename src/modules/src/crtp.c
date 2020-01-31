@@ -177,10 +177,6 @@ void crtpRxTask(void *param)
   while (true) {
     if (link != &nopLink) {
       if (!link->receivePacket(&p)) {
-        
-        // guojun: debug port
-        // if (p.port != 0xf)
-        //   DEBUG_PRINT("RP: %x\n", p.port);
 
         if (queues[p.port]) {
           if (xQueueSend(queues[p.port], &p, 0) == errQUEUE_FULL) {

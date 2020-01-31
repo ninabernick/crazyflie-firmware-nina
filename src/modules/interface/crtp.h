@@ -46,6 +46,7 @@ typedef enum {
   CRTP_PORT_SETPOINT_GENERIC = 0x07,
   CRTP_PORT_SETPOINT_HL      = 0x08,
   CRTP_PORT_SETPOSITION      = 0x09, // guojun: add a new port for position hold
+  CRTP_PORT_DEBUG            = 0x10, // guojun: add a debug port
   CRTP_PORT_PLATFORM         = 0x0D,
   CRTP_PORT_LINK             = 0x0F,
 } CRTPPort;

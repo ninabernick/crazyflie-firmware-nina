@@ -37,6 +37,9 @@ static bool isInit;
 
 static void commanderCrtpCB(CRTPPacket* pk);
 
+// leo: add a debug function
+static void commanderCrtpDebug(CRTPPacket* pk);
+
 void crtpCommanderInit(void)
 {
   if(isInit) {
@@ -48,6 +51,8 @@ void crtpCommanderInit(void)
   crtpRegisterPortCB(CRTP_PORT_SETPOSITION, commanderCrtpCB); // guojun: add set position port
   crtpRegisterPortCB(CRTP_PORT_SETPOINT, commanderCrtpCB);
   crtpRegisterPortCB(CRTP_PORT_SETPOINT_GENERIC, commanderCrtpCB);
+
+  crtpRegisterPortCB(CRTP_PORT_DEBUG, commanderCrtpDebug);
   isInit = true;
 }
 
@@ -71,4 +76,15 @@ static void commanderCrtpCB(CRTPPacket* pk)
     crtpCommanderHeightHoldDecodeSetpoint(&setpoint, pk);
     commanderSetSetpoint(&setpoint, COMMANDER_PRIORITY_CRTP);
   }
+}
+
+#include "motors.h"
+struct debugStructure {
+  uint16_t id;
+  uint16_t value;
+};
+
+static void commanderCrtpDebug(CRTPPacket* pk) {
+  struct debugStructure *data = (struct debugStructure *) (char*)pk->data;
+  motorsSetValue(data->id, data->value);
 }
