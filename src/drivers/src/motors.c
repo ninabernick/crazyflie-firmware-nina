@@ -55,7 +55,7 @@ void motorsBeep(int id, bool enable, uint16_t frequency, uint16_t ratio);
 
 #include "motors_def_cf2.c"
 
-const MotorPerifDef** motorMap;  /* Current map configuration */
+const iMotorPerifDef** motorMap;  /* Current map configuration */
 
 const uint32_t MOTORS[] = { MOTOR_M1, MOTOR_M2, MOTOR_M3, MOTOR_M4 };
 
@@ -63,84 +63,7 @@ const uint16_t testsound[NBR_OF_MOTORS] = {A4, A5, F5, D5 };
 
 static bool isInit = false;
 
-uint32_t gpio_bsrr[222] = 
-{ 
-  0x4, 0x4 << 16, 0x4 << 16, 
-  0x4, 0x4 << 16, 0x4 << 16, 
-  0x4, 0x4 << 16, 0x4 << 16, 
-  0x4, 0x4 << 16, 0x4 << 16, 
-  0x4, 0x4 << 16, 0x4 << 16, //
-  0x4, 0x4 << 16, 0x4 << 16, //
-  0x4, 0x4 << 16, 0x4 << 16, 
-  0x4, 0x4 << 16, 0x4 << 16, //
-  0x4, 0x4 << 16, 0x4 << 16, 
-  0x4, 0x4 << 16, 0x4 << 16, //
-  0x4, 0x4 << 16, 0x4 << 16, 
-  0x4, 0x4 << 16, 0x4 << 16, 
-  0x4, 0x4 << 16, 0x4 << 16, //
-  0x4, 0x4 << 16, 0x4 << 16, 
-  0x4, 0x4 << 16, 0x4 << 16, 
-  0x4, 0x4 << 16, 0x4 << 16,
-
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-  0x4 << 16, 0x4 << 16, 0x4 << 16, 
-};
+uint32_t DMA_GPIO_DATA[2][MOTORS_DMA_BUFFER_SIZE];
 
 /* Private functions */
 
@@ -165,14 +88,12 @@ static uint16_t motorsConv16ToBits(uint16_t bits)
 }
 
 /* Public functions */
-
-// Contorl gpio using dma
-void motorsInit(const MotorPerifDef** motorMapSelect) {
-  // int i;
+void motorsInit(const iMotorPerifDef** motorMapSelect) {
+  int i;
   // Init structures
   GPIO_InitTypeDef GPIO_InitStructure;
   TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-  // TIM_OCInitTypeDef  TIM_OCInitStructure;
+  TIM_OCInitTypeDef  TIM_OCInitStructure;
   DMA_InitTypeDef DMA_InitStructure;
   NVIC_InitTypeDef NVIC_InitStructure;
 
@@ -180,7 +101,122 @@ void motorsInit(const MotorPerifDef** motorMapSelect) {
     return;
   }
 
-  // leo: enable the gpio d2
+  motorMap = motorMapSelect;
+
+  // Timer configuration
+  // Configure TIM8 base
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM8, ENABLE);
+  TIM_TimeBaseStructure.TIM_Period = MOTORS_PWM_PERIOD;
+  TIM_TimeBaseStructure.TIM_Prescaler = MOTORS_PWM_PRESCALE;
+  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+  TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
+  TIM_TimeBaseInit(TIM8, &TIM_TimeBaseStructure);
+  TIM_SelectOutputTrigger(TIM8, TIM_TRGOSource_Update);
+  for (int k = 0; k < MOTORS_DMA_BUFFER_SIZE; k++) DMA_GPIO_DATA[0][k] = DMA_GPIO_DATA[1][k] = 0;
+
+  for (i = 0; i < 4; i++) {
+
+    // Configure the GPIO for the timer output
+    MOTORS_RCC_GPIO_CMD(motorMap[i]->gpioPerif, ENABLE);
+    GPIO_StructInit(&GPIO_InitStructure);
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+    GPIO_InitStructure.GPIO_OType = motorMap[i]->gpioOType;
+    GPIO_InitStructure.GPIO_Pin = motorMap[i]->gpioPin;
+    GPIO_Init(motorMap[i]->gpioPort, &GPIO_InitStructure);
+    //Map timers to alternate functions
+    //MOTORS_GPIO_AF_CFG(motorMap[i]->gpioPort, motorMap[i]->gpioPinSource, motorMap[i]->gpioAF);
+
+    // Init dma buffer data
+    for (int k = 0; k < MOTORS_DMA_DATA_SIZE; k++) {
+      DMA_GPIO_DATA[i % 2][k] |= (k % 3 == 0 ? motorMap[i]->gpioPin : motorMap[i]->gpioPin << 16);
+    }
+    for (int k = MOTORS_DMA_DATA_SIZE; k < MOTORS_DMA_BUFFER_SIZE; k++) {
+      DMA_GPIO_DATA[i % 2][k] |= motorMap[i]->gpioPin << 16;
+    }
+
+    if (i > 1) continue;
+    // DMA configuration
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
+    DMA_InitStructure.DMA_Channel = DMA_Channel_7;
+    DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&motorMap[i]->gpioPort->BSRRL);
+    DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)DMA_GPIO_DATA[i % 2];
+    DMA_InitStructure.DMA_DIR = DMA_DIR_MemoryToPeripheral;
+    DMA_InitStructure.DMA_BufferSize = MOTORS_DMA_BUFFER_SIZE;
+    DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+    DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+    DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Word;
+    DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Word;
+    DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+    DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
+    DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;
+    DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
+    DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
+    DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
+    DMA_Init(motorMap[i]->dmaXStreamY, &DMA_InitStructure);
+
+    NVIC_InitStructure.NVIC_IRQChannel = motorMap[i]->dmaNVICIRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+    DMA_ITConfig(motorMap[i]->dmaXStreamY, DMA_IT_TC, ENABLE);
+
+    // channel configuration
+    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Toggle;
+    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Disable;
+    TIM_OCInitStructure.TIM_Pulse = 0;
+    TIM_OCInitStructure.TIM_OCPolarity = motorMap[i]->timPolarity;
+    TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
+
+    // Configure Output Compare for PWM
+    motorMap[i]->ocInit(motorMap[i]->tim, &TIM_OCInitStructure);
+    motorMap[i]->preloadConfig(motorMap[i]->tim, TIM_OCPreload_Enable);
+    TIM_DMACmd(motorMap[i]->tim, motorMap[i]->dmaSource, ENABLE);
+    //MOTORS_TIM_DBG_CFG(motorMap[i]->timDbgStop, ENABLE);
+    DMA_Cmd(motorMap[i]->dmaXStreamY, ENABLE);
+  }
+  
+
+  // configure TIM8 channals
+  // TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Toggle;
+  // TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Disable;
+  // TIM_OCInitStructure.TIM_Pulse = 0;
+  // TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+  // TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
+  // // CC1
+  // TIM_OC1Init(TIM8, &TIM_OCInitStructure);
+  // TIM_OC1PreloadConfig(TIM8, TIM_OCPreload_Enable);
+  // TIM_DMACmd(TIM8, TIM_DMA_CC1, ENABLE);
+  // // CC2
+  // TIM_OC2Init(TIM8, &TIM_OCInitStructure);
+  // TIM_OC2PreloadConfig(TIM8, TIM_OCPreload_Enable);
+  // TIM_DMACmd(TIM8, TIM_DMA_CC2, ENABLE);
+
+  TIM_Cmd(TIM8, ENABLE);
+  // DMA_Cmd(DMA2_Stream2, ENABLE);
+  // DMA_Cmd(DMA2_Stream3, ENABLE);
+
+  isInit = true;
+}
+
+// Contorl gpio using dma, test version
+/*
+void motorsInitTest(const iMotorPerifDef** motorMapSelect) {
+  // int i;
+  // Init structures
+  GPIO_InitTypeDef GPIO_InitStructure;
+  TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+  TIM_OCInitTypeDef  TIM_OCInitStructure;
+  DMA_InitTypeDef DMA_InitStructure;
+  NVIC_InitTypeDef NVIC_InitStructure;
+
+  if (isInit) {
+    return;
+  }
+
+  // DMA2_Stream2, PD2
   MOTORS_RCC_GPIO_CMD(RCC_AHB1Periph_GPIOD, ENABLE);
   GPIO_StructInit(&GPIO_InitStructure);
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
@@ -190,15 +226,11 @@ void motorsInit(const MotorPerifDef** motorMapSelect) {
   GPIO_Init(GPIOD, &GPIO_InitStructure);
 
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
-
-  // DMA_Cmd(DMA2_Stream1, DISABLE);
-  // DMA_DeInit(DMA2_Stream1);
-  
   DMA_InitStructure.DMA_Channel = DMA_Channel_7;
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&GPIOD->BSRRL);
-  DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)gpio_bsrr;
+  DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)DMA_GPIO_DATA;
   DMA_InitStructure.DMA_DIR = DMA_DIR_MemoryToPeripheral;
-  DMA_InitStructure.DMA_BufferSize = 222;
+  DMA_InitStructure.DMA_BufferSize = MOTORS_DMA_BUFFER_SIZE;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
   DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Word;
@@ -209,16 +241,52 @@ void motorsInit(const MotorPerifDef** motorMapSelect) {
   DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
   DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
   DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
-  DMA_Init(DMA2_Stream1, &DMA_InitStructure);
+  DMA_Init(DMA2_Stream2, &DMA_InitStructure);
 
-  NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream1_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream2_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
-  DMA_ITConfig(DMA2_Stream1, DMA_IT_TC, ENABLE);
+  DMA_ITConfig(DMA2_Stream2, DMA_IT_TC, ENABLE);
 
-  motorMap = motorMapSelect;
+  // DMA2_Stream3, PA1
+  MOTORS_RCC_GPIO_CMD(RCC_AHB1Periph_GPIOA, ENABLE);
+  GPIO_StructInit(&GPIO_InitStructure);
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
+  DMA_InitStructure.DMA_Channel = DMA_Channel_7;
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&GPIOA->BSRRL);
+  DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)DMA_GPIO_DATA;
+  DMA_InitStructure.DMA_DIR = DMA_DIR_MemoryToPeripheral;
+  DMA_InitStructure.DMA_BufferSize = MOTORS_DMA_BUFFER_SIZE;
+  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Word;
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Word;
+  DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
+  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;
+  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
+  DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
+  DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
+  DMA_Init(DMA2_Stream3, &DMA_InitStructure);
+
+  NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream3_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+  DMA_ITConfig(DMA2_Stream3, DMA_IT_TC, ENABLE);
+
+  // motorMap = motorMapSelect;
   //leo: try the PA1
 
   //Clock the gpio and the timers
@@ -251,105 +319,64 @@ void motorsInit(const MotorPerifDef** motorMapSelect) {
   // MOTORS_GPIO_AF_CFG(motorMap[i]->gpioPort, motorMap[i]->gpioPinSource, motorMap[i]->gpioAF);
 
   // Timer configuration
-
+  // Configure TIM8 base
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM8, ENABLE);
-  // RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
   TIM_TimeBaseStructure.TIM_Period = MOTORS_PWM_PERIOD;
   TIM_TimeBaseStructure.TIM_Prescaler = MOTORS_PWM_PRESCALE;
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
   TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
   TIM_TimeBaseInit(TIM8, &TIM_TimeBaseStructure);
-  // TIM_TimeBaseInit(motorMap[i]->tim, &TIM_TimeBaseStructure);
-
-
-  // NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
-  // NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  // NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  // NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  // NVIC_Init(&NVIC_InitStructure);
-  // TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
-
   TIM_SelectOutputTrigger(TIM8, TIM_TRGOSource_Update);
-  TIM_DMACmd(TIM8, TIM_DMA_Update, ENABLE);
-/**/
-  // PWM channels configuration (All identical!)
-  // TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
-  // TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-  // leo: test the pulse value
-  // TIM_OCInitStructure.TIM_Pulse = 128; // TIM_Pulse / TIM_Period = duty cycle
-  // TIM_OCInitStructure.TIM_OCPolarity = motorMap[i]->timPolarity;
-  // TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
 
-  // Configure Output Compare for PWM
-  // motorMap[i]->ocInit(motorMap[i]->tim, &TIM_OCInitStructure);
-  // motorMap[i]->preloadConfig(motorMap[i]->tim, TIM_OCPreload_Enable);
-  // MOTORS_TIM_DBG_CFG(motorMap[i]->timDbgStop, ENABLE);
-  // Enable the timer PWM outputs
-  // TIM_CtrlPWMOutputs(motorMap[i]->tim, DISABLE);
+  // configure TIM8 channals
+  TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Toggle;
+  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Disable;
+  TIM_OCInitStructure.TIM_Pulse = 0;
+  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+  TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
+  // CC1
+  TIM_OC1Init(TIM8, &TIM_OCInitStructure);
+  TIM_OC1PreloadConfig(TIM8, TIM_OCPreload_Enable);
+  TIM_DMACmd(TIM8, TIM_DMA_CC1, ENABLE);
+  // CC2
+  TIM_OC2Init(TIM8, &TIM_OCInitStructure);
+  TIM_OC2PreloadConfig(TIM8, TIM_OCPreload_Enable);
+  TIM_DMACmd(TIM8, TIM_DMA_CC2, ENABLE);
 
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
-  // RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
-  TIM_TimeBaseStructure.TIM_Period = 999;
-  TIM_TimeBaseStructure.TIM_Prescaler = 20;
-  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-  TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
-  TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
-
-
-  // use dma interrupt instead (DMA2_Stream1_IRQn)
-  // NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
-  // NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  // NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  // NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  // NVIC_Init(&NVIC_InitStructure);
-  // TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
-
-  TIM_Cmd(TIM2, ENABLE);
   TIM_Cmd(TIM8, ENABLE);
-  DMA_Cmd(DMA2_Stream1, ENABLE);
+  DMA_Cmd(DMA2_Stream2, ENABLE);
+  DMA_Cmd(DMA2_Stream3, ENABLE);
 
   isInit = true;
 }
+*/
 
-void DMA2_Stream1_IRQHandler() {
+void DMA2_Stream2_IRQHandler() {
   static int i = 0;
-  // if (i == 1) {
-  //   GPIO_ToggleBits(GPIOD, GPIO_Pin_2);
-  //   i = 0;
-  // } else i++;
-  
 
-  if (i == 80000) {
-    gpio_bsrr[13] = gpio_bsrr[16] = gpio_bsrr[22] = 0x4;
-    gpio_bsrr[28] = gpio_bsrr[37] = gpio_bsrr[46] = 0x4;
-  } else if (i == 80000 + 24000) {
-    gpio_bsrr[13] = gpio_bsrr[16] = gpio_bsrr[22] = 0x4 << 16;
-    gpio_bsrr[28] = gpio_bsrr[37] = gpio_bsrr[46] = 0x4 << 16;
-    i = 0;
-  }
-  i++;
-
-  // clean the intertupt
-  DMA_ClearITPendingBit(DMA2_Stream1, DMA_IT_TCIF1);
-}
-
-void TIM2_IRQHandler() {
-  static int i = 0;
-  if (i == 1) {
+  if (i == 4000) {
     GPIO_ToggleBits(GPIOD, GPIO_Pin_2);
     i = 0;
-  } else i++;
-  
+  }
+
+  i++;
   // clean the intertupt
-  TIM2->SR &= ~TIM_SR_UIF;
-  return;
+  DMA_ClearITPendingBit(DMA2_Stream2, DMA_IT_TCIF1);
+}
+
+void DMA2_Stream3_IRQHandler() {
+  static int i = 0;
+
+  i++;
+  // clean the intertupt
+  DMA_ClearITPendingBit(DMA2_Stream3, DMA_IT_TCIF1);
 }
 
 
-//Initialization. Will set all motors ratio to 0%
-void motorsInitYYY(const MotorPerifDef** motorMapSelect)
+// Initialization. Will set all motors ratio to 0%
+// The standard version of motor init
+void motorsInitOriginal(const iMotorPerifDef** motorMapSelect)
 {
   int i;
   //Init structures
@@ -431,7 +458,7 @@ void motorsInitYYY(const MotorPerifDef** motorMapSelect)
   isInit = true;
 }
 
-void motorsDeInit(const MotorPerifDef** motorMapSelect)
+void motorsDeInit()
 {
   int i;
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -476,20 +503,21 @@ bool motorsTest(void)
   return isInit;
 }
 
-void motorsSetRatioB(uint32_t id, uint16_t ithrust) {
+void motorsSetValue(uint32_t id, uint16_t value) {
   if (isInit) {
-    uint16_t ratio = ithrust;
     ASSERT(id < NBR_OF_MOTORS);
 
-    ratio = ithrust / 65535.0 * 140.0;
-    motorMap[id]->setCompare(motorMap[id]->tim, motorsConv16ToBits(ratio));
+    uint32_t u16 = 1 << 15;
 
-    // if (motorMap[id]->drvType == BRUSHLESS) {
-    //   motorMap[id]->setCompare(motorMap[id]->tim, motorsBLConv16ToBits(ratio));
-    // }
-    // else {
-    //   motorMap[id]->setCompare(motorMap[id]->tim, motorsConv16ToBits(ratio));
-    // }
+    for (int i = 0; i < 16; i++) {
+      if (value & (u16 >> i)) {
+        DMA_GPIO_DATA[id % 2][i * 3 + 1] |= motorMap[id]->gpioPin << 16;
+        DMA_GPIO_DATA[id % 2][i * 3 + 1] &= ~motorMap[id]->gpioPin;
+      } else {
+        DMA_GPIO_DATA[id % 2][i * 3 + 1] &= ~motorMap[id]->gpioPin << 16;
+        DMA_GPIO_DATA[id % 2][i * 3 + 1] |= motorMap[id]->gpioPin;
+      }
+    }
   }
 }
 

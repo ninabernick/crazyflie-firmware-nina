@@ -110,7 +110,7 @@ bool platformConfigPhysicalLayoutAntennasAreClose() {
   return active_config->physicalLayoutAntennasAreClose;
 }
 
-const MotorPerifDef** platformConfigGetMotorMapping() {
+const iMotorPerifDef** platformConfigGetMotorMapping() {
   return active_config->motorMap;
 }
 

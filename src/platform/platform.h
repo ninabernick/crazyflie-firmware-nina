@@ -57,7 +57,7 @@ typedef struct {
   char deviceTypeName[20];
   SensorImplementation_t sensorImplementation;
   bool physicalLayoutAntennasAreClose;
-  const MotorPerifDef** motorMap;
+  const iMotorPerifDef** motorMap;
 } platformConfig_t;
 
 /**
@@ -82,6 +82,6 @@ const char* platformConfigGetDeviceType();
 const char* platformConfigGetDeviceTypeName();
 SensorImplementation_t platformConfigGetSensorImplementation();
 bool platformConfigPhysicalLayoutAntennasAreClose();
-const MotorPerifDef** platformConfigGetMotorMapping();
+const iMotorPerifDef** platformConfigGetMotorMapping();
 
 #endif /* PLATFORM_H_ */

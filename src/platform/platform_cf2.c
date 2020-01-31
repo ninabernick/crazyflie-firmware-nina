@@ -39,14 +39,14 @@ static platformConfig_t configs[] = {
     .deviceTypeName = "Crazyflie 2.0",
     .sensorImplementation = SensorImplementation_mpu9250_lps25h,
     .physicalLayoutAntennasAreClose = true,
-    .motorMap = motorMapDefaultBrushed,
+    .motorMap = motorMapIFlight,
   },
   {
     .deviceType = "CF21",
     .deviceTypeName = "Crazyflie 2.1",
     .sensorImplementation = SensorImplementation_bmi088_bmp388,
     .physicalLayoutAntennasAreClose = false,
-    .motorMap = motorMapDefaultBrushed,
+    .motorMap = motorMapIFlight,
   },
   {  // Old ID of Crzyflie Bolt
     .deviceType = "RZ10",

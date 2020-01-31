@@ -521,6 +521,100 @@ static const MotorPerifDef DECK_MOSI =
     .preloadConfig = TIM_OC1PreloadConfig,
 };
 
+// leo: customized motorMap, using two channels for two sets of GPIO output
+// Connector M1, PA1, TIM8_CH1
+static const iMotorPerifDef ICONN_M1 =
+{
+    .drvType       = BRUSHLESS,
+    .gpioPerif     = RCC_AHB1Periph_GPIOA,
+    .gpioPort      = GPIOA,
+    .gpioPin       = GPIO_Pin_1,
+    .gpioPinSource = GPIO_PinSource1,
+    .gpioOType     = GPIO_OType_PP,
+    .gpioAF        = GPIO_AF_TIM8,
+    .timPerif      = RCC_APB2Periph_TIM8,
+    .tim           = TIM8,
+    .timPolarity   = TIM_OCPolarity_High,
+    .timDbgStop    = DBGMCU_TIM8_STOP,
+    .setCompare    = TIM_SetCompare1,
+    .getCompare    = TIM_GetCapture1,
+    .ocInit        = TIM_OC1Init,
+    .preloadConfig = TIM_OC1PreloadConfig,
+    .dmaXStreamY   = DMA2_Stream2,
+    .dmaSource     = TIM_DMA_CC1,
+    .dmaNVICIRQn   = DMA2_Stream2_IRQn,
+};
+
+// Connector M2, PB11, TIM8_CH2
+static const iMotorPerifDef ICONN_M2 =
+{
+    .drvType       = BRUSHLESS,
+    .gpioPerif     = RCC_AHB1Periph_GPIOB,
+    .gpioPort      = GPIOB,
+    .gpioPin       = GPIO_Pin_11,
+    .gpioPinSource = GPIO_PinSource11,
+    .gpioOType     = GPIO_OType_PP,
+    .gpioAF        = GPIO_AF_TIM8,
+    .timPerif      = RCC_APB2Periph_TIM8,
+    .tim           = TIM8,
+    .timPolarity   = TIM_OCPolarity_High,
+    .timDbgStop    = DBGMCU_TIM8_STOP,
+    .setCompare    = TIM_SetCompare2,
+    .getCompare    = TIM_GetCapture2,
+    .ocInit        = TIM_OC2Init,
+    .preloadConfig = TIM_OC2PreloadConfig,
+    .dmaXStreamY   = DMA2_Stream3,
+    .dmaSource     = TIM_DMA_CC2,
+    .dmaNVICIRQn   = DMA2_Stream3_IRQn,
+};
+
+// Connector M3, PA15, TIM8_CH1
+static const iMotorPerifDef ICONN_M3 =
+{
+    .drvType       = BRUSHLESS,
+    .gpioPerif     = RCC_AHB1Periph_GPIOA,
+    .gpioPort      = GPIOA,
+    .gpioPin       = GPIO_Pin_15,
+    .gpioPinSource = GPIO_PinSource15,
+    .gpioOType     = GPIO_OType_PP,
+    .gpioAF        = GPIO_AF_TIM8,
+    .timPerif      = RCC_APB2Periph_TIM8,
+    .tim           = TIM8,
+    .timPolarity   = TIM_OCPolarity_High,
+    .timDbgStop    = DBGMCU_TIM8_STOP,
+    .setCompare    = TIM_SetCompare1,
+    .getCompare    = TIM_GetCapture1,
+    .ocInit        = TIM_OC1Init,
+    .preloadConfig = TIM_OC1PreloadConfig,
+    .dmaXStreamY   = DMA2_Stream2,
+    .dmaSource     = TIM_DMA_CC1,
+    .dmaNVICIRQn   = DMA2_Stream2_IRQn,
+};
+
+// Connector M4, PB9, TIM8_CH2
+static const iMotorPerifDef ICONN_M4 =
+{
+    .drvType       = BRUSHLESS,
+    .gpioPerif     = RCC_AHB1Periph_GPIOB,
+    .gpioPort      = GPIOB,
+    .gpioPin       = GPIO_Pin_9,
+    .gpioPinSource = GPIO_PinSource9,
+    .gpioOType     = GPIO_OType_PP,
+    .gpioAF        = GPIO_AF_TIM8,
+    .timPerif      = RCC_APB2Periph_TIM8,
+    .tim           = TIM8,
+    .timPolarity   = TIM_OCPolarity_High,
+    .timDbgStop    = DBGMCU_TIM8_STOP,
+    .setCompare    = TIM_SetCompare2,
+    .getCompare    = TIM_GetCapture2,
+    .ocInit        = TIM_OC2Init,
+    .preloadConfig = TIM_OC2PreloadConfig,
+    .dmaXStreamY   = DMA2_Stream3,
+    .dmaSource     = TIM_DMA_CC2,
+    .dmaNVICIRQn   = DMA2_Stream3_IRQn,
+};
+
+
 /**
  * Mapping for Tags that don't have motors.
  * Actually same mapping as for CF2 but the pins are not connected.
@@ -542,6 +636,14 @@ const MotorPerifDef* motorMapDefaultBrushed[NBR_OF_MOTORS] =
   &CONN_M2,
   &CONN_M3,
   &CONN_M4
+};
+
+const iMotorPerifDef* motorMapIFlight[NBR_OF_MOTORS] =
+{
+  &ICONN_M1,
+  &ICONN_M2,
+  &ICONN_M3,
+  &ICONN_M4,
 };
 
 /**
@@ -573,11 +675,13 @@ const MotorPerifDef* motorMapDefaltConBrushless[NBR_OF_MOTORS] =
 /**
  * Brushless motors mapped to the Bolt PWM outputs.
  */
-const MotorPerifDef* motorMapBoltBrushless[NBR_OF_MOTORS] =
-{
-  &BOLT_M1_BL,
-  &BOLT_M2_BL,
-  &BOLT_M3_BL,
-  &BOLT_M4_BL
-};
+// const MotorPerifDef* motorMapBoltBrushless[NBR_OF_MOTORS] =
+// {
+//   &BOLT_M1_BL,
+//   &BOLT_M2_BL,
+//   &BOLT_M3_BL,
+//   &BOLT_M4_BL
+// };
+
+const iMotorPerifDef* motorMapBoltBrushless[NBR_OF_MOTORS];
 

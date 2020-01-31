@@ -38,23 +38,27 @@
 #include "config.h"
 /* ST includes */
 #include "stm32fxxx.h"
+#include "stm32f4xx.h"
 
 /******** Defines ********/
 
 // The following defines gives a PWM of 8 bits at ~328KHz for a sysclock of 168MHz
 // CF2 PWM ripple is filtered better at 328kHz. At 168kHz the NCP702 regulator is affected.
 #define TIM_CLOCK_HZ 84000000
-#define MOTORS_PWM_BITS           8//8
+#define MOTORS_PWM_BITS           8
 // #define MOTORS_PWM_PERIOD         ((1<<MOTORS_PWM_BITS) - 1)
 #define MOTORS_PWM_PERIOD         93 // leo: change freq
 #define MOTORS_PWM_PRESCALE       0
 #define MOTORS_TIM_BEEP_CLK_FREQ  (84000000L / 5)
 #define MOTORS_POLARITY           TIM_OCPolarity_High
+#define MOTORS_DMA_DATA_SIZE      48
+#define MOTORS_DMA_BUFFER_SIZE    222
 
 // Abstraction of ST lib functions
 #define MOTORS_GPIO_MODE          GPIO_Mode_AF
 #define MOTORS_RCC_GPIO_CMD       RCC_AHB1PeriphClockCmd
 #define MOTORS_RCC_TIM_CMD        RCC_APB1PeriphClockCmd
+#define MOTORS_RCC_DMA_CMD        RCC_AHB1PeriphClockCmd
 #define MOTORS_TIM_DBG_CFG        DBGMCU_APB2PeriphConfig
 #define MOTORS_GPIO_AF_CFG(a,b,c) GPIO_PinAFConfig(a,b,c)
 
@@ -105,6 +109,7 @@
 #define MOTOR_M2  1
 #define MOTOR_M3  2
 #define MOTOR_M4  3
+
 
 // Test defines
 #define MOTORS_TEST_RATIO         (uint16_t)(0.2*(1<<16))
@@ -199,6 +204,37 @@ typedef struct
   void (*preloadConfig)(TIM_TypeDef* TIMx, uint16_t TIM_OCPreload);
 } MotorPerifDef;
 
+// leo: new motorPerifDef
+typedef struct
+{
+  DMA_Stream_TypeDef* DMAy_Channelx;
+  motorsDrvType drvType;
+  uint32_t      gpioPerif;
+  GPIO_TypeDef* gpioPort;
+  uint16_t      gpioPin;
+  uint16_t      gpioPinSource;
+  uint32_t      gpioOType;
+  uint8_t       gpioAF;
+  uint32_t      gpioPowerswitchPerif;
+  GPIO_TypeDef* gpioPowerswitchPort;
+  uint16_t      gpioPowerswitchPin;
+  uint32_t      timPerif;
+  TIM_TypeDef*  tim;
+  uint16_t      timPolarity;
+  uint32_t      timDbgStop;
+  uint32_t      timPeriod;
+  uint16_t      timPrescaler;
+  /* Function pointers */
+  void (*setCompare)(TIM_TypeDef* TIMx, uint32_t Compare);
+  uint32_t (*getCompare)(TIM_TypeDef* TIMx);
+  void (*ocInit)(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct);
+  void (*preloadConfig)(TIM_TypeDef* TIMx, uint16_t TIM_OCPreload);
+  // leo: add DMA parameters
+  uint16_t      dmaSource;
+  uint16_t      dmaNVICIRQn;
+  DMA_Stream_TypeDef* dmaXStreamY;
+} iMotorPerifDef;
+
 /**
  * Motor mapping configurations
  */
@@ -206,8 +242,8 @@ extern const MotorPerifDef* motorMapNoMotors[NBR_OF_MOTORS];
 extern const MotorPerifDef* motorMapDefaultBrushed[NBR_OF_MOTORS];
 extern const MotorPerifDef* motorMapDefaltConBrushless[NBR_OF_MOTORS];
 extern const MotorPerifDef* motorMapBigQuadDeck[NBR_OF_MOTORS];
-extern const MotorPerifDef* motorMapBoltBrushless[NBR_OF_MOTORS];
-
+extern const iMotorPerifDef* motorMapBoltBrushless[NBR_OF_MOTORS];
+extern const iMotorPerifDef* motorMapIFlight[NBR_OF_MOTORS];
 /**
  * Test sound tones
  */
@@ -217,12 +253,12 @@ extern const uint16_t testsound[NBR_OF_MOTORS];
 /**
  * Initialisation. Will set all motors ratio to 0%
  */
-void motorsInit(const MotorPerifDef** motorMapSelect);
+void motorsInit(const iMotorPerifDef** motorMapSelect);
 
 /**
  * DeInitialisation. Reset to default
  */
-void motorsDeInit(const MotorPerifDef** motorMapSelect);
+void motorsDeInit();
 
 /**
  * Test of the motor modules. The test will spin each motor very short in
@@ -238,7 +274,7 @@ void motorsSetRatio(uint32_t id, uint16_t ratio);
 /**
  * leo: control iflight esc: send 16bits number
  */
-void motorsSetRatioB(uint32_t id, uint16_t ratio);
+void motorsSetValue(uint32_t id, uint16_t value);
 
 /**
  * Get the PWM ratio of the motor 'id'. Return -1 if wrong ID.
