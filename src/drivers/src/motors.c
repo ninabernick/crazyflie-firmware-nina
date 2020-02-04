@@ -161,7 +161,7 @@ void motorsInit(const iMotorPerifDef** motorMapSelect) {
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
-    DMA_ITConfig(motorMap[i]->dmaXStreamY, DMA_IT_TC, ENABLE);
+    // DMA_ITConfig(motorMap[i]->dmaXStreamY, DMA_IT_TC, ENABLE);
 
     // channel configuration
     TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Toggle;
@@ -503,20 +503,41 @@ bool motorsTest(void)
   return isInit;
 }
 
+static inline void setDMAData(uint16_t id, uint16_t pin, uint16_t bit) {
+  DMA_GPIO_DATA[id % 2][bit * 3 + 1] &= ~pin << 16;
+  DMA_GPIO_DATA[id % 2][bit * 3 + 1] |= pin;
+}
+
+static inline void clearDMAData(uint16_t id, uint16_t pin, uint16_t bit) {
+  DMA_GPIO_DATA[id % 2][bit * 3 + 1] |= pin << 16;
+  DMA_GPIO_DATA[id % 2][bit * 3 + 1] &= ~pin;
+}
+
+/**
+  * @brief  set the output for esc board
+  *         | 0 0 0 0, 0 0 0 0, 0 0 | 0 0 | 0 0 0 0  |
+  *         | motor power value     | 0 0 | checksum |
+  * @param  id: the id of motor, can be 0, 1, 2, 3
+  * @param  value: value of motor output, between 0-1024
+  */
 void motorsSetValue(uint32_t id, uint16_t value) {
   if (isInit) {
     ASSERT(id < NBR_OF_MOTORS);
+    ASSERT(value < MOTORS_MAX_OUTPUT);
+    uint16_t u10 = 1 << 9;
+    uint16_t check_sum = ((value >> 6) & 0xf) ^ ((value >> 2) & 0xf) ^ ((value << 2) & 0xf);
 
-    uint32_t u16 = 1 << 15;
+    for (int i = 0; i < 10; i++) {
+      if (value & (u10 >> i))
+        setDMAData(id, motorMap[id]->gpioPin, i);
+      else clearDMAData(id, motorMap[id]->gpioPin, i);
+    }
 
-    for (int i = 0; i < 16; i++) {
-      if (value & (u16 >> i)) {
-        DMA_GPIO_DATA[id % 2][i * 3 + 1] |= motorMap[id]->gpioPin << 16;
-        DMA_GPIO_DATA[id % 2][i * 3 + 1] &= ~motorMap[id]->gpioPin;
-      } else {
-        DMA_GPIO_DATA[id % 2][i * 3 + 1] &= ~motorMap[id]->gpioPin << 16;
-        DMA_GPIO_DATA[id % 2][i * 3 + 1] |= motorMap[id]->gpioPin;
-      }
+    u10 = 1 << 15;
+    for (int i = 12; i < 16; i++) {
+      if (check_sum & (u10 >> i))
+        setDMAData(id, motorMap[id]->gpioPin, i);
+      else clearDMAData(id, motorMap[id]->gpioPin, i);
     }
   }
 }
