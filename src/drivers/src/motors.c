@@ -88,7 +88,7 @@ static uint16_t motorsConv16ToBits(uint16_t bits)
 }
 
 /* Public functions */
-void motorsInit(const iMotorPerifDef** motorMapSelect) {
+void motorsInitFlight(const iMotorPerifDef** motorMapSelect) {
   int i;
   // Init structures
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -106,8 +106,8 @@ void motorsInit(const iMotorPerifDef** motorMapSelect) {
   // Timer configuration
   // Configure TIM8 base
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM8, ENABLE);
-  TIM_TimeBaseStructure.TIM_Period = MOTORS_PWM_PERIOD;
-  TIM_TimeBaseStructure.TIM_Prescaler = MOTORS_PWM_PRESCALE;
+  TIM_TimeBaseStructure.TIM_Period = MOTORS_SIG_PERIOD;
+  TIM_TimeBaseStructure.TIM_Prescaler = MOTORS_SIG_PRESCALE;
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
   TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
@@ -177,27 +177,8 @@ void motorsInit(const iMotorPerifDef** motorMapSelect) {
     //MOTORS_TIM_DBG_CFG(motorMap[i]->timDbgStop, ENABLE);
     DMA_Cmd(motorMap[i]->dmaXStreamY, ENABLE);
   }
-  
-
-  // configure TIM8 channals
-  // TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Toggle;
-  // TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Disable;
-  // TIM_OCInitStructure.TIM_Pulse = 0;
-  // TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-  // TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
-  // // CC1
-  // TIM_OC1Init(TIM8, &TIM_OCInitStructure);
-  // TIM_OC1PreloadConfig(TIM8, TIM_OCPreload_Enable);
-  // TIM_DMACmd(TIM8, TIM_DMA_CC1, ENABLE);
-  // // CC2
-  // TIM_OC2Init(TIM8, &TIM_OCInitStructure);
-  // TIM_OC2PreloadConfig(TIM8, TIM_OCPreload_Enable);
-  // TIM_DMACmd(TIM8, TIM_DMA_CC2, ENABLE);
 
   TIM_Cmd(TIM8, ENABLE);
-  // DMA_Cmd(DMA2_Stream2, ENABLE);
-  // DMA_Cmd(DMA2_Stream3, ENABLE);
-
   isInit = true;
 }
 
@@ -352,31 +333,9 @@ void motorsInitTest(const iMotorPerifDef** motorMapSelect) {
 }
 */
 
-void DMA2_Stream2_IRQHandler() {
-  static int i = 0;
-
-  if (i == 4000) {
-    GPIO_ToggleBits(GPIOD, GPIO_Pin_2);
-    i = 0;
-  }
-
-  i++;
-  // clean the intertupt
-  DMA_ClearITPendingBit(DMA2_Stream2, DMA_IT_TCIF1);
-}
-
-void DMA2_Stream3_IRQHandler() {
-  static int i = 0;
-
-  i++;
-  // clean the intertupt
-  DMA_ClearITPendingBit(DMA2_Stream3, DMA_IT_TCIF1);
-}
-
-
 // Initialization. Will set all motors ratio to 0%
 // The standard version of motor init
-void motorsInitOriginal(const iMotorPerifDef** motorMapSelect)
+void motorsInit(const iMotorPerifDef** motorMapSelect)
 {
   int i;
   //Init structures
@@ -545,8 +504,6 @@ void motorsSetValue(uint32_t id, uint16_t value) {
 // Ithrust is thrust mapped for 65536 <==> 60 grams
 void motorsSetRatio(uint32_t id, uint16_t ithrust)
 {
-  // leo: disable the motor set
-  return;
 
   if (isInit) {
     uint16_t ratio;
@@ -598,8 +555,6 @@ int motorsGetRatio(uint32_t id)
 
 void motorsBeep(int id, bool enable, uint16_t frequency, uint16_t ratio)
 {
-  // leo: disable the beep
-  return;
 
   TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 

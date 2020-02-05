@@ -46,9 +46,13 @@
 // CF2 PWM ripple is filtered better at 328kHz. At 168kHz the NCP702 regulator is affected.
 #define TIM_CLOCK_HZ 84000000
 #define MOTORS_PWM_BITS           8
-// #define MOTORS_PWM_PERIOD         ((1<<MOTORS_PWM_BITS) - 1)
-#define MOTORS_PWM_PERIOD         93 // leo: change freq
+#define MOTORS_PWM_PERIOD         ((1<<MOTORS_PWM_BITS) - 1)
 #define MOTORS_PWM_PRESCALE       0
+
+// leo: 1.8Mhz freq for data transfer
+#define MOTORS_SIG_PERIOD         93
+#define MOTORS_SIG_PRESCALE       0
+
 #define MOTORS_TIM_BEEP_CLK_FREQ  (84000000L / 5)
 #define MOTORS_POLARITY           TIM_OCPolarity_High
 #define MOTORS_DMA_DATA_SIZE      48
@@ -239,8 +243,8 @@ typedef struct
 /**
  * Motor mapping configurations
  */
-extern const MotorPerifDef* motorMapNoMotors[NBR_OF_MOTORS];
-extern const MotorPerifDef* motorMapDefaultBrushed[NBR_OF_MOTORS];
+extern const iMotorPerifDef* motorMapNoMotors[NBR_OF_MOTORS];
+extern const iMotorPerifDef* motorMapDefaultBrushed[NBR_OF_MOTORS];
 extern const MotorPerifDef* motorMapDefaltConBrushless[NBR_OF_MOTORS];
 extern const MotorPerifDef* motorMapBigQuadDeck[NBR_OF_MOTORS];
 extern const iMotorPerifDef* motorMapBoltBrushless[NBR_OF_MOTORS];
