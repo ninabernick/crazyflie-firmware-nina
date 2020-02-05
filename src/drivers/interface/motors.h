@@ -51,7 +51,7 @@
 
 // leo: 1.8Mhz freq for data transfer
 #define MOTORS_SIG_PERIOD         93
-#define MOTORS_SIG_PRESCALE       0
+#define MOTORS_SIG_PRESCALE       1
 
 #define MOTORS_TIM_BEEP_CLK_FREQ  (84000000L / 5)
 #define MOTORS_POLARITY           TIM_OCPolarity_High
