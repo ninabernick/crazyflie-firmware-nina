@@ -88,7 +88,7 @@ static uint16_t motorsConv16ToBits(uint16_t bits)
 }
 
 /* Public functions */
-void motorsInitFlight(const iMotorPerifDef** motorMapSelect) {
+void motorsInitIFlight(const iMotorPerifDef** motorMapSelect) {
   int i;
   // Init structures
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -179,6 +179,7 @@ void motorsInitFlight(const iMotorPerifDef** motorMapSelect) {
   }
 
   TIM_Cmd(TIM8, ENABLE);
+  motorsDrive = motorsSetValue;
   isInit = true;
 }
 
@@ -413,7 +414,7 @@ void motorsInit(const iMotorPerifDef** motorMapSelect)
   {
     TIM_Cmd(motorMap[i]->tim, ENABLE);
   }
-
+  motorsDrive = motorsSetRatio;
   isInit = true;
 }
 
@@ -451,9 +452,9 @@ bool motorsTest(void)
       motorsBeep(MOTORS[i], false, 0, 0);
       vTaskDelay(M2T(MOTORS_TEST_DELAY_TIME_MS));
 #else
-      motorsSetRatio(MOTORS[i], MOTORS_TEST_RATIO);
+      (*motorsDrive)(MOTORS[i], MOTORS_TEST_RATIO);
       vTaskDelay(M2T(MOTORS_TEST_ON_TIME_MS));
-      motorsSetRatio(MOTORS[i], 0);
+      (*motorsDrive)(MOTORS[i], 0);
       vTaskDelay(M2T(MOTORS_TEST_DELAY_TIME_MS));
 #endif
     }

@@ -434,11 +434,11 @@ static void testProps(sensorData_t *sensors)
 
     if (i == 1)
     {
-      motorsSetRatio(motorToTest, 0xFFFF);
+      (*motorsDrive)(motorToTest, 0xFFFF);
     }
     else if (i == 50)
     {
-      motorsSetRatio(motorToTest, 0);
+      (*motorsDrive)(motorToTest, 0);
     }
     else if (i == PROPTEST_NBR_OF_VARIANCE_VALUES)
     {
@@ -470,10 +470,10 @@ static void testProps(sensorData_t *sensors)
     }
     if (i == 1)
     {
-      motorsSetRatio(MOTOR_M1, 0xFFFF);
-      motorsSetRatio(MOTOR_M2, 0xFFFF);
-      motorsSetRatio(MOTOR_M3, 0xFFFF);
-      motorsSetRatio(MOTOR_M4, 0xFFFF);
+      (*motorsDrive)(MOTOR_M1, 0xFFFF);
+      (*motorsDrive)(MOTOR_M2, 0xFFFF);
+      (*motorsDrive)(MOTOR_M3, 0xFFFF);
+      (*motorsDrive)(MOTOR_M4, 0xFFFF);
     }
     else if (i < 50)
     {
@@ -482,10 +482,10 @@ static void testProps(sensorData_t *sensors)
     }
     else if (i == 50)
     {
-      motorsSetRatio(MOTOR_M1, 0);
-      motorsSetRatio(MOTOR_M2, 0);
-      motorsSetRatio(MOTOR_M3, 0);
-      motorsSetRatio(MOTOR_M4, 0);
+      (*motorsDrive)(MOTOR_M1, 0);
+      (*motorsDrive)(MOTOR_M2, 0);
+      (*motorsDrive)(MOTOR_M3, 0);
+      (*motorsDrive)(MOTOR_M4, 0);
 //      DEBUG_PRINT("IdleV: %f, minV: %f, M1V: %f, M2V: %f, M3V: %f, M4V: %f\n", (double)idleVoltage,
 //                  (double)minLoadedVoltage,
 //                  (double)minSingleLoadedVoltage[MOTOR_M1],

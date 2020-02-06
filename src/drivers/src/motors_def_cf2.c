@@ -525,7 +525,7 @@ static const MotorPerifDef DECK_MOSI =
 // Connector M1, PA1, TIM8_CH1
 static const iMotorPerifDef ICONN_M1 =
 {
-    .drvType       = BRUSHLESS,
+    .drvType       = IFLIGHT_BRUSHLESS,
     .gpioPerif     = RCC_AHB1Periph_GPIOA,
     .gpioPort      = GPIOA,
     .gpioPin       = GPIO_Pin_1,
@@ -548,7 +548,7 @@ static const iMotorPerifDef ICONN_M1 =
 // Connector M2, PB11, TIM8_CH2
 static const iMotorPerifDef ICONN_M2 =
 {
-    .drvType       = BRUSHLESS,
+    .drvType       = IFLIGHT_BRUSHLESS,
     .gpioPerif     = RCC_AHB1Periph_GPIOB,
     .gpioPort      = GPIOB,
     .gpioPin       = GPIO_Pin_11,
@@ -571,7 +571,7 @@ static const iMotorPerifDef ICONN_M2 =
 // Connector M3, PA15, TIM8_CH1
 static const iMotorPerifDef ICONN_M3 =
 {
-    .drvType       = BRUSHLESS,
+    .drvType       = IFLIGHT_BRUSHLESS,
     .gpioPerif     = RCC_AHB1Periph_GPIOA,
     .gpioPort      = GPIOA,
     .gpioPin       = GPIO_Pin_15,
@@ -594,7 +594,7 @@ static const iMotorPerifDef ICONN_M3 =
 // Connector M4, PB9, TIM8_CH2
 static const iMotorPerifDef ICONN_M4 =
 {
-    .drvType       = BRUSHLESS,
+    .drvType       = IFLIGHT_BRUSHLESS,
     .gpioPerif     = RCC_AHB1Periph_GPIOB,
     .gpioPort      = GPIOB,
     .gpioPin       = GPIO_Pin_9,

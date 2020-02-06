@@ -51,7 +51,7 @@
 
 // leo: 1.8Mhz freq for data transfer
 #define MOTORS_SIG_PERIOD         93
-#define MOTORS_SIG_PRESCALE       1
+#define MOTORS_SIG_PRESCALE       0
 
 #define MOTORS_TIM_BEEP_CLK_FREQ  (84000000L / 5)
 #define MOTORS_POLARITY           TIM_OCPolarity_High
@@ -181,7 +181,8 @@
 typedef enum
 {
   BRUSHED,
-  BRUSHLESS
+  BRUSHLESS,
+  IFLIGHT_BRUSHLESS
 } motorsDrvType;
 
 typedef struct
@@ -253,12 +254,19 @@ extern const iMotorPerifDef* motorMapIFlight[NBR_OF_MOTORS];
  * Test sound tones
  */
 extern const uint16_t testsound[NBR_OF_MOTORS];
+
+void (*motorsDrive) (uint32_t id, uint16_t);
 /*** Public interface ***/
 
 /**
  * Initialisation. Will set all motors ratio to 0%
  */
 void motorsInit(const iMotorPerifDef** motorMapSelect);
+
+/**
+ * Initialisation. Will set all motors ratio to 0%
+ */
+void motorsInitIFlight(const iMotorPerifDef** motorMapSelect);
 
 /**
  * DeInitialisation. Reset to default
