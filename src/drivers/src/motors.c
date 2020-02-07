@@ -95,7 +95,7 @@ void motorsInitIFlight(const iMotorPerifDef** motorMapSelect) {
   TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
   TIM_OCInitTypeDef  TIM_OCInitStructure;
   DMA_InitTypeDef DMA_InitStructure;
-  NVIC_InitTypeDef NVIC_InitStructure;
+  // NVIC_InitTypeDef NVIC_InitStructure;
 
   if (isInit) {
     return;
@@ -156,11 +156,12 @@ void motorsInitIFlight(const iMotorPerifDef** motorMapSelect) {
     DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
     DMA_Init(motorMap[i]->dmaXStreamY, &DMA_InitStructure);
 
-    NVIC_InitStructure.NVIC_IRQChannel = motorMap[i]->dmaNVICIRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
+    // do not use interrupt, it will block the mcu
+    // NVIC_InitStructure.NVIC_IRQChannel = motorMap[i]->dmaNVICIRQn;
+    // NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    // NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    // NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    // NVIC_Init(&NVIC_InitStructure);
     // DMA_ITConfig(motorMap[i]->dmaXStreamY, DMA_IT_TC, ENABLE);
 
     // channel configuration
@@ -463,12 +464,12 @@ bool motorsTest(void)
   return isInit;
 }
 
-static inline void setDMAData(uint16_t id, uint16_t pin, uint16_t bit) {
+static inline void setDMADataBit(uint16_t id, uint16_t pin, uint16_t bit) {
   DMA_GPIO_DATA[id % 2][bit * 3 + 1] &= ~pin << 16;
   DMA_GPIO_DATA[id % 2][bit * 3 + 1] |= pin;
 }
 
-static inline void clearDMAData(uint16_t id, uint16_t pin, uint16_t bit) {
+static inline void clearDMADataBit(uint16_t id, uint16_t pin, uint16_t bit) {
   DMA_GPIO_DATA[id % 2][bit * 3 + 1] |= pin << 16;
   DMA_GPIO_DATA[id % 2][bit * 3 + 1] &= ~pin;
 }
@@ -483,21 +484,23 @@ static inline void clearDMAData(uint16_t id, uint16_t pin, uint16_t bit) {
 void motorsSetValue(uint32_t id, uint16_t value) {
   if (isInit) {
     ASSERT(id < NBR_OF_MOTORS);
-    ASSERT(value < MOTORS_MAX_OUTPUT);
+    // re range from 0-0xFFFF to 0-1024
+    value = value / (float)0xFFFF * (float)MOTORS_MAX_OUTPUT;
+
     uint16_t u10 = 1 << 9;
     uint16_t check_sum = ((value >> 6) & 0xf) ^ ((value >> 2) & 0xf) ^ ((value << 2) & 0xf);
 
     for (int i = 0; i < 10; i++) {
       if (value & (u10 >> i))
-        setDMAData(id, motorMap[id]->gpioPin, i);
-      else clearDMAData(id, motorMap[id]->gpioPin, i);
+        setDMADataBit(id, motorMap[id]->gpioPin, i);
+      else clearDMADataBit(id, motorMap[id]->gpioPin, i);
     }
 
     u10 = 1 << 15;
     for (int i = 12; i < 16; i++) {
       if (check_sum & (u10 >> i))
-        setDMAData(id, motorMap[id]->gpioPin, i);
-      else clearDMAData(id, motorMap[id]->gpioPin, i);
+        setDMADataBit(id, motorMap[id]->gpioPin, i);
+      else clearDMADataBit(id, motorMap[id]->gpioPin, i);
     }
   }
 }
