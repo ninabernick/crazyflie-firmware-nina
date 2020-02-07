@@ -26,7 +26,7 @@
  * This code mainly interfacing the PWM peripheral lib of ST.
  */
 // Connector M1, PA1, TIM2_CH2
-static const iMotorPerifDef CONN_M1 =
+static const MotorPerifDef CONN_M1 =
 {
     .drvType       = BRUSHED,
     .gpioPerif     = RCC_AHB1Periph_GPIOA,
@@ -48,7 +48,7 @@ static const iMotorPerifDef CONN_M1 =
 };
 
 // Connector M2, PB11, TIM2_CH4
-static const iMotorPerifDef CONN_M2 =
+static const MotorPerifDef CONN_M2 =
 {
     .drvType       = BRUSHED,
     .gpioPerif     = RCC_AHB1Periph_GPIOB,
@@ -70,7 +70,7 @@ static const iMotorPerifDef CONN_M2 =
 };
 
 // Connector M3, PA15, TIM2_CH1
-static const iMotorPerifDef CONN_M3 =
+static const MotorPerifDef CONN_M3 =
 {
     .drvType       = BRUSHED,
     .gpioPerif     = RCC_AHB1Periph_GPIOA,
@@ -92,7 +92,7 @@ static const iMotorPerifDef CONN_M3 =
 };
 
 // Connector M4, PB9, TIM4_CH4
-static const iMotorPerifDef CONN_M4 =
+static const MotorPerifDef CONN_M4 =
 {
     .drvType       = BRUSHED,
     .gpioPerif     = RCC_AHB1Periph_GPIOB,
@@ -523,7 +523,7 @@ static const MotorPerifDef DECK_MOSI =
 
 // leo: customized motorMap, using two channels for two sets of GPIO output
 // Connector M1, PA1, TIM8_CH1
-static const iMotorPerifDef ICONN_M1 =
+static const MotorPerifDef ICONN_M1 =
 {
     .drvType       = IFLIGHT_BRUSHLESS,
     .gpioPerif     = RCC_AHB1Periph_GPIOA,
@@ -546,7 +546,7 @@ static const iMotorPerifDef ICONN_M1 =
 };
 
 // Connector M2, PB11, TIM8_CH2
-static const iMotorPerifDef ICONN_M2 =
+static const MotorPerifDef ICONN_M2 =
 {
     .drvType       = IFLIGHT_BRUSHLESS,
     .gpioPerif     = RCC_AHB1Periph_GPIOB,
@@ -569,7 +569,7 @@ static const iMotorPerifDef ICONN_M2 =
 };
 
 // Connector M3, PA15, TIM8_CH1
-static const iMotorPerifDef ICONN_M3 =
+static const MotorPerifDef ICONN_M3 =
 {
     .drvType       = IFLIGHT_BRUSHLESS,
     .gpioPerif     = RCC_AHB1Periph_GPIOA,
@@ -592,7 +592,7 @@ static const iMotorPerifDef ICONN_M3 =
 };
 
 // Connector M4, PB9, TIM8_CH2
-static const iMotorPerifDef ICONN_M4 =
+static const MotorPerifDef ICONN_M4 =
 {
     .drvType       = IFLIGHT_BRUSHLESS,
     .gpioPerif     = RCC_AHB1Periph_GPIOB,
@@ -619,7 +619,7 @@ static const iMotorPerifDef ICONN_M4 =
  * Mapping for Tags that don't have motors.
  * Actually same mapping as for CF2 but the pins are not connected.
  */
-const iMotorPerifDef* motorMapNoMotors[NBR_OF_MOTORS] =
+const MotorPerifDef* motorMapNoMotors[NBR_OF_MOTORS] =
 {
   &CONN_M1,
   &CONN_M2,
@@ -630,7 +630,7 @@ const iMotorPerifDef* motorMapNoMotors[NBR_OF_MOTORS] =
 /**
  * Default brushed mapping to M1-M4 connectors.
  */
-const iMotorPerifDef* motorMapDefaultBrushed[NBR_OF_MOTORS] =
+const MotorPerifDef* motorMapDefaultBrushed[NBR_OF_MOTORS] =
 {
   &CONN_M1,
   &CONN_M2,
@@ -638,7 +638,7 @@ const iMotorPerifDef* motorMapDefaultBrushed[NBR_OF_MOTORS] =
   &CONN_M4
 };
 
-const iMotorPerifDef* motorMapIFlight[NBR_OF_MOTORS] =
+const MotorPerifDef* motorMapIFlight[NBR_OF_MOTORS] =
 {
   &ICONN_M1,
   &ICONN_M2,
@@ -683,5 +683,5 @@ const MotorPerifDef* motorMapDefaltConBrushless[NBR_OF_MOTORS] =
 //   &BOLT_M4_BL
 // };
 
-const iMotorPerifDef* motorMapBoltBrushless[NBR_OF_MOTORS];
+const MotorPerifDef* motorMapBoltBrushless[NBR_OF_MOTORS];
 

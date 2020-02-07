@@ -55,7 +55,7 @@ void motorsBeep(int id, bool enable, uint16_t frequency, uint16_t ratio);
 
 #include "motors_def_cf2.c"
 
-const iMotorPerifDef** motorMap;  /* Current map configuration */
+const MotorPerifDef** motorMap;  /* Current map configuration */
 
 const uint32_t MOTORS[] = { MOTOR_M1, MOTOR_M2, MOTOR_M3, MOTOR_M4 };
 
@@ -88,7 +88,10 @@ static uint16_t motorsConv16ToBits(uint16_t bits)
 }
 
 /* Public functions */
-void motorsInitIFlight(const iMotorPerifDef** motorMapSelect) {
+
+// Initialization. Will set all motors ratio to 0%
+// The iflight version of motor init
+void motorsInitIFlight(const MotorPerifDef** motorMapSelect) {
   int i;
   // Init structures
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -116,7 +119,6 @@ void motorsInitIFlight(const iMotorPerifDef** motorMapSelect) {
   for (int k = 0; k < MOTORS_DMA_BUFFER_SIZE; k++) DMA_GPIO_DATA[0][k] = DMA_GPIO_DATA[1][k] = 0;
 
   for (i = 0; i < 4; i++) {
-
     // Configure the GPIO for the timer output
     MOTORS_RCC_GPIO_CMD(motorMap[i]->gpioPerif, ENABLE);
     GPIO_StructInit(&GPIO_InitStructure);
@@ -125,9 +127,7 @@ void motorsInitIFlight(const iMotorPerifDef** motorMapSelect) {
     GPIO_InitStructure.GPIO_OType = motorMap[i]->gpioOType;
     GPIO_InitStructure.GPIO_Pin = motorMap[i]->gpioPin;
     GPIO_Init(motorMap[i]->gpioPort, &GPIO_InitStructure);
-    //Map timers to alternate functions
-    //MOTORS_GPIO_AF_CFG(motorMap[i]->gpioPort, motorMap[i]->gpioPinSource, motorMap[i]->gpioAF);
-
+    
     // Init dma buffer data
     for (int k = 0; k < MOTORS_DMA_DATA_SIZE; k++) {
       DMA_GPIO_DATA[i % 2][k] |= (k % 3 == 0 ? motorMap[i]->gpioPin : motorMap[i]->gpioPin << 16);
@@ -136,7 +136,9 @@ void motorsInitIFlight(const iMotorPerifDef** motorMapSelect) {
       DMA_GPIO_DATA[i % 2][k] |= motorMap[i]->gpioPin << 16;
     }
 
+    // only two DMA streams are used, so avoid duplicated configuration
     if (i > 1) continue;
+
     // DMA configuration
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
     DMA_InitStructure.DMA_Channel = DMA_Channel_7;
@@ -186,7 +188,7 @@ void motorsInitIFlight(const iMotorPerifDef** motorMapSelect) {
 
 // Contorl gpio using dma, test version
 /*
-void motorsInitTest(const iMotorPerifDef** motorMapSelect) {
+void motorsInitTest(const MotorPerifDef** motorMapSelect) {
   // int i;
   // Init structures
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -337,7 +339,7 @@ void motorsInitTest(const iMotorPerifDef** motorMapSelect) {
 
 // Initialization. Will set all motors ratio to 0%
 // The standard version of motor init
-void motorsInit(const iMotorPerifDef** motorMapSelect)
+void motorsInit(const MotorPerifDef** motorMapSelect)
 {
   int i;
   //Init structures
@@ -439,14 +441,11 @@ void motorsDeInit()
   }
 }
 
-bool motorsTest(void)
-{
+bool motorsTest(void) {
   int i;
 
-  for (i = 0; i < sizeof(MOTORS) / sizeof(*MOTORS); i++)
-  {
-    if (motorMap[i]->drvType == BRUSHED)
-    {
+  for (i = 0; i < sizeof(MOTORS) / sizeof(*MOTORS); i++) {
+    if (motorMap[i]->drvType == BRUSHED) {
 #ifdef ACTIVATE_STARTUP_SOUND
       motorsBeep(MOTORS[i], true, testsound[i], (uint16_t)(MOTORS_TIM_BEEP_CLK_FREQ / A4)/ 20);
       vTaskDelay(M2T(MOTORS_TEST_ON_TIME_MS));
@@ -506,9 +505,7 @@ void motorsSetValue(uint32_t id, uint16_t value) {
 }
 
 // Ithrust is thrust mapped for 65536 <==> 60 grams
-void motorsSetRatio(uint32_t id, uint16_t ithrust)
-{
-
+void motorsSetRatio(uint32_t id, uint16_t ithrust) {
   if (isInit) {
     uint16_t ratio;
 

@@ -53,7 +53,7 @@ static struct {
 
 void powerDistributionInit(void)
 {
-  const iMotorPerifDef** motorMap = platformConfigGetMotorMapping();
+  const MotorPerifDef** motorMap = platformConfigGetMotorMapping();
   if (motorMap[0]->drvType != IFLIGHT_BRUSHLESS)
     motorsInit(motorMap);
   else motorsInitIFlight(motorMap);

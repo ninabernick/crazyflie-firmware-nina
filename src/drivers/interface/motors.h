@@ -185,31 +185,6 @@ typedef enum
   IFLIGHT_BRUSHLESS
 } motorsDrvType;
 
-typedef struct
-{
-  motorsDrvType drvType;
-  uint32_t      gpioPerif;
-  GPIO_TypeDef* gpioPort;
-  uint16_t      gpioPin;
-  uint16_t      gpioPinSource;
-  uint32_t      gpioOType;
-  uint8_t       gpioAF;
-  uint32_t      gpioPowerswitchPerif;
-  GPIO_TypeDef* gpioPowerswitchPort;
-  uint16_t      gpioPowerswitchPin;
-  uint32_t      timPerif;
-  TIM_TypeDef*  tim;
-  uint16_t      timPolarity;
-  uint32_t      timDbgStop;
-  uint32_t      timPeriod;
-  uint16_t      timPrescaler;
-  /* Function pointers */
-  void (*setCompare)(TIM_TypeDef* TIMx, uint32_t Compare);
-  uint32_t (*getCompare)(TIM_TypeDef* TIMx);
-  void (*ocInit)(TIM_TypeDef* TIMx, TIM_OCInitTypeDef* TIM_OCInitStruct);
-  void (*preloadConfig)(TIM_TypeDef* TIMx, uint16_t TIM_OCPreload);
-} MotorPerifDef;
-
 // leo: new motorPerifDef
 typedef struct
 {
@@ -239,17 +214,17 @@ typedef struct
   uint16_t      dmaSource;
   uint16_t      dmaNVICIRQn;
   DMA_Stream_TypeDef* dmaXStreamY;
-} iMotorPerifDef;
+} MotorPerifDef;
 
 /**
  * Motor mapping configurations
  */
-extern const iMotorPerifDef* motorMapNoMotors[NBR_OF_MOTORS];
-extern const iMotorPerifDef* motorMapDefaultBrushed[NBR_OF_MOTORS];
+extern const MotorPerifDef* motorMapNoMotors[NBR_OF_MOTORS];
+extern const MotorPerifDef* motorMapDefaultBrushed[NBR_OF_MOTORS];
 extern const MotorPerifDef* motorMapDefaltConBrushless[NBR_OF_MOTORS];
 extern const MotorPerifDef* motorMapBigQuadDeck[NBR_OF_MOTORS];
-extern const iMotorPerifDef* motorMapBoltBrushless[NBR_OF_MOTORS];
-extern const iMotorPerifDef* motorMapIFlight[NBR_OF_MOTORS];
+extern const MotorPerifDef* motorMapBoltBrushless[NBR_OF_MOTORS];
+extern const MotorPerifDef* motorMapIFlight[NBR_OF_MOTORS];
 /**
  * Test sound tones
  */
@@ -261,12 +236,12 @@ void (*motorsDrive) (uint32_t id, uint16_t);
 /**
  * Initialisation. Will set all motors ratio to 0%
  */
-void motorsInit(const iMotorPerifDef** motorMapSelect);
+void motorsInit(const MotorPerifDef** motorMapSelect);
 
 /**
  * Initialisation. Will set all motors ratio to 0%
  */
-void motorsInitIFlight(const iMotorPerifDef** motorMapSelect);
+void motorsInitIFlight(const MotorPerifDef** motorMapSelect);
 
 /**
  * DeInitialisation. Reset to default
