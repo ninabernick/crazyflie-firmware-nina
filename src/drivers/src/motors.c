@@ -67,23 +67,19 @@ uint32_t DMA_GPIO_DATA[2][MOTORS_DMA_BUFFER_SIZE];
 
 /* Private functions */
 
-static uint16_t motorsBLConvBitsTo16(uint16_t bits)
-{
+static uint16_t motorsBLConvBitsTo16(uint16_t bits) {
   return (0xFFFF * (bits - MOTORS_BL_PWM_CNT_FOR_HIGH) / MOTORS_BL_PWM_CNT_FOR_HIGH);
 }
 
-static uint16_t motorsBLConv16ToBits(uint16_t bits)
-{
+static uint16_t motorsBLConv16ToBits(uint16_t bits) {
   return (MOTORS_BL_PWM_CNT_FOR_HIGH + ((bits * MOTORS_BL_PWM_CNT_FOR_HIGH) / 0xFFFF));
 }
 
-static uint16_t motorsConvBitsTo16(uint16_t bits)
-{
+static uint16_t motorsConvBitsTo16(uint16_t bits) {
   return ((bits) << (16 - MOTORS_PWM_BITS));
 }
 
-static uint16_t motorsConv16ToBits(uint16_t bits)
-{
+static uint16_t motorsConv16ToBits(uint16_t bits) {
   return ((bits) >> (16 - MOTORS_PWM_BITS) & ((1 << MOTORS_PWM_BITS) - 1));
 }
 
@@ -421,13 +417,12 @@ void motorsInit(const MotorPerifDef** motorMapSelect)
   isInit = true;
 }
 
-void motorsDeInit()
-{
+// we don't need this function
+void motorsDeInit() {
   int i;
   GPIO_InitTypeDef GPIO_InitStructure;
 
-  for (i = 0; i < NBR_OF_MOTORS; i++)
-  {
+  for (i = 0; i < NBR_OF_MOTORS; i++) {
     // Configure default
     GPIO_StructInit(&GPIO_InitStructure);
     GPIO_InitStructure.GPIO_Pin = motorMap[i]->gpioPin;
@@ -463,14 +458,20 @@ bool motorsTest(void) {
   return isInit;
 }
 
-static inline void setDMADataBit(uint16_t id, uint16_t pin, uint16_t bit) {
-  DMA_GPIO_DATA[id % 2][bit * 3 + 1] &= ~pin << 16;
-  DMA_GPIO_DATA[id % 2][bit * 3 + 1] |= pin;
+/**
+  * @brief  set/clear the DMA data bit
+  * @param  id: the id of motor, can be 0, 1, 2, 3
+  * @param  bit: the index of data bit
+  * @retval None
+  */
+static inline void setDMADataBit(uint16_t id, uint16_t bit) {
+  DMA_GPIO_DATA[id % 2][bit * 3 + 1] &= ~motorMap[id]->gpioPin << 16;
+  DMA_GPIO_DATA[id % 2][bit * 3 + 1] |= motorMap[id]->gpioPin;
 }
 
-static inline void clearDMADataBit(uint16_t id, uint16_t pin, uint16_t bit) {
-  DMA_GPIO_DATA[id % 2][bit * 3 + 1] |= pin << 16;
-  DMA_GPIO_DATA[id % 2][bit * 3 + 1] &= ~pin;
+static inline void clearDMADataBit(uint16_t id, uint16_t bit) {
+  DMA_GPIO_DATA[id % 2][bit * 3 + 1] |= motorMap[id]->gpioPin << 16;
+  DMA_GPIO_DATA[id % 2][bit * 3 + 1] &= ~motorMap[id]->gpioPin;
 }
 
 /**
@@ -479,27 +480,31 @@ static inline void clearDMADataBit(uint16_t id, uint16_t pin, uint16_t bit) {
   *         | motor power value     | 0 0 | checksum |
   * @param  id: the id of motor, can be 0, 1, 2, 3
   * @param  value: value of motor output, between 0-1024
+  * @retval None
   */
 void motorsSetValue(uint32_t id, uint16_t value) {
   if (isInit) {
     ASSERT(id < NBR_OF_MOTORS);
-    // re range from 0-0xFFFF to 0-1024
+    
     value = value / (float)0xFFFF * (float)MOTORS_MAX_OUTPUT;
+    motor_ratios[id] = value;
 
     uint16_t u10 = 1 << 9;
     uint16_t check_sum = ((value >> 6) & 0xf) ^ ((value >> 2) & 0xf) ^ ((value << 2) & 0xf);
 
+    // set bits 0-9, the output value
     for (int i = 0; i < 10; i++) {
       if (value & (u10 >> i))
-        setDMADataBit(id, motorMap[id]->gpioPin, i);
-      else clearDMADataBit(id, motorMap[id]->gpioPin, i);
+        setDMADataBit(id, i);
+      else clearDMADataBit(id, i);
     }
 
+    // set bits 12-15, the checksum for the output value
     u10 = 1 << 15;
     for (int i = 12; i < 16; i++) {
       if (check_sum & (u10 >> i))
-        setDMADataBit(id, motorMap[id]->gpioPin, i);
-      else clearDMADataBit(id, motorMap[id]->gpioPin, i);
+        setDMADataBit(id, i);
+      else clearDMADataBit(id, i);
     }
   }
 }
@@ -514,8 +519,7 @@ void motorsSetRatio(uint32_t id, uint16_t ithrust) {
     ratio = ithrust;
 
   #ifdef ENABLE_THRUST_BAT_COMPENSATED
-    if (motorMap[id]->drvType == BRUSHED)
-    {
+    if (motorMap[id]->drvType == BRUSHED) {
       float thrust = ((float)ithrust / 65536.0f) * 60;
       float volts = -0.0006239f * thrust * thrust + 0.088f * thrust;
       float supply_voltage = pmGetBatteryVoltage();
@@ -526,50 +530,41 @@ void motorsSetRatio(uint32_t id, uint16_t ithrust) {
 
     }
   #endif
-    if (motorMap[id]->drvType == BRUSHLESS)
-    {
+    if (motorMap[id]->drvType == BRUSHLESS) {
       motorMap[id]->setCompare(motorMap[id]->tim, motorsBLConv16ToBits(ratio));
     }
-    else
-    {
+    else {
       motorMap[id]->setCompare(motorMap[id]->tim, motorsConv16ToBits(ratio));
     }
   }
 }
 
-int motorsGetRatio(uint32_t id)
-{
+int motorsGetRatio(uint32_t id) {
   int ratio;
 
   ASSERT(id < NBR_OF_MOTORS);
-  if (motorMap[id]->drvType == BRUSHLESS)
-  {
+  if (motorMap[id]->drvType == BRUSHLESS) {
     ratio = motorsBLConvBitsTo16(motorMap[id]->getCompare(motorMap[id]->tim));
   }
-  else
-  {
+  else {
     ratio = motorsConvBitsTo16(motorMap[id]->getCompare(motorMap[id]->tim));
   }
 
   return ratio;
 }
 
-void motorsBeep(int id, bool enable, uint16_t frequency, uint16_t ratio)
-{
-
+void motorsBeep(int id, bool enable, uint16_t frequency, uint16_t ratio) {
   TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 
   ASSERT(id < NBR_OF_MOTORS);
 
   TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
 
-  if (enable)
-  {
+  if (enable) {
     TIM_TimeBaseStructure.TIM_Prescaler = (5 - 1);
     TIM_TimeBaseStructure.TIM_Period = (uint16_t)(MOTORS_TIM_BEEP_CLK_FREQ / frequency);
   }
-  else
-  {
+  else {
     TIM_TimeBaseStructure.TIM_Period = motorMap[id]->timPeriod;
     TIM_TimeBaseStructure.TIM_Prescaler = motorMap[id]->timPrescaler;
   }
@@ -581,8 +576,7 @@ void motorsBeep(int id, bool enable, uint16_t frequency, uint16_t ratio)
 
 
 // Play a tone with a given frequency and a specific duration in milliseconds (ms)
-void motorsPlayTone(uint16_t frequency, uint16_t duration_msec)
-{
+void motorsPlayTone(uint16_t frequency, uint16_t duration_msec) {
   motorsBeep(MOTOR_M1, true, frequency, (uint16_t)(MOTORS_TIM_BEEP_CLK_FREQ / frequency)/ 20);
   motorsBeep(MOTOR_M2, true, frequency, (uint16_t)(MOTORS_TIM_BEEP_CLK_FREQ / frequency)/ 20);
   motorsBeep(MOTOR_M3, true, frequency, (uint16_t)(MOTORS_TIM_BEEP_CLK_FREQ / frequency)/ 20);
@@ -595,19 +589,18 @@ void motorsPlayTone(uint16_t frequency, uint16_t duration_msec)
 }
 
 // Plays a melody from a note array
-void motorsPlayMelody(uint16_t *notes)
-{
+void motorsPlayMelody(uint16_t *notes) {
   int i = 0;
   uint16_t note;      // Note in hz
   uint16_t duration;  // Duration in ms
 
-  do
-  {
+  do {
     note = notes[i++];
     duration = notes[i++];
     motorsPlayTone(note, duration);
   } while (duration != 0);
 }
+
 LOG_GROUP_START(pwm)
 LOG_ADD(LOG_UINT32, m1_pwm, &motor_ratios[0])
 LOG_ADD(LOG_UINT32, m2_pwm, &motor_ratios[1])

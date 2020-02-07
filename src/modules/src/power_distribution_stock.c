@@ -51,16 +51,17 @@ static struct {
   uint16_t m4;
 } motorPowerSet;
 
-void powerDistributionInit(void)
-{
+void powerDistributionInit(void) {
   const MotorPerifDef** motorMap = platformConfigGetMotorMapping();
-  if (motorMap[0]->drvType != IFLIGHT_BRUSHLESS)
+
+  if (motorMap[0]->drvType != IFLIGHT_BRUSHLESS) {
     motorsInit(motorMap);
-  else motorsInitIFlight(motorMap);
+  } else {
+    motorsInitIFlight(motorMap);
+  }
 }
 
-bool powerDistributionTest(void)
-{
+bool powerDistributionTest(void) {
   bool pass = true;
 
   pass &= motorsTest();
@@ -70,43 +71,39 @@ bool powerDistributionTest(void)
 
 #define limitThrust(VAL) limitUint16(VAL)
 
-void powerStop()
-{
+void powerStop() {
   (*motorsDrive)(MOTOR_M1, 0);
   (*motorsDrive)(MOTOR_M2, 0);
   (*motorsDrive)(MOTOR_M3, 0);
   (*motorsDrive)(MOTOR_M4, 0);
 }
 
-void powerDistribution(const control_t *control)
-{
+void powerDistribution(const control_t *control) {
   #ifdef QUAD_FORMATION_X
     int16_t r = control->roll / 2.0f;
     int16_t p = control->pitch / 2.0f;
     motorPower.m1 = limitThrust(control->thrust - r + p + control->yaw);
     motorPower.m2 = limitThrust(control->thrust - r - p - control->yaw);
-    motorPower.m3 =  limitThrust(control->thrust + r - p + control->yaw);
-    motorPower.m4 =  limitThrust(control->thrust + r + p - control->yaw);
+    motorPower.m3 = limitThrust(control->thrust + r - p + control->yaw);
+    motorPower.m4 = limitThrust(control->thrust + r + p - control->yaw);
   #else // QUAD_FORMATION_NORMAL
     motorPower.m1 = limitThrust(control->thrust + control->pitch +
                                control->yaw);
     motorPower.m2 = limitThrust(control->thrust - control->roll -
                                control->yaw);
-    motorPower.m3 =  limitThrust(control->thrust - control->pitch +
+    motorPower.m3 = limitThrust(control->thrust - control->pitch +
                                control->yaw);
-    motorPower.m4 =  limitThrust(control->thrust + control->roll -
+    motorPower.m4 = limitThrust(control->thrust + control->roll -
                                control->yaw);
   #endif
 
-  if (motorSetEnable)
-  {
+  if (motorSetEnable) {
+    // for real-time debug
     (*motorsDrive)(MOTOR_M1, motorPowerSet.m1);
     (*motorsDrive)(MOTOR_M2, motorPowerSet.m2);
     (*motorsDrive)(MOTOR_M3, motorPowerSet.m3);
     (*motorsDrive)(MOTOR_M4, motorPowerSet.m4);
-  }
-  else
-  {
+  } else {
     (*motorsDrive)(MOTOR_M1, motorPower.m1);
     (*motorsDrive)(MOTOR_M2, motorPower.m2);
     (*motorsDrive)(MOTOR_M3, motorPower.m3);

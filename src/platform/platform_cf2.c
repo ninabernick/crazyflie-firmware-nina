@@ -54,7 +54,6 @@ static platformConfig_t configs[] = {
     .sensorImplementation = SensorImplementation_bmi088_spi_bmp388,
     .physicalLayoutAntennasAreClose = false,
     .motorMap = motorMapIFlight,
-    // .motorMap = motorMapBoltBrushless,
   },
   {
     .deviceType = "CB10",
@@ -62,7 +61,6 @@ static platformConfig_t configs[] = {
     .sensorImplementation = SensorImplementation_bmi088_spi_bmp388,
     .physicalLayoutAntennasAreClose = false,
     .motorMap = motorMapIFlight,
-    // .motorMap = motorMapBoltBrushless,
   }
 };
 

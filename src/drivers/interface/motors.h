@@ -44,7 +44,7 @@
 
 // The following defines gives a PWM of 8 bits at ~328KHz for a sysclock of 168MHz
 // CF2 PWM ripple is filtered better at 328kHz. At 168kHz the NCP702 regulator is affected.
-#define TIM_CLOCK_HZ 84000000
+#define TIM_CLOCK_HZ              84000000
 #define MOTORS_PWM_BITS           8
 #define MOTORS_PWM_PERIOD         ((1<<MOTORS_PWM_BITS) - 1)
 #define MOTORS_PWM_PRESCALE       0
@@ -83,7 +83,7 @@
  * base as for the regular PWM driver. This means it will be a PWM with a period of the update rate configured to be high
  * only in the 1-2 ms range.
  */
-  #define BLMC_PERIOD 0.0005   // 0.5ms = 2000Hz
+  #define BLMC_PERIOD                  0.0005   // 0.5ms = 2000Hz
   #define MOTORS_BL_PWM_PRESCALE_RAW   (uint32_t)((TIM_CLOCK_HZ/0xFFFF) * BLMC_PERIOD + 1) // +1 is to not end up above 0xFFFF in the end
   #define MOTORS_BL_PWM_CNT_FOR_PERIOD (uint32_t)(TIM_CLOCK_HZ * BLMC_PERIOD / MOTORS_BL_PWM_PRESCALE_RAW)
   #define MOTORS_BL_PWM_CNT_FOR_HIGH   (uint32_t)(TIM_CLOCK_HZ * 0.000125 / MOTORS_BL_PWM_PRESCALE_RAW)
@@ -99,7 +99,7 @@
  * base as for the regular PWM driver. This means it will be a PWM with a period of the update rate configured to be high
  * only in the 1-2 ms range.
  */
-  #define BLMC_PERIOD 0.0025   // 2.5ms = 400Hz
+  #define BLMC_PERIOD                  0.0025   // 2.5ms = 400Hz
   #define MOTORS_BL_PWM_PRESCALE_RAW   (uint32_t)((TIM_CLOCK_HZ/0xFFFF) * BLMC_PERIOD + 1) // +1 is to not end up above 0xFFFF in the end
   #define MOTORS_BL_PWM_CNT_FOR_PERIOD (uint32_t)(TIM_CLOCK_HZ * BLMC_PERIOD / MOTORS_BL_PWM_PRESCALE_RAW)
   #define MOTORS_BL_PWM_CNT_FOR_HIGH   (uint32_t)(TIM_CLOCK_HZ * 0.001 / MOTORS_BL_PWM_PRESCALE_RAW)
@@ -178,16 +178,14 @@
 #define FULL 1000
 #define STOP 0
 
-typedef enum
-{
+typedef enum {
   BRUSHED,
   BRUSHLESS,
   IFLIGHT_BRUSHLESS
 } motorsDrvType;
 
-// leo: new motorPerifDef
-typedef struct
-{
+// leo: add DMA parameters to motorPerifDef
+typedef struct {
   DMA_Stream_TypeDef* DMAy_Channelx;
   motorsDrvType drvType;
   uint32_t      gpioPerif;
@@ -212,7 +210,7 @@ typedef struct
   void (*preloadConfig)(TIM_TypeDef* TIMx, uint16_t TIM_OCPreload);
   // leo: add DMA parameters
   uint16_t      dmaSource;
-  uint16_t      dmaNVICIRQn;
+  uint16_t      dmaNVICIRQn; // IRQn function is only used for debug
   DMA_Stream_TypeDef* dmaXStreamY;
 } MotorPerifDef;
 
@@ -225,21 +223,28 @@ extern const MotorPerifDef* motorMapDefaltConBrushless[NBR_OF_MOTORS];
 extern const MotorPerifDef* motorMapBigQuadDeck[NBR_OF_MOTORS];
 extern const MotorPerifDef* motorMapBoltBrushless[NBR_OF_MOTORS];
 extern const MotorPerifDef* motorMapIFlight[NBR_OF_MOTORS];
+
+/**
+ * Motor driver function
+ */
+void (*motorsDrive) (uint32_t id, uint16_t value);
+
 /**
  * Test sound tones
  */
 extern const uint16_t testsound[NBR_OF_MOTORS];
 
-void (*motorsDrive) (uint32_t id, uint16_t);
 /*** Public interface ***/
 
 /**
  * Initialisation. Will set all motors ratio to 0%
+ * The standard version, configure 4 pins to PWM mode
  */
 void motorsInit(const MotorPerifDef** motorMapSelect);
 
 /**
  * Initialisation. Will set all motors ratio to 0%
+ * The iflight version, configure 4 pins to DMA output mode
  */
 void motorsInitIFlight(const MotorPerifDef** motorMapSelect);
 
@@ -260,8 +265,13 @@ bool motorsTest(void);
 void motorsSetRatio(uint32_t id, uint16_t ratio);
 
 /**
- * leo: control iflight esc: send 16bits number
- */
+  * @brief  set the output for esc board
+  *         | 0 0 0 0, 0 0 0 0, 0 0 | 0 0 | 0 0 0 0  |
+  *         | motor power value     | 0 0 | checksum |
+  * @param  id: the id of motor, can be 0, 1, 2, 3
+  * @param  value: value of motor output, between 0-1024
+  * @retval None
+  */
 void motorsSetValue(uint32_t id, uint16_t value);
 
 /**
