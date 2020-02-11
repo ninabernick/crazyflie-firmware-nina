@@ -3655,7 +3655,7 @@ Discarded input sections
  .text          0x0000000000000000        0x0 bin/main.o
  .data          0x0000000000000000        0x0 bin/main.o
  .bss           0x0000000000000000        0x0 bin/main.o
- .debug_macro   0x0000000000000000      0xb02 bin/main.o
+ .debug_macro   0x0000000000000000      0xb08 bin/main.o
  .debug_macro   0x0000000000000000       0x22 bin/main.o
  .debug_macro   0x0000000000000000       0x8e bin/main.o
  .debug_macro   0x0000000000000000       0x51 bin/main.o
@@ -4351,7 +4351,7 @@ Discarded input sections
  .text          0x0000000000000000        0x0 bin/nvic.o
  .data          0x0000000000000000        0x0 bin/nvic.o
  .bss           0x0000000000000000        0x0 bin/nvic.o
- .debug_macro   0x0000000000000000      0xb02 bin/nvic.o
+ .debug_macro   0x0000000000000000      0xb08 bin/nvic.o
  .debug_macro   0x0000000000000000       0x22 bin/nvic.o
  .debug_macro   0x0000000000000000       0xa0 bin/nvic.o
  .debug_macro   0x0000000000000000       0x22 bin/nvic.o
@@ -14428,7 +14428,7 @@ Discarded input sections
  .text          0x0000000000000000        0x0 bin/platformservice.o
  .data          0x0000000000000000        0x0 bin/platformservice.o
  .bss           0x0000000000000000        0x0 bin/platformservice.o
- .debug_macro   0x0000000000000000      0xb02 bin/platformservice.o
+ .debug_macro   0x0000000000000000      0xb08 bin/platformservice.o
  .debug_macro   0x0000000000000000       0x22 bin/platformservice.o
  .debug_macro   0x0000000000000000      0x174 bin/platformservice.o
  .debug_macro   0x0000000000000000       0x22 bin/platformservice.o
@@ -30838,7 +30838,7 @@ LOAD /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtn.o
  .debug_abbrev  0x000000000001e1eb       0xc6 bin/sleepus.o
  .debug_abbrev  0x000000000001e2b1      0x184 bin/system_stm32f4xx.o
 
-.debug_line     0x0000000000000000    0x46ee0
+.debug_line     0x0000000000000000    0x46ee8
  *(.debug_line)
  .debug_line    0x0000000000000000      0x3ef bin/list.o
  .debug_line    0x00000000000003ef      0xd98 bin/tasks.o
@@ -30956,57 +30956,57 @@ LOAD /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtn.o
  .debug_line    0x0000000000031fb8      0x2ec bin/controller.o
  .debug_line    0x00000000000322a4      0x33c bin/controller_pid.o
  .debug_line    0x00000000000325e0      0x5ea bin/controller_mellinger.o
- .debug_line    0x0000000000032bca      0x6b3 bin/power_distribution_stock.o
- .debug_line    0x000000000003327d      0x9f7 bin/estimator_kalman.o
- .debug_line    0x0000000000033c74      0xa60 bin/kalman_core.o
- .debug_line    0x00000000000346d4      0x335 bin/kalman_supervisor.o
- .debug_line    0x0000000000034a09      0x5ce bin/crtp_commander_high_level.o
- .debug_line    0x0000000000034fd7      0x2d5 bin/planner.o
- .debug_line    0x00000000000352ac      0x610 bin/pptraj.o
- .debug_line    0x00000000000358bc      0x6b6 bin/deck.o
- .debug_line    0x0000000000035f72      0x84b bin/deck_info.o
- .debug_line    0x00000000000367bd      0x704 bin/deck_drivers.o
- .debug_line    0x0000000000036ec1      0x6a0 bin/deck_test.o
- .debug_line    0x0000000000037561      0x5b4 bin/deck_constants.o
- .debug_line    0x0000000000037b15      0x601 bin/deck_digital.o
- .debug_line    0x0000000000038116      0x63b bin/deck_analog.o
- .debug_line    0x0000000000038751      0x865 bin/deck_spi.o
- .debug_line    0x0000000000038fb6      0xd26 bin/ledring12.o
- .debug_line    0x0000000000039cdc      0x68f bin/buzzdeck.o
- .debug_line    0x000000000003a36b      0x91f bin/gtgps.o
- .debug_line    0x000000000003ac8a      0x68f bin/cppmdeck.o
- .debug_line    0x000000000003b319      0xb78 bin/usddeck.o
- .debug_line    0x000000000003be91      0x863 bin/zranger.o
- .debug_line    0x000000000003c6f4      0xaf2 bin/zranger2.o
- .debug_line    0x000000000003d1e6      0xa8a bin/locodeck.o
- .debug_line    0x000000000003dc70      0x1e8 bin/clockCorrectionEngine.o
- .debug_line    0x000000000003de58      0x75d bin/lpsTwrTag.o
- .debug_line    0x000000000003e5b5      0x665 bin/lpsTdoa2Tag.o
- .debug_line    0x000000000003ec1a      0x602 bin/lpsTdoa3Tag.o
- .debug_line    0x000000000003f21c      0x424 bin/tdoaEngine.o
- .debug_line    0x000000000003f640      0x289 bin/tdoaStats.o
- .debug_line    0x000000000003f8c9      0x576 bin/tdoaStorage.o
- .debug_line    0x000000000003fe3f      0x2b8 bin/outlierFilter.o
- .debug_line    0x00000000000400f7      0x871 bin/flowdeck_v1v2.o
- .debug_line    0x0000000000040968      0x84a bin/oa.o
- .debug_line    0x00000000000411b2      0xad5 bin/multiranger.o
- .debug_line    0x0000000000041c87      0x877 bin/lighthouse.o
- .debug_line    0x00000000000424fe      0x7db bin/activeMarkerDeck.o
- .debug_line    0x0000000000042cd9      0x73d bin/exptest.o
- .debug_line    0x0000000000043416      0x73f bin/exptestRR.o
- .debug_line    0x0000000000043b55      0x7d9 bin/exptestBolt.o
- .debug_line    0x000000000004432e      0x26d bin/filter.o
- .debug_line    0x000000000004459b      0x643 bin/cfassert.o
- .debug_line    0x0000000000044bde      0x359 bin/eprintf.o
- .debug_line    0x0000000000044f37      0x194 bin/crc.o
- .debug_line    0x00000000000450cb      0x238 bin/num.o
- .debug_line    0x0000000000045303      0x215 bin/debug.o
- .debug_line    0x0000000000045518      0x1bf bin/version.o
- .debug_line    0x00000000000456d7      0x2da bin/FreeRTOS-openocd.o
- .debug_line    0x00000000000459b1      0x876 bin/configblockeeprom.o
- .debug_line    0x0000000000046227      0x218 bin/crc_bosch.o
- .debug_line    0x000000000004643f      0x5fe bin/sleepus.o
- .debug_line    0x0000000000046a3d      0x4a3 bin/system_stm32f4xx.o
+ .debug_line    0x0000000000032bca      0x6bb bin/power_distribution_stock.o
+ .debug_line    0x0000000000033285      0x9f7 bin/estimator_kalman.o
+ .debug_line    0x0000000000033c7c      0xa60 bin/kalman_core.o
+ .debug_line    0x00000000000346dc      0x335 bin/kalman_supervisor.o
+ .debug_line    0x0000000000034a11      0x5ce bin/crtp_commander_high_level.o
+ .debug_line    0x0000000000034fdf      0x2d5 bin/planner.o
+ .debug_line    0x00000000000352b4      0x610 bin/pptraj.o
+ .debug_line    0x00000000000358c4      0x6b6 bin/deck.o
+ .debug_line    0x0000000000035f7a      0x84b bin/deck_info.o
+ .debug_line    0x00000000000367c5      0x704 bin/deck_drivers.o
+ .debug_line    0x0000000000036ec9      0x6a0 bin/deck_test.o
+ .debug_line    0x0000000000037569      0x5b4 bin/deck_constants.o
+ .debug_line    0x0000000000037b1d      0x601 bin/deck_digital.o
+ .debug_line    0x000000000003811e      0x63b bin/deck_analog.o
+ .debug_line    0x0000000000038759      0x865 bin/deck_spi.o
+ .debug_line    0x0000000000038fbe      0xd26 bin/ledring12.o
+ .debug_line    0x0000000000039ce4      0x68f bin/buzzdeck.o
+ .debug_line    0x000000000003a373      0x91f bin/gtgps.o
+ .debug_line    0x000000000003ac92      0x68f bin/cppmdeck.o
+ .debug_line    0x000000000003b321      0xb78 bin/usddeck.o
+ .debug_line    0x000000000003be99      0x863 bin/zranger.o
+ .debug_line    0x000000000003c6fc      0xaf2 bin/zranger2.o
+ .debug_line    0x000000000003d1ee      0xa8a bin/locodeck.o
+ .debug_line    0x000000000003dc78      0x1e8 bin/clockCorrectionEngine.o
+ .debug_line    0x000000000003de60      0x75d bin/lpsTwrTag.o
+ .debug_line    0x000000000003e5bd      0x665 bin/lpsTdoa2Tag.o
+ .debug_line    0x000000000003ec22      0x602 bin/lpsTdoa3Tag.o
+ .debug_line    0x000000000003f224      0x424 bin/tdoaEngine.o
+ .debug_line    0x000000000003f648      0x289 bin/tdoaStats.o
+ .debug_line    0x000000000003f8d1      0x576 bin/tdoaStorage.o
+ .debug_line    0x000000000003fe47      0x2b8 bin/outlierFilter.o
+ .debug_line    0x00000000000400ff      0x871 bin/flowdeck_v1v2.o
+ .debug_line    0x0000000000040970      0x84a bin/oa.o
+ .debug_line    0x00000000000411ba      0xad5 bin/multiranger.o
+ .debug_line    0x0000000000041c8f      0x877 bin/lighthouse.o
+ .debug_line    0x0000000000042506      0x7db bin/activeMarkerDeck.o
+ .debug_line    0x0000000000042ce1      0x73d bin/exptest.o
+ .debug_line    0x000000000004341e      0x73f bin/exptestRR.o
+ .debug_line    0x0000000000043b5d      0x7d9 bin/exptestBolt.o
+ .debug_line    0x0000000000044336      0x26d bin/filter.o
+ .debug_line    0x00000000000445a3      0x643 bin/cfassert.o
+ .debug_line    0x0000000000044be6      0x359 bin/eprintf.o
+ .debug_line    0x0000000000044f3f      0x194 bin/crc.o
+ .debug_line    0x00000000000450d3      0x238 bin/num.o
+ .debug_line    0x000000000004530b      0x215 bin/debug.o
+ .debug_line    0x0000000000045520      0x1bf bin/version.o
+ .debug_line    0x00000000000456df      0x2da bin/FreeRTOS-openocd.o
+ .debug_line    0x00000000000459b9      0x876 bin/configblockeeprom.o
+ .debug_line    0x000000000004622f      0x218 bin/crc_bosch.o
+ .debug_line    0x0000000000046447      0x5fe bin/sleepus.o
+ .debug_line    0x0000000000046a45      0x4a3 bin/system_stm32f4xx.o
 
 .debug_frame    0x0000000000000000     0xeba8
  *(.debug_frame)
@@ -31317,7 +31317,7 @@ LOAD /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtn.o
  .debug_str     0x000000000007e233      0x263 bin/fatfs_sd.o
                                        0x43bc (size before relaxing)
  .debug_str     0x000000000007e496      0x8b1 bin/main.o
-                                      0x6385a (size before relaxing)
+                                      0x63878 (size before relaxing)
  .debug_str     0x000000000007ed47      0x28d bin/platform.o
                                       0x62ba6 (size before relaxing)
  .debug_str     0x000000000007efd4      0x338 bin/platform_utils.o
@@ -31327,7 +31327,7 @@ LOAD /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtn.o
  .debug_str     0x000000000007f36d      0x183 bin/exti.o
                                       0x5ea4d (size before relaxing)
  .debug_str     0x000000000007f4f0      0x45e bin/nvic.o
-                                      0x6436e (size before relaxing)
+                                      0x6438c (size before relaxing)
  .debug_str     0x000000000007f94e      0x6d1 bin/motors.o
                                       0x65d15 (size before relaxing)
  .debug_str     0x000000000008001f       0x51 bin/led_f405.o
@@ -31439,7 +31439,7 @@ LOAD /usr/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v7e-m/fpv4-sp/hard/crtn.o
  .debug_str     0x00000000000aafea      0x33c bin/sitaw.o
                                        0x96ec (size before relaxing)
  .debug_str     0x00000000000ab326       0xce bin/platformservice.o
-                                      0x6584f (size before relaxing)
+                                      0x6586d (size before relaxing)
  .debug_str     0x00000000000ab3f4      0x417 bin/sound_cf2.o
                                        0xcd67 (size before relaxing)
  .debug_str     0x00000000000ab80b      0x1a0 bin/extrx.o
