@@ -35,8 +35,7 @@ int platformInit(void) {
   const platformConfig_t* configs = platformGetListOfConfigurations(&nrOfConfigs);
 
   int err = platformInitConfiguration(configs, nrOfConfigs);
-  if (err != 0)
-  {
+  if (err != 0) {
     // This firmware is not compatible, abort init
     return 1;
   }

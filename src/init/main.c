@@ -42,8 +42,7 @@
 /* ST includes */
 #include "stm32fxxx.h"
 
-int main() 
-{
+int main() {
   //Initialize the platform.
   int err = platformInit();
   if (err != 0) {

@@ -78,8 +78,7 @@ void polyreflect(float p[PP_SIZE]);
 // 4d single polynomial piece for x-y-z-yaw, includes duration.
 //
 
-struct poly4d
-{
+struct poly4d {
 	float p[4][PP_SIZE];
 	float duration; // TODO use int millis instead?
 } __attribute__((packed));
@@ -112,8 +111,7 @@ float poly4d_max_accel_approx(struct poly4d const *p);
 
 
 // output of differentially flat 4d polynomials.
-struct traj_eval
-{
+struct traj_eval {
 	struct vec pos;
 	struct vec vel;
 	struct vec acc;
@@ -136,8 +134,7 @@ struct traj_eval poly4d_eval(struct poly4d const *p, float t);
 // piecewise polynomial trajectories //
 // ----------------------------------//
 
-struct piecewise_traj
-{
+struct piecewise_traj {
 	float t_begin;
 	float timescale;
 	struct vec shift;
@@ -145,8 +142,7 @@ struct piecewise_traj
 	struct poly4d* pieces;
 };
 
-static inline float piecewise_duration(struct piecewise_traj const *pp)
-{
+static inline float piecewise_duration(struct piecewise_traj const *pp) {
 	float total_dur = 0;
 	for (int i = 0; i < pp->n_pieces; ++i) {
 		total_dur += pp->pieces[i].duration;
@@ -169,7 +165,6 @@ struct traj_eval piecewise_eval_reversed(
 	struct piecewise_traj const *traj, float t);
 
 
-static inline bool piecewise_is_finished(struct piecewise_traj const *traj, float t)
-{
+static inline bool piecewise_is_finished(struct piecewise_traj const *traj, float t) {
 	return (t - traj->t_begin) >= piecewise_duration(traj);
 }

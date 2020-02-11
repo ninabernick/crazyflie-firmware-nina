@@ -47,9 +47,6 @@ static char* getAddressOfOtpMemoryBlock(int blockNr) {
   char* getAddressOfOtpMemoryBlock(const int blockNr);
 #endif
 
-
-
-
 void platformGetDeviceTypeString(char* deviceTypeString) {
   char* block = 0;
 

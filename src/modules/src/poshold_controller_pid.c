@@ -39,14 +39,17 @@ static const float thrustScale = 1000.0f;
 #define POSHOLD_LPF_CUTOFF_FREQ 20.0f
 #define POSHOLD_LPF_ENABLE true
 
+// #define thrustBase  36000
+// #define thrustMin   20000
+// leo: test for the min thrust
 #define thrustBase  36000
-#define thrustMin   20000
+#define thrustMin   10000
 
 // PID coefficiencies
 #define PID_X_RATE_KP  25.0
 #define PID_X_RATE_KI  2.0
 #define PID_X_RATE_KD  0.0
-#define PID_X_RATE_INTEGRATION_LIMIT    25.0
+#define PID_X_RATE_INTEGRATION_LIMIT   25.0
 
 #define PID_Y_RATE_KP  25.0
 #define PID_Y_RATE_KI  2.0
@@ -56,12 +59,12 @@ static const float thrustScale = 1000.0f;
 #define PID_Z_RATE_KP  25.0
 #define PID_Z_RATE_KI  15.0
 #define PID_Z_RATE_KD  1.0
-#define PID_Z_RATE_INTEGRATION_LIMIT     (UINT16_MAX / 2000)
+#define PID_Z_RATE_INTEGRATION_LIMIT   (UINT16_MAX / 2000)
 
 #define PID_X_KP  2.0
 #define PID_X_KI  0.5
 #define PID_X_KD  0.35
-#define PID_X_INTEGRATION_LIMIT    2.0
+#define PID_X_INTEGRATION_LIMIT   2.0
 
 #define PID_Y_KP  2.0
 #define PID_Y_KI  0.5
@@ -71,7 +74,7 @@ static const float thrustScale = 1000.0f;
 #define PID_Z_KP  2.0
 #define PID_Z_KI  0.5
 #define PID_Z_KD  0.35
-#define PID_Z_INTEGRATION_LIMIT     2.0
+#define PID_Z_INTEGRATION_LIMIT   2.0
 
 PidObject pidXRate;
 PidObject pidYRate;
@@ -82,14 +85,12 @@ PidObject pidZ;
 
 static bool isInit;
 
-bool posHoldControllerTest()
-{
+bool posHoldControllerTest() {
   return isInit;
 }
 
-void posHoldControllerInit(const float updateDt)
-{
-  if(isInit)
+void posHoldControllerInit(const float updateDt) {
+  if (isInit)
     return;
   pidInit(&pidXRate, 0, PID_X_RATE_KP, PID_X_RATE_KI, PID_X_RATE_KD,
       updateDt, POSHOLD_RATE, POSHOLD_LPF_CUTOFF_FREQ, POSHOLD_LPF_ENABLE);
@@ -115,8 +116,7 @@ void posHoldControllerInit(const float updateDt)
   isInit = true;
 }
 
-void posHoldController(float* thrust, attitude_t *attitude, setpoint_t *setpoint, const state_t *state)
-{
+void posHoldController(float* thrust, attitude_t *attitude, setpoint_t *setpoint, const state_t *state) {
   float cos_yaw = cosf(state->attitude.yaw * (float)M_PI / 180.0f);
   float sin_yaw = sinf(state->attitude.yaw * (float)M_PI / 180.0f);
   float body_vx = setpoint->velocity.x;
@@ -166,8 +166,7 @@ void posHoldController(float* thrust, attitude_t *attitude, setpoint_t *setpoint
   }
 }
 
-void posHoldControllerResetAllPID()
-{
+void posHoldControllerResetAllPID() {
   pidReset(&pidXRate);
   pidReset(&pidYRate);
   pidReset(&pidZRate);

@@ -65,8 +65,7 @@
 #define DEFAULT_PID_OUTPUT_LIMIT      0.0
 
 
-typedef struct
-{
+typedef struct {
   float desired;      //< set point
   float error;        //< error
   float prevError;    //< previous error
@@ -88,15 +87,15 @@ typedef struct
 /**
  * PID object initialization.
  *
- * @param[out] pid   A pointer to the pid object to initialize.
- * @param[in] desired  The initial set point.
- * @param[in] kp        The proportional gain
- * @param[in] ki        The integral gain
- * @param[in] kd        The derivative gain
- * @param[in] dt        Delta time since the last call
- * @param[in] samplingRate Frequency the update will be called
- * @param[in] cutoffFreq   Frequency to set the low pass filter cutoff at
- * @param[in] enableDFilter Enable setting for the D lowpass filter
+ * @param[out] pid          A pointer to the pid object to initialize.
+ * @param[in]  desired      The initial set point.
+ * @param[in]  kp           The proportional gain
+ * @param[in]  ki           The integral gain
+ * @param[in]  kd           The derivative gain
+ * @param[in]  dt           Delta time since the last call
+ * @param[in]  samplingRate Frequency the update will be called
+ * @param[in]  cutoffFreq   Frequency to set the low pass filter cutoff at
+ * @param[in]  enableDFilter Enable setting for the D lowpass filter
  */
  void pidInit(PidObject* pid, const float desired, const float kp,
               const float ki, const float kd, const float dt,

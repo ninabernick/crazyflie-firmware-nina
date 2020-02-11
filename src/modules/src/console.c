@@ -56,23 +56,19 @@ static void addBufferFullMarker();
  * Send the data to the client
  * returns TRUE if successful otherwise FALSE
  */
-static bool consoleSendMessage(void)
-{
-  if (crtpSendPacket(&messageToPrint) == pdTRUE)
-  {
+static bool consoleSendMessage(void) {
+  if (crtpSendPacket(&messageToPrint) == pdTRUE) {
     messageToPrint.size = 0;
     messageSendingIsPending = false;
   }
-  else
-  {
+  else {
     return false;
   }
 
   return true;
 }
 
-void consoleInit()
-{
+void consoleInit() {
   if (isInit)
     return;
 
@@ -84,13 +80,11 @@ void consoleInit()
   isInit = true;
 }
 
-bool consoleTest(void)
-{
+bool consoleTest(void) {
   return isInit;
 }
 
-int consolePutchar(int ch)
-{
+int consolePutchar(int ch) {
   bool isInInterrupt = (SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk) != 0;
 
   if (!isInit) {
@@ -101,26 +95,20 @@ int consolePutchar(int ch)
     return consolePutcharFromISR(ch);
   }
 
-  if (xSemaphoreTake(synch, portMAX_DELAY) == pdTRUE)
-  {
+  if (xSemaphoreTake(synch, portMAX_DELAY) == pdTRUE) {
     // Try to send if we already have a pending message
-    if (messageSendingIsPending) 
-    {
+    if (messageSendingIsPending) {
       consoleSendMessage();
     }
 
-    if (! messageSendingIsPending) 
-    {
-      if (messageToPrint.size < CRTP_MAX_DATA_SIZE)
-      {
+    if (! messageSendingIsPending) {
+      if (messageToPrint.size < CRTP_MAX_DATA_SIZE) {
         messageToPrint.data[messageToPrint.size] = (unsigned char)ch;
         messageToPrint.size++;
       }
 
-      if (ch == '\n' || messageToPrint.size >= CRTP_MAX_DATA_SIZE)
-      {
-        if (crtpGetFreeTxQueuePackets() == 1)
-        {
+      if (ch == '\n' || messageToPrint.size >= CRTP_MAX_DATA_SIZE) {
+        if (crtpGetFreeTxQueuePackets() == 1) {
           addBufferFullMarker();
         }
         messageSendingIsPending = true;

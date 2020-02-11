@@ -484,6 +484,7 @@ static inline void clearDMADataBit(uint16_t id, uint16_t bit) {
   */
 void motorsSetValue(uint32_t id, uint16_t value) {
   if (isInit) {
+
     ASSERT(id < NBR_OF_MOTORS);
     
     value = value / (float)0xFFFF * (float)MOTORS_MAX_OUTPUT;

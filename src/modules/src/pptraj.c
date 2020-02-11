@@ -45,8 +45,7 @@ static struct poly4d poly4d_tmp;
 
 // polynomials are stored with ascending degree
 
-void polylinear(float p[PP_SIZE], float duration, float x0, float x1)
-{
+void polylinear(float p[PP_SIZE], float duration, float x0, float x1) {
 	p[0] = x0;
 	p[1] = (x1 - x0) / duration;
 	for (int i = 2; i < PP_SIZE; ++i) {
@@ -54,16 +53,14 @@ void polylinear(float p[PP_SIZE], float duration, float x0, float x1)
 	}
 }
 
-void polyscale(float p[PP_SIZE], float s)
-{
+void polyscale(float p[PP_SIZE], float s) {
 	for (int i = 0; i < PP_SIZE; ++i) {
 		p[i] *= s;
 	}
 }
 
 // e.g. if s==2 the new polynomial will be stretched to take 2x longer
-void polystretchtime(float p[PP_SIZE], float s)
-{
+void polystretchtime(float p[PP_SIZE], float s) {
 	float recip = 1.0f / s;
 	float scale = recip;
 	for (int i = 1; i < PP_SIZE; ++i) {
@@ -72,16 +69,14 @@ void polystretchtime(float p[PP_SIZE], float s)
 	}
 }
 
-void polyreflect(float p[PP_SIZE])
-{
+void polyreflect(float p[PP_SIZE]) {
 	for (int i = 1; i < PP_SIZE; i += 2) {
 		p[i] = -p[i];
 	}
 }
 
 // evaluate a polynomial using horner's rule.
-float polyval(float const p[PP_SIZE], float t)
-{
+float polyval(float const p[PP_SIZE], float t) {
 	float x = 0.0;
 	for (int i = PP_DEGREE; i >= 0; --i) {
 		x = x * t + p[i];
@@ -90,8 +85,7 @@ float polyval(float const p[PP_SIZE], float t)
 }
 
 // compute derivative of a polynomial in place
-void polyder(float p[PP_SIZE])
-{
+void polyder(float p[PP_SIZE]) {
 	for (int i = 1; i <= PP_DEGREE; ++i) {
 		p[i-1] = i * p[i];
 	}
@@ -100,8 +94,8 @@ void polyder(float p[PP_SIZE])
 
 void poly5(float poly[PP_SIZE], float T,
 	float x0, float dx0, float ddx0,
-	float xf, float dxf, float ddxf)
-{
+	float xf, float dxf, float ddxf) {
+
 	float T2 = T * T;
 	float T3 = T2 * T;
 	float T4 = T3 * T;
@@ -119,8 +113,7 @@ void poly5(float poly[PP_SIZE], float T,
 
 static void poly7_nojerk(float poly[PP_SIZE], float T,
 	float x0, float dx0, float ddx0,
-	float xf, float dxf, float ddxf)
-{
+	float xf, float dxf, float ddxf) {
 	if (T <= 0.0f) {
 		poly[0] = xf;
 		poly[1] = dxf;
@@ -155,8 +148,7 @@ static void poly7_nojerk(float poly[PP_SIZE], float T,
 //
 
 // construct a 4d zero polynomial.
-struct poly4d poly4d_zero(float duration)
-{
+struct poly4d poly4d_zero(float duration) {
 	struct poly4d p = {
 		.p = {{0}},
 		.duration = duration,
@@ -164,8 +156,7 @@ struct poly4d poly4d_zero(float duration)
 	return p;
 }
 
-struct poly4d poly4d_linear(float duration, struct vec p0, struct vec p1, float yaw0, float yaw1)
-{
+struct poly4d poly4d_linear(float duration, struct vec p0, struct vec p1, float yaw0, float yaw1) {
 	struct poly4d p;
 	p.duration = duration;
 	polylinear(p.p[0], duration, p0.x, p1.x);
@@ -175,51 +166,44 @@ struct poly4d poly4d_linear(float duration, struct vec p0, struct vec p1, float 
 	return p;
 }
 
-void poly4d_scale(struct poly4d *p, float x, float y, float z, float yaw)
-{
+void poly4d_scale(struct poly4d *p, float x, float y, float z, float yaw) {
 	polyscale(p->p[0], x);
 	polyscale(p->p[1], y);
 	polyscale(p->p[2], z);
 	polyscale(p->p[3], yaw);
 }
 
-void poly4d_shift(struct poly4d *p, float x, float y, float z, float yaw)
-{
+void poly4d_shift(struct poly4d *p, float x, float y, float z, float yaw) {
 	p->p[0][0] += x;
 	p->p[1][0] += y;
 	p->p[2][0] += z;
 	p->p[3][0] += yaw;
 }
 
-void poly4d_stretchtime(struct poly4d *p, float s)
-{
+void poly4d_stretchtime(struct poly4d *p, float s) {
 	for (int i = 0; i < 4; ++i) {
 		polystretchtime(p->p[i], s);
 	}
 	p->duration *= s;
 }
 
-void polyder4d(struct poly4d *p)
-{
+void polyder4d(struct poly4d *p) {
 	for (int i = 0; i < 4; ++i) {
 		polyder(p->p[i]);
 	}
 }
 
-static struct vec polyval_xyz(struct poly4d const *p, float t)
-{
+static struct vec polyval_xyz(struct poly4d const *p, float t) {
 	return mkvec(polyval(p->p[0], t), polyval(p->p[1], t), polyval(p->p[2], t));
 }
 
-static float polyval_yaw(struct poly4d const *p, float t)
-{
+static float polyval_yaw(struct poly4d const *p, float t) {
 	return polyval(p->p[3], t);
 }
 
 // compute loose maximum of acceleration -
 // uses L1 norm instead of Euclidean, evaluates polynomial instead of root-finding
-float poly4d_max_accel_approx(struct poly4d const *p)
-{
+float poly4d_max_accel_approx(struct poly4d const *p) {
 	struct poly4d* acc = &poly4d_tmp;
 	*acc = *p;
 	polyder4d(acc);
@@ -237,20 +221,17 @@ float poly4d_max_accel_approx(struct poly4d const *p)
 	return amax;
 }
 
-struct traj_eval traj_eval_invalid()
-{
+struct traj_eval traj_eval_invalid() {
 	struct traj_eval ev;
 	ev.pos = vrepeat(NAN);
 	return ev;
 }
 
-bool is_traj_eval_valid(struct traj_eval const *ev)
-{
+bool is_traj_eval_valid(struct traj_eval const *ev) {
 	return !visnan(ev->pos);
 }
 
-struct traj_eval poly4d_eval(struct poly4d const *p, float t)
-{
+struct traj_eval poly4d_eval(struct poly4d const *p, float t) {
 	// flat variables
 	struct traj_eval out;
 	out.pos = polyval_xyz(p, t);
@@ -295,8 +276,7 @@ struct traj_eval poly4d_eval(struct poly4d const *p, float t)
 
 // piecewise eval
 struct traj_eval piecewise_eval(
-  struct piecewise_traj const *traj, float t)
-{
+  struct piecewise_traj const *traj, float t) {
 	int cursor = 0;
 	t = t - traj->t_begin;
 	while (cursor < traj->n_pieces) {
@@ -321,8 +301,7 @@ struct traj_eval piecewise_eval(
 }
 
 struct traj_eval piecewise_eval_reversed(
-  struct piecewise_traj const *traj, float t)
-{
+  struct piecewise_traj const *traj, float t) {
 	int cursor = traj->n_pieces - 1;
 	t = t - traj->t_begin;
 	while (cursor >= 0) {
@@ -354,8 +333,7 @@ struct traj_eval piecewise_eval_reversed(
 // y, dy == yaw, derivative of yaw
 void piecewise_plan_5th_order(struct piecewise_traj *pp, float duration,
 	struct vec p0, float y0, struct vec v0, float dy0, struct vec a0,
-	struct vec p1, float y1, struct vec v1, float dy1, struct vec a1)
-{
+	struct vec p1, float y1, struct vec v1, float dy1, struct vec a1) {
 	struct poly4d *p = &pp->pieces[0];
 	p->duration = duration;
 	pp->timescale = 1.0;
@@ -370,8 +348,7 @@ void piecewise_plan_5th_order(struct piecewise_traj *pp, float duration,
 // y, dy == yaw, derivative of yaw
 void piecewise_plan_7th_order_no_jerk(struct piecewise_traj *pp, float duration,
 	struct vec p0, float y0, struct vec v0, float dy0, struct vec a0,
-	struct vec p1, float y1, struct vec v1, float dy1, struct vec a1)
-{
+	struct vec p1, float y1, struct vec v1, float dy1, struct vec a1) {
 	struct poly4d *p = &pp->pieces[0];
 	p->duration = duration;
 	pp->timescale = 1.0;
