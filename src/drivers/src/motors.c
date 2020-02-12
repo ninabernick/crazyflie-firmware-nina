@@ -182,169 +182,16 @@ void motorsInitIFlight(const MotorPerifDef** motorMapSelect) {
   isInit = true;
 }
 
-// Contorl gpio using dma, test version
-/*
-void motorsInitTest(const MotorPerifDef** motorMapSelect) {
-  // int i;
-  // Init structures
-  GPIO_InitTypeDef GPIO_InitStructure;
-  TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-  TIM_OCInitTypeDef  TIM_OCInitStructure;
-  DMA_InitTypeDef DMA_InitStructure;
-  NVIC_InitTypeDef NVIC_InitStructure;
-
-  if (isInit) {
-    return;
-  }
-
-  // DMA2_Stream2, PD2
-  MOTORS_RCC_GPIO_CMD(RCC_AHB1Periph_GPIOD, ENABLE);
-  GPIO_StructInit(&GPIO_InitStructure);
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
-  GPIO_Init(GPIOD, &GPIO_InitStructure);
-
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
-  DMA_InitStructure.DMA_Channel = DMA_Channel_7;
-  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&GPIOD->BSRRL);
-  DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)DMA_GPIO_DATA;
-  DMA_InitStructure.DMA_DIR = DMA_DIR_MemoryToPeripheral;
-  DMA_InitStructure.DMA_BufferSize = MOTORS_DMA_BUFFER_SIZE;
-  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
-  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Word;
-  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Word;
-  DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
-  DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
-  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;
-  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
-  DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
-  DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
-  DMA_Init(DMA2_Stream2, &DMA_InitStructure);
-
-  NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream2_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
-  DMA_ITConfig(DMA2_Stream2, DMA_IT_TC, ENABLE);
-
-  // DMA2_Stream3, PA1
-  MOTORS_RCC_GPIO_CMD(RCC_AHB1Periph_GPIOA, ENABLE);
-  GPIO_StructInit(&GPIO_InitStructure);
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
-  DMA_InitStructure.DMA_Channel = DMA_Channel_7;
-  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&GPIOA->BSRRL);
-  DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)DMA_GPIO_DATA;
-  DMA_InitStructure.DMA_DIR = DMA_DIR_MemoryToPeripheral;
-  DMA_InitStructure.DMA_BufferSize = MOTORS_DMA_BUFFER_SIZE;
-  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
-  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Word;
-  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Word;
-  DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
-  DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
-  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;
-  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
-  DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
-  DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
-  DMA_Init(DMA2_Stream3, &DMA_InitStructure);
-
-  NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream3_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
-  DMA_ITConfig(DMA2_Stream3, DMA_IT_TC, ENABLE);
-
-  // motorMap = motorMapSelect;
-  //leo: try the PA1
-
-  //Clock the gpio and the timers
-  // MOTORS_RCC_GPIO_CMD(motorMap[i]->gpioPerif, ENABLE);
-  // MOTORS_RCC_GPIO_CMD(motorMap[i]->gpioPowerswitchPerif, ENABLE);
-  // MOTORS_RCC_TIM_CMD(motorMap[i]->timPerif, ENABLE);
-
-  // If there is a power switch, as on Bolt, enable power to ESC by
-  // switching on mosfet.
-  // if (motorMap[i]->gpioPowerswitchPin != 0)
-  // {
-  //   GPIO_StructInit(&GPIO_InitStructure);
-  //   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-  //   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  //   GPIO_InitStructure.GPIO_Pin = motorMap[i]->gpioPowerswitchPin;
-  //   GPIO_Init(motorMap[i]->gpioPowerswitchPort, &GPIO_InitStructure);
-  //   GPIO_WriteBit(motorMap[i]->gpioPowerswitchPort, motorMap[i]->gpioPowerswitchPin, 1);
-  // }
-
-  // Configure the GPIO for the timer output
-  // GPIO_StructInit(&GPIO_InitStructure);
-  // GPIO_InitStructure.GPIO_Mode = MOTORS_GPIO_MODE;
-  // GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  // GPIO_InitStructure.GPIO_OType = motorMap[i]->gpioOType;
-  // GPIO_InitStructure.GPIO_Pin = motorMap[i]->gpioPin;
-  // GPIO_Init(motorMap[i]->gpioPort, &GPIO_InitStructure);
-
-
-  // Map timers to alternate functions
-  // MOTORS_GPIO_AF_CFG(motorMap[i]->gpioPort, motorMap[i]->gpioPinSource, motorMap[i]->gpioAF);
-
-  // Timer configuration
-  // Configure TIM8 base
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM8, ENABLE);
-  TIM_TimeBaseStructure.TIM_Period = MOTORS_PWM_PERIOD;
-  TIM_TimeBaseStructure.TIM_Prescaler = MOTORS_PWM_PRESCALE;
-  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-  TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
-  TIM_TimeBaseInit(TIM8, &TIM_TimeBaseStructure);
-  TIM_SelectOutputTrigger(TIM8, TIM_TRGOSource_Update);
-
-  // configure TIM8 channals
-  TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Toggle;
-  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Disable;
-  TIM_OCInitStructure.TIM_Pulse = 0;
-  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-  TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
-  // CC1
-  TIM_OC1Init(TIM8, &TIM_OCInitStructure);
-  TIM_OC1PreloadConfig(TIM8, TIM_OCPreload_Enable);
-  TIM_DMACmd(TIM8, TIM_DMA_CC1, ENABLE);
-  // CC2
-  TIM_OC2Init(TIM8, &TIM_OCInitStructure);
-  TIM_OC2PreloadConfig(TIM8, TIM_OCPreload_Enable);
-  TIM_DMACmd(TIM8, TIM_DMA_CC2, ENABLE);
-
-  TIM_Cmd(TIM8, ENABLE);
-  DMA_Cmd(DMA2_Stream2, ENABLE);
-  DMA_Cmd(DMA2_Stream3, ENABLE);
-
-  isInit = true;
-}
-*/
-
 // Initialization. Will set all motors ratio to 0%
 // The standard version of motor init
-void motorsInit(const MotorPerifDef** motorMapSelect)
-{
+void motorsInit(const MotorPerifDef** motorMapSelect) {
   int i;
   //Init structures
   GPIO_InitTypeDef GPIO_InitStructure;
   TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
   TIM_OCInitTypeDef  TIM_OCInitStructure;
 
-  if (isInit)
-  {
+  if (isInit) {
     // First to init will configure it
     return;
   }
@@ -353,8 +200,7 @@ void motorsInit(const MotorPerifDef** motorMapSelect)
 
   DEBUG_PRINT("Using %s motor driver\n", motorMap[0]->drvType == BRUSHED ? "brushed" : "brushless");
 
-  for (i = 0; i < NBR_OF_MOTORS; i++)
-  {
+  for (i = 0; i < NBR_OF_MOTORS; i++) {
     //Clock the gpio and the timers
     MOTORS_RCC_GPIO_CMD(motorMap[i]->gpioPerif, ENABLE);
     MOTORS_RCC_GPIO_CMD(motorMap[i]->gpioPowerswitchPerif, ENABLE);
@@ -362,8 +208,7 @@ void motorsInit(const MotorPerifDef** motorMapSelect)
 
     // If there is a power switch, as on Bolt, enable power to ESC by
     // switching on mosfet.
-    if (motorMap[i]->gpioPowerswitchPin != 0)
-    {
+    if (motorMap[i]->gpioPowerswitchPin != 0) {
       GPIO_StructInit(&GPIO_InitStructure);
       GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
       GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
@@ -409,8 +254,7 @@ void motorsInit(const MotorPerifDef** motorMapSelect)
   }
 
   // Start the timers
-  for (i = 0; i < NBR_OF_MOTORS; i++)
-  {
+  for (i = 0; i < NBR_OF_MOTORS; i++) {
     TIM_Cmd(motorMap[i]->tim, ENABLE);
   }
   motorsDrive = motorsSetRatio;
@@ -492,6 +336,8 @@ void motorsSetValue(uint32_t id, uint16_t value) {
 
     uint16_t u10 = 1 << 9;
     uint16_t check_sum = ((value >> 6) & 0xf) ^ ((value >> 2) & 0xf) ^ ((value << 2) & 0xf);
+
+    // no need for battery voltage compensate
 
     // set bits 0-9, the output value
     for (int i = 0; i < 10; i++) {

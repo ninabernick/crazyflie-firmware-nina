@@ -28,8 +28,7 @@ void controllerPidInit(void)
   posHoldControllerInit(POSHOLD_UPDATE_DT);
 }
 
-bool controllerPidTest(void)
-{
+bool controllerPidTest(void) {
   bool pass = true;
 
   pass &= attitudeControllerTest();
@@ -61,7 +60,6 @@ void controllerPid(control_t *control, setpoint_t *setpoint,
   if (RATE_DO_EXECUTE(POSHOLD_RATE, tick)) {
     posHoldController(&actuatorThrust, &attitudeDesired, setpoint, state);
   }
-
 
   if (RATE_DO_EXECUTE(ATTITUDE_RATE, tick)) {
     // Switch between manual and automatic position control

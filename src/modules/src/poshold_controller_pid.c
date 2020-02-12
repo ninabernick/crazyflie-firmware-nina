@@ -43,7 +43,7 @@ static const float thrustScale = 1000.0f;
 // #define thrustMin   20000
 // leo: test for the min thrust
 #define thrustBase  36000
-#define thrustMin   10000
+#define thrustMin   20000
 
 // PID coefficiencies
 #define PID_X_RATE_KP  25.0
