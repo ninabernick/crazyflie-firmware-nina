@@ -479,23 +479,17 @@ static void testProps(sensorData_t *sensors) {
 
     i++;
   }
-  else if (testState == restartBatTest)
-  {
-    if (i++ > 2000)
-    {
+  else if (testState == restartBatTest) {
+    if (i++ > 2000) {
       testState = configureAcc;
       i = 0;
     }
   }
-  else if (testState == evaluateResult)
-  {
-    for (int m = 0; m < NBR_OF_MOTORS; m++)
-    {
-      if (!evaluateTest(0, PROPELLER_BALANCE_TEST_THRESHOLD,  accVarX[m] + accVarY[m], m))
-      {
+  else if (testState == evaluateResult) {
+    for (int m = 0; m < NBR_OF_MOTORS; m++) {
+      if (!evaluateTest(0, PROPELLER_BALANCE_TEST_THRESHOLD,  accVarX[m] + accVarY[m], m)) {
         nrFailedTests++;
-        for (int j = 0; j < 3; j++)
-        {
+        for (int j = 0; j < 3; j++) {
           motorsBeep(m, true, testsound[m], (uint16_t)(MOTORS_TIM_BEEP_CLK_FREQ / A4)/ 20);
           vTaskDelay(M2T(MOTORS_TEST_ON_TIME_MS));
           motorsBeep(m, false, 0, 0);
@@ -504,10 +498,8 @@ static void testProps(sensorData_t *sensors) {
       }
     }
 #ifdef PLAY_STARTUP_MELODY_ON_MOTORS
-    if (nrFailedTests == 0)
-    {
-      for (int m = 0; m < NBR_OF_MOTORS; m++)
-      {
+    if (nrFailedTests == 0) {
+      for (int m = 0; m < NBR_OF_MOTORS; m++) {
         motorsBeep(m, true, testsound[m], (uint16_t)(MOTORS_TIM_BEEP_CLK_FREQ / A4)/ 20);
         vTaskDelay(M2T(MOTORS_TEST_ON_TIME_MS));
         motorsBeep(m, false, 0, 0);
