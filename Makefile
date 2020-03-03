@@ -31,9 +31,9 @@ LPS_TDOA3_ENABLE  ?= 0
 -include current_platform.mk
 include tools/make/platform.mk
 
-CFLAGS += -DCRAZYFLIE_FW
+CFLAGS += -DCRAZYFLIE_FWs
 # leo; replace a cb mcu with cf one
-CFLAGS += -DDEVICE_TYPE_STRING_FORCE="CB10"
+# CFLAGS += -DDEVICE_TYPE_STRING_FORCE="CB10"
 
 ######### Stabilizer configuration ##########
 ## These are set by the platform (see tools/make/platforms/*.mk), can be overwritten here

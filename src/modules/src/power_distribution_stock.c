@@ -82,17 +82,21 @@ void powerDistribution(const control_t *control) {
   #ifdef QUAD_FORMATION_X
     int16_t r = control->roll / 2.0f;
     int16_t p = control->pitch / 2.0f;
-    // top-left, bottom-right: clockwise
-    // motorPower.m1 = limitThrust(control->thrust - r + p + control->yaw);
-    // motorPower.m2 = limitThrust(control->thrust - r - p - control->yaw);
-    // motorPower.m3 = limitThrust(control->thrust + r - p + control->yaw);
-    // motorPower.m4 = limitThrust(control->thrust + r + p - control->yaw);
     
+#ifndef DEVICE_TYPE_STRING_FORCE // for cf2
+    // top-left, bottom-right: clockwise
+    motorPower.m1 = limitThrust(control->thrust - r + p + control->yaw);
+    motorPower.m2 = limitThrust(control->thrust - r - p - control->yaw);
+    motorPower.m3 = limitThrust(control->thrust + r - p + control->yaw);
+    motorPower.m4 = limitThrust(control->thrust + r + p - control->yaw);
+#else // for bolt
     // top-left, bottom-right: c-clockwise
     motorPower.m1 = limitThrust(control->thrust - r + p - control->yaw);
     motorPower.m2 = limitThrust(control->thrust - r - p + control->yaw);
     motorPower.m3 = limitThrust(control->thrust + r - p - control->yaw);
     motorPower.m4 = limitThrust(control->thrust + r + p + control->yaw);
+#endif
+    
 
   #else // QUAD_FORMATION_NORMAL
     motorPower.m1 = limitThrust(control->thrust + control->pitch +

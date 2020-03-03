@@ -109,7 +109,7 @@ void crtpCommanderHeightHoldDecodeSetpoint(setpoint_t *setpoint, CRTPPacket *pk)
   setpoint->position.z = values->zDistance;
 
   setpoint->mode.yaw = modeVelocity;
-  setpoint->attitudeRate.yaw = -values->yawrate;
+  setpoint->attitudeRate.yaw = values->yawrate;
 
   setpoint->mode.x = modeVelocity;
   setpoint->mode.y = modeVelocity;

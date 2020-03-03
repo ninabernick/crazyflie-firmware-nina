@@ -58,7 +58,7 @@ static const float thrustScale = 1000.0f;
 
 #define PID_Z_RATE_KP  25.0
 #define PID_Z_RATE_KI  15.0
-#define PID_Z_RATE_KD  2.0
+#define PID_Z_RATE_KD  1.0
 // #define PID_Z_RATE_KD  1.0
 #define PID_Z_RATE_INTEGRATION_LIMIT   30.0
 
