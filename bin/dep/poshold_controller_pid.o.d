@@ -23,7 +23,9 @@ poshold_controller_pid.o: src/modules/src/poshold_controller_pid.c \
  src/modules/interface/stabilizer_types.h src/hal/interface/imu_types.h \
  src/modules/interface/log.h src/modules/interface/param.h \
  src/modules/interface/pid.h src/utils/interface/filter.h \
- src/modules/interface/position_controller.h
+ src/modules/interface/position_controller.h src/utils/interface/debug.h \
+ src/modules/interface/console.h src/utils/interface/eprintf.h \
+ /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h
 
 /usr/arm-none-eabi/include/math.h:
 
@@ -92,3 +94,11 @@ src/modules/interface/pid.h:
 src/utils/interface/filter.h:
 
 src/modules/interface/position_controller.h:
+
+src/utils/interface/debug.h:
+
+src/modules/interface/console.h:
+
+src/utils/interface/eprintf.h:
+
+/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h:

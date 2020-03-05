@@ -22,8 +22,7 @@ static attitude_t attitudeDesired;
 static attitude_t rateDesired;
 static float actuatorThrust;
 
-void controllerPidInit(void)
-{
+void controllerPidInit(void) {
   attitudeControllerInit(ATTITUDE_UPDATE_DT);
   posHoldControllerInit(POSHOLD_UPDATE_DT);
 }
@@ -39,13 +38,12 @@ bool controllerPidTest(void) {
 void controllerPid(control_t *control, setpoint_t *setpoint,
                                          const sensorData_t *sensors,
                                          const state_t *state,
-                                         const uint32_t tick)
-{
+                                         const uint32_t tick) {
   // 500Hz
   if (RATE_DO_EXECUTE(ATTITUDE_RATE, tick)) {
     // Rate-controled YAW is moving YAW angle setpoint
     if (setpoint->mode.yaw == modeVelocity) {
-       attitudeDesired.yaw += setpoint->attitudeRate.yaw * ATTITUDE_UPDATE_DT;
+      attitudeDesired.yaw += setpoint->attitudeRate.yaw * ATTITUDE_UPDATE_DT;
       while (attitudeDesired.yaw > 180.0f)
         attitudeDesired.yaw -= 360.0f;
       while (attitudeDesired.yaw < -180.0f)
@@ -91,9 +89,7 @@ void controllerPid(control_t *control, setpoint_t *setpoint,
     attitudeControllerCorrectRatePID(sensors->gyro.x, -sensors->gyro.y, sensors->gyro.z,
                              rateDesired.roll, rateDesired.pitch, rateDesired.yaw);
 
-    attitudeControllerGetActuatorOutput(&control->roll,
-                                        &control->pitch,
-                                        &control->yaw);
+    attitudeControllerGetActuatorOutput(&control->roll, &control->pitch, &control->yaw);
 
     control->yaw = -control->yaw;
   }
@@ -112,7 +108,6 @@ void controllerPid(control_t *control, setpoint_t *setpoint,
     control->yaw = 0;
 
     attitudeControllerResetAllPID();
-    // positionControllerResetAllPID();
     posHoldControllerResetAllPID();
 
     // Reset the calculated YAW angle for rate control

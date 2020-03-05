@@ -57,7 +57,7 @@
 #define MOTORS_POLARITY           TIM_OCPolarity_High
 #define MOTORS_DMA_DATA_SIZE      48
 #define MOTORS_DMA_BUFFER_SIZE    222
-#define MOTORS_MAX_OUTPUT         (1 << 10)
+#define MOTORS_MAX_OUTPUT         ((1 << 10) - 1)
 
 // Abstraction of ST lib functions
 #define MOTORS_GPIO_MODE          GPIO_Mode_AF

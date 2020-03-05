@@ -73,21 +73,18 @@ static void estimatedGravityDirection(float* gx, float* gy, float* gz);
 // TODO: Make math util file
 static float invSqrt(float x);
 
-void sensfusion6Init()
-{
+void sensfusion6Init() {
   if(isInit)
     return;
 
   isInit = true;
 }
 
-bool sensfusion6Test(void)
-{
+bool sensfusion6Test(void) {
   return isInit;
 }
 
-void sensfusion6UpdateQ(float gx, float gy, float gz, float ax, float ay, float az, float dt)
-{
+void sensfusion6UpdateQ(float gx, float gy, float gz, float ax, float ay, float az, float dt) {
   sensfusion6UpdateQImpl(gx, gy, gz, ax, ay, az, dt);
   estimatedGravityDirection(&gravX, &gravY, &gravZ);
 
@@ -104,8 +101,7 @@ void sensfusion6UpdateQ(float gx, float gy, float gz, float ax, float ay, float 
 // Date     Author          Notes
 // 29/09/2011 SOH Madgwick    Initial release
 // 02/10/2011 SOH Madgwick  Optimised for reduced CPU load
-static void sensfusion6UpdateQImpl(float gx, float gy, float gz, float ax, float ay, float az, float dt)
-{
+static void sensfusion6UpdateQImpl(float gx, float gy, float gz, float ax, float ay, float az, float dt) {
   float recipNorm;
   float s0, s1, s2, s3;
   float qDot1, qDot2, qDot3, qDot4;
@@ -118,8 +114,7 @@ static void sensfusion6UpdateQImpl(float gx, float gy, float gz, float ax, float
   qDot4 = 0.5f * (q0 * gz + q1 * gy - q2 * gx);
 
   // Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
-  if(!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f)))
-  {
+  if (!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f))) {
     // Normalise accelerometer measurement
     recipNorm = invSqrt(ax * ax + ay * ay + az * az);
     ax *= recipNorm;
@@ -179,8 +174,7 @@ static void sensfusion6UpdateQImpl(float gx, float gy, float gz, float ax, float
 // Date     Author      Notes
 // 29/09/2011 SOH Madgwick    Initial release
 // 02/10/2011 SOH Madgwick  Optimised for reduced CPU load
-static void sensfusion6UpdateQImpl(float gx, float gy, float gz, float ax, float ay, float az, float dt)
-{
+static void sensfusion6UpdateQImpl(float gx, float gy, float gz, float ax, float ay, float az, float dt) {
   float recipNorm;
   float halfvx, halfvy, halfvz;
   float halfex, halfey, halfez;
@@ -191,8 +185,7 @@ static void sensfusion6UpdateQImpl(float gx, float gy, float gz, float ax, float
   gz = gz * M_PI_F / 180;
 
   // Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
-  if(!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f)))
-  {
+  if(!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f))) {
     // Normalise accelerometer measurement
     recipNorm = invSqrt(ax * ax + ay * ay + az * az);
     ax *= recipNorm;
@@ -210,8 +203,7 @@ static void sensfusion6UpdateQImpl(float gx, float gy, float gz, float ax, float
     halfez = (ax * halfvy - ay * halfvx);
 
     // Compute and apply integral feedback if enabled
-    if(twoKi > 0.0f)
-    {
+    if(twoKi > 0.0f) {
       integralFBx += twoKi * halfex * dt;  // integral error scaled by Ki
       integralFBy += twoKi * halfey * dt;
       integralFBz += twoKi * halfez * dt;
@@ -219,8 +211,7 @@ static void sensfusion6UpdateQImpl(float gx, float gy, float gz, float ax, float
       gy += integralFBy;
       gz += integralFBz;
     }
-    else
-    {
+    else {
       integralFBx = 0.0f; // prevent integral windup
       integralFBy = 0.0f;
       integralFBz = 0.0f;
@@ -253,16 +244,14 @@ static void sensfusion6UpdateQImpl(float gx, float gy, float gz, float ax, float
 }
 #endif
 
-void sensfusion6GetQuaternion(float* qx, float* qy, float* qz, float* qw)
-{
+void sensfusion6GetQuaternion(float* qx, float* qy, float* qz, float* qw) {
   *qx = q1;
   *qy = q2;
   *qz = q3;
   *qw = q0;
 }
 
-void sensfusion6GetEulerRPY(float* roll, float* pitch, float* yaw)
-{
+void sensfusion6GetEulerRPY(float* roll, float* pitch, float* yaw) {
   float gx = gravX;
   float gy = gravY;
   float gz = gravZ;
@@ -275,13 +264,11 @@ void sensfusion6GetEulerRPY(float* roll, float* pitch, float* yaw)
   *roll = atan2f(gy, gz) * 180 / M_PI_F;
 }
 
-float sensfusion6GetAccZWithoutGravity(const float ax, const float ay, const float az)
-{
+float sensfusion6GetAccZWithoutGravity(const float ax, const float ay, const float az) {
   return sensfusion6GetAccZ(ax, ay, az) - baseZacc;
 }
 
-float sensfusion6GetInvThrustCompensationForTilt()
-{
+float sensfusion6GetInvThrustCompensationForTilt() {
   // Return the z component of the estimated gravity direction
   // (0, 0, 1) dot G
   return gravZ;
@@ -290,8 +277,7 @@ float sensfusion6GetInvThrustCompensationForTilt()
 //---------------------------------------------------------------------------------------------------
 // Fast inverse square-root
 // See: http://en.wikipedia.org/wiki/Fast_inverse_square_root
-float invSqrt(float x)
-{
+float invSqrt(float x) {
   float halfx = 0.5f * x;
   float y = x;
   long i = *(long*)&y;
@@ -301,15 +287,13 @@ float invSqrt(float x)
   return y;
 }
 
-static float sensfusion6GetAccZ(const float ax, const float ay, const float az)
-{
+static float sensfusion6GetAccZ(const float ax, const float ay, const float az) {
   // return vertical acceleration
   // (A dot G) / |G|,  (|G| = 1) -> (A dot G)
   return (ax * gravX + ay * gravY + az * gravZ);
 }
 
-static void estimatedGravityDirection(float* gx, float* gy, float* gz)
-{
+static void estimatedGravityDirection(float* gx, float* gy, float* gz) {
   *gx = 2 * (q1 * q3 - q0 * q2);
   *gy = 2 * (q0 * q1 + q2 * q3);
   *gz = q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3;

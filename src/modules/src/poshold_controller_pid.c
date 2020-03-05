@@ -24,6 +24,8 @@
  * poshold_estimator_pid.c: PID-based implementation of the position hold controller
  */
 
+#define DEBUG_MODULE "PPID"
+
 #include <math.h>
 #include "num.h"
 
@@ -33,17 +35,24 @@
 #include "pid.h"
 #include "num.h"
 #include "position_controller.h"
+#include "debug.h"
 
 static const float thrustScale = 1000.0f;
 
 #define POSHOLD_LPF_CUTOFF_FREQ 20.0f
 #define POSHOLD_LPF_ENABLE true
 
+/* CF2 */
 // #define thrustBase  36000
 // #define thrustMin   20000
-// leo: test for the min thrust
-#define thrustBase  36000
+
+/* iFlight with 2S */
+#define thrustBase  30000
 #define thrustMin   20000
+
+/* iFlight with 3S */
+//#define thrustBase  20000
+//#define thrustMin   15000
 
 // PID coefficiencies
 #define PID_X_RATE_KP  25.0
@@ -56,10 +65,12 @@ static const float thrustScale = 1000.0f;
 #define PID_Y_RATE_KD  0.0
 #define PID_Y_RATE_INTEGRATION_LIMIT   25.0
 
-#define PID_Z_RATE_KP  25.0
-#define PID_Z_RATE_KI  15.0
-#define PID_Z_RATE_KD  1.0
+// #define PID_Z_RATE_KP  25.0
+// #define PID_Z_RATE_KI  15.0
 // #define PID_Z_RATE_KD  1.0
+#define PID_Z_RATE_KP  7.0
+#define PID_Z_RATE_KI  2.0
+#define PID_Z_RATE_KD  0.3
 #define PID_Z_RATE_INTEGRATION_LIMIT   30.0
 
 #define PID_X_KP  2.0
@@ -72,10 +83,9 @@ static const float thrustScale = 1000.0f;
 #define PID_Y_KD  0.35
 #define PID_Y_INTEGRATION_LIMIT   2.0
 
-#define PID_Z_KP  2.0
-#define PID_Z_KI  0.5
-#define PID_Z_KD  0.35
-// #define PID_Z_KD  0.35
+#define PID_Z_KP  10.0
+#define PID_Z_KI  2.0
+#define PID_Z_KD  1.0
 #define PID_Z_INTEGRATION_LIMIT   2.0
 
 PidObject pidXRate;
@@ -115,6 +125,7 @@ void posHoldControllerInit(const float updateDt) {
   pidSetIntegralLimit(&pidX,  PID_X_INTEGRATION_LIMIT);
   pidSetIntegralLimit(&pidY,  PID_Y_INTEGRATION_LIMIT);
   pidSetIntegralLimit(&pidZ,  PID_Z_INTEGRATION_LIMIT);
+
   isInit = true;
 }
 
@@ -123,6 +134,15 @@ void posHoldController(float* thrust, attitude_t *attitude, setpoint_t *setpoint
   float sin_yaw = sinf(state->attitude.yaw * (float)M_PI / 180.0f);
   float body_vx = setpoint->velocity.x;
   float body_vy = setpoint->velocity.y;
+
+
+  // leonana: debug the height
+  // static int cnt = 0;
+  // if (cnt++ % 5 == 0) {
+  //   int tmp = 100 * state->position.z;
+  //   DEBUG_PRINT("%c%c\n", (tmp / 10) + 48, (tmp % 10) + 48);
+  // }
+  
 
   // X, Y
   if (setpoint->mode.x == modeAbs) {

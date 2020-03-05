@@ -62,8 +62,7 @@ static int16_t yawOutput;
 
 static bool isInit;
 
-void attitudeControllerInit(const float updateDt)
-{
+void attitudeControllerInit(const float updateDt) {
   if(isInit)
     return;
 
@@ -93,8 +92,7 @@ void attitudeControllerInit(const float updateDt)
   isInit = true;
 }
 
-bool attitudeControllerTest()
-{
+bool attitudeControllerTest() {
   return isInit;
 }
 
@@ -135,18 +133,15 @@ void attitudeControllerCorrectAttitudePID(
   *yawRateDesired = pidUpdate(&pidYaw, eulerYawActual, false);
 }
 
-void attitudeControllerResetRollAttitudePID(void)
-{
+void attitudeControllerResetRollAttitudePID(void) {
     pidReset(&pidRoll);
 }
 
-void attitudeControllerResetPitchAttitudePID(void)
-{
+void attitudeControllerResetPitchAttitudePID(void) {
     pidReset(&pidPitch);
 }
 
-void attitudeControllerResetAllPID(void)
-{
+void attitudeControllerResetAllPID(void) {
   pidReset(&pidRoll);
   pidReset(&pidPitch);
   pidReset(&pidYaw);
@@ -155,8 +150,7 @@ void attitudeControllerResetAllPID(void)
   pidReset(&pidYawRate);
 }
 
-void attitudeControllerGetActuatorOutput(int16_t* roll, int16_t* pitch, int16_t* yaw)
-{
+void attitudeControllerGetActuatorOutput(int16_t* roll, int16_t* pitch, int16_t* yaw) {
   *roll = rollOutput;
   *pitch = pitchOutput;
   *yaw = yawOutput;
