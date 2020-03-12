@@ -98,6 +98,7 @@ static inline bool stateEstimatorHasDistanceMeasurement(distanceMeasurement_t *d
 }
 
 // Direct measurements of Crazyflie position
+// External measurements
 static xQueueHandle posDataQueue;
 #define POS_QUEUE_LENGTH (10)
 
@@ -106,6 +107,7 @@ static inline bool stateEstimatorHasPositionMeasurement(positionMeasurement_t *p
 }
 
 // Direct measurements of Crazyflie pose
+// External measurements
 static xQueueHandle poseDataQueue;
 #define POSE_QUEUE_LENGTH (10)
 
@@ -114,6 +116,7 @@ static inline bool stateEstimatorHasPoseMeasurement(poseMeasurement_t *pose) {
 }
 
 // Measurements of a UWB Tx/Rx
+// UWB extention board
 static xQueueHandle tdoaDataQueue;
 #define UWB_QUEUE_LENGTH (10)
 
@@ -123,6 +126,7 @@ static inline bool stateEstimatorHasTDOAPacket(tdoaMeasurement_t *uwb) {
 
 
 // Measurements of flow (dnx, dny)
+// flow deck
 static xQueueHandle flowDataQueue;
 #define FLOW_QUEUE_LENGTH (10)
 
@@ -131,6 +135,7 @@ static inline bool stateEstimatorHasFlowPacket(flowMeasurement_t *flow) {
 }
 
 // Measurements of TOF from laser sensor
+// flow deck
 static xQueueHandle tofDataQueue;
 #define TOF_QUEUE_LENGTH (10)
 
@@ -139,6 +144,7 @@ static inline bool stateEstimatorHasTOFPacket(tofMeasurement_t *tof) {
 }
 
 // Absolute height measurement along the room Z
+// UWB board: DW1000
 static xQueueHandle heightDataQueue;
 #define HEIGHT_QUEUE_LENGTH (10)
 
@@ -225,8 +231,7 @@ static inline float arm_sqrt(float32_t in)
 // --------------------------------------------------
 
 
-void estimatorKalman(state_t *state, sensorData_t *sensors, control_t *control, const uint32_t tick)
-{
+void estimatorKalman(state_t *state, sensorData_t *sensors, control_t *control, const uint32_t tick) {
   // If the client (via a parameter update) triggers an estimator reset:
   if (coreData.resetEstimation) { estimatorKalmanInit(); coreData.resetEstimation = false; }
 
@@ -261,12 +266,10 @@ void estimatorKalman(state_t *state, sensorData_t *sensors, control_t *control, 
   thrustAccumulatorCount++;
 
   // Run the system dynamics to predict the state forward.
-  // guojun: here max count is 1000/100 = 10
   if ((osTick - lastPrediction) >= configTICK_RATE_HZ/PREDICT_RATE // update at the PREDICT_RATE
       && gyroAccumulatorCount > 0
       && accAccumulatorCount > 0
-      && thrustAccumulatorCount > 0)
-  {
+      && thrustAccumulatorCount > 0) {
     // gyro is in deg/sec but the estimator requires rad/sec
     gyroAccumulator.x *= DEG_TO_RAD;
     gyroAccumulator.y *= DEG_TO_RAD;
@@ -335,8 +338,7 @@ void estimatorKalman(state_t *state, sensorData_t *sensors, control_t *control, 
   }
 
   if ((osTick - lastBaroUpdate) >= configTICK_RATE_HZ/BARO_RATE // update at BARO_RATE
-      && baroAccumulatorCount > 0)
-  {
+      && baroAccumulatorCount > 0) {
     baroAccumulator.asl /= baroAccumulatorCount;
 
     kalmanCoreUpdateWithBaro(&coreData, &sensors->baro, quadIsFlying);
@@ -355,50 +357,43 @@ void estimatorKalman(state_t *state, sensorData_t *sensors, control_t *control, 
 
   tofMeasurement_t tof;
 
-  while (stateEstimatorHasTOFPacket(&tof))
-  {
+  while (stateEstimatorHasTOFPacket(&tof)) {
     kalmanCoreUpdateWithTof(&coreData, &tof);
     doneUpdate = true;
   }
 
   heightMeasurement_t height;
-  while (stateEstimatorHasHeightPacket(&height))
-  {
+  while (stateEstimatorHasHeightPacket(&height)) {
     kalmanCoreUpdateWithAbsoluteHeight(&coreData, &height);
     doneUpdate = true;
   }
 
   distanceMeasurement_t dist;
-  while (stateEstimatorHasDistanceMeasurement(&dist))
-  {
+  while (stateEstimatorHasDistanceMeasurement(&dist)) {
     kalmanCoreUpdateWithDistance(&coreData, &dist);
     doneUpdate = true;
   }
 
   positionMeasurement_t pos;
-  while (stateEstimatorHasPositionMeasurement(&pos))
-  {
+  while (stateEstimatorHasPositionMeasurement(&pos)) {
     kalmanCoreUpdateWithPosition(&coreData, &pos);
     doneUpdate = true;
   }
 
   poseMeasurement_t pose;
-  while (stateEstimatorHasPoseMeasurement(&pose))
-  {
+  while (stateEstimatorHasPoseMeasurement(&pose)) {
     kalmanCoreUpdateWithPose(&coreData, &pose);
     doneUpdate = true;
   }
 
   tdoaMeasurement_t tdoa;
-  while (stateEstimatorHasTDOAPacket(&tdoa))
-  {
+  while (stateEstimatorHasTDOAPacket(&tdoa)) {
     kalmanCoreUpdateWithTDOA(&coreData, &tdoa);
     doneUpdate = true;
   }
 
   flowMeasurement_t flow;
-  while (stateEstimatorHasFlowPacket(&flow))
-  {
+  while (stateEstimatorHasFlowPacket(&flow)) {
     kalmanCoreUpdateWithFlow(&coreData, &flow, sensors);
     doneUpdate = true;
   }
@@ -410,8 +405,7 @@ void estimatorKalman(state_t *state, sensorData_t *sensors, control_t *control, 
    * - correctness of the covariance matrix is ensured
    */
 
-  if (doneUpdate)
-  {
+  if (doneUpdate) {
     kalmanCoreFinalize(&coreData, sensors, osTick);
     if (!kalmanSupervisorIsStateWithinBounds(&coreData)) {
       coreData.resetEstimation = true;
@@ -428,8 +422,7 @@ void estimatorKalman(state_t *state, sensorData_t *sensors, control_t *control, 
 
 
 void estimatorKalmanInit(void) {
-  if (!isInit)
-  {
+  if (!isInit) {
     distDataQueue = xQueueCreate(DIST_QUEUE_LENGTH, sizeof(distanceMeasurement_t));
     posDataQueue = xQueueCreate(POS_QUEUE_LENGTH, sizeof(positionMeasurement_t));
     poseDataQueue = xQueueCreate(POSE_QUEUE_LENGTH, sizeof(poseMeasurement_t));
@@ -437,9 +430,7 @@ void estimatorKalmanInit(void) {
     flowDataQueue = xQueueCreate(FLOW_QUEUE_LENGTH, sizeof(flowMeasurement_t));
     tofDataQueue = xQueueCreate(TOF_QUEUE_LENGTH, sizeof(tofMeasurement_t));
     heightDataQueue = xQueueCreate(HEIGHT_QUEUE_LENGTH, sizeof(heightMeasurement_t));
-  }
-  else
-  {
+  } else {
     xQueueReset(distDataQueue);
     xQueueReset(posDataQueue);
     xQueueReset(poseDataQueue);
@@ -468,16 +459,14 @@ void estimatorKalmanInit(void) {
   isInit = true;
 }
 
-static bool stateEstimatorEnqueueExternalMeasurement(xQueueHandle queue, void *measurement)
-{
+static bool stateEstimatorEnqueueExternalMeasurement(xQueueHandle queue, void *measurement) {
   portBASE_TYPE result;
   bool isInInterrupt = (SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk) != 0;
 
   if (isInInterrupt) {
     portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
     result = xQueueSendFromISR(queue, measurement, &xHigherPriorityTaskWoken);
-    if(xHigherPriorityTaskWoken == pdTRUE)
-    {
+    if(xHigherPriorityTaskWoken == pdTRUE) {
       portYIELD();
     }
   } else {
@@ -486,53 +475,45 @@ static bool stateEstimatorEnqueueExternalMeasurement(xQueueHandle queue, void *m
   return (result == pdTRUE);
 }
 
-bool estimatorKalmanEnqueueTDOA(const tdoaMeasurement_t *uwb)
-{
+bool estimatorKalmanEnqueueTDOA(const tdoaMeasurement_t *uwb) {
   ASSERT(isInit);
   return stateEstimatorEnqueueExternalMeasurement(tdoaDataQueue, (void *)uwb);
 }
 
-bool estimatorKalmanEnqueuePosition(const positionMeasurement_t *pos)
-{
+bool estimatorKalmanEnqueuePosition(const positionMeasurement_t *pos) {
   ASSERT(isInit);
   return stateEstimatorEnqueueExternalMeasurement(posDataQueue, (void *)pos);
 }
 
-bool estimatorKalmanEnqueuePose(const poseMeasurement_t *pose)
-{
+bool estimatorKalmanEnqueuePose(const poseMeasurement_t *pose) {
   ASSERT(isInit);
   return stateEstimatorEnqueueExternalMeasurement(poseDataQueue, (void *)pose);
 }
 
-bool estimatorKalmanEnqueueDistance(const distanceMeasurement_t *dist)
-{
+bool estimatorKalmanEnqueueDistance(const distanceMeasurement_t *dist) {
   ASSERT(isInit);
   return stateEstimatorEnqueueExternalMeasurement(distDataQueue, (void *)dist);
 }
 
-bool estimatorKalmanEnqueueFlow(const flowMeasurement_t *flow)
-{
+bool estimatorKalmanEnqueueFlow(const flowMeasurement_t *flow) {
   // A flow measurement (dnx,  dny) [accumulated pixels]
   ASSERT(isInit);
   return stateEstimatorEnqueueExternalMeasurement(flowDataQueue, (void *)flow);
 }
 
-bool estimatorKalmanEnqueueTOF(const tofMeasurement_t *tof)
-{
+bool estimatorKalmanEnqueueTOF(const tofMeasurement_t *tof) {
   // A distance (distance) [m] to the ground along the z_B axis.
   ASSERT(isInit);
   return stateEstimatorEnqueueExternalMeasurement(tofDataQueue, (void *)tof);
 }
 
-bool estimatorKalmanEnqueueAbsoluteHeight(const heightMeasurement_t *height)
-{
+bool estimatorKalmanEnqueueAbsoluteHeight(const heightMeasurement_t *height) {
   // A distance (height) [m] to the ground along the z axis.
   ASSERT(isInit);
   return stateEstimatorEnqueueExternalMeasurement(heightDataQueue, (void *)height);
 }
 
-bool estimatorKalmanTest(void)
-{
+bool estimatorKalmanTest(void) {
   return isInit;
 }
 

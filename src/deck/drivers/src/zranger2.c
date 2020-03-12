@@ -61,15 +61,13 @@ static bool isInit;
 
 static VL53L1_Dev_t dev;
 
-static uint16_t zRanger2GetMeasurementAndRestart(VL53L1_Dev_t *dev)
-{
+static uint16_t zRanger2GetMeasurementAndRestart(VL53L1_Dev_t *dev) {
     VL53L1_Error status = VL53L1_ERROR_NONE;
     VL53L1_RangingMeasurementData_t rangingData;
     uint8_t dataReady = 0;
     uint16_t range;
 
-    while (dataReady == 0)
-    {
+    while (dataReady == 0) {
         status = VL53L1_GetMeasurementDataReady(dev, &dataReady);
         vTaskDelay(M2T(1));
     }
@@ -84,17 +82,13 @@ static uint16_t zRanger2GetMeasurementAndRestart(VL53L1_Dev_t *dev)
     return range;
 }
 
-void zRanger2Init(DeckInfo* info)
-{
+void zRanger2Init(DeckInfo* info) {
   if (isInit)
     return;
 
-  if (vl53l1xInit(&dev, I2C1_DEV))
-  {
+  if (vl53l1xInit(&dev, I2C1_DEV)) {
       DEBUG_PRINT("Z-down sensor [OK]\n");
-  }
-  else
-  {
+  } else {
     DEBUG_PRINT("Z-down sensor [FAIL]\n");
     return;
   }
@@ -107,16 +101,11 @@ void zRanger2Init(DeckInfo* info)
   isInit = true;
 }
 
-bool zRanger2Test(void)
-{
-  if (!isInit)
-    return false;
-
-  return true;
+bool zRanger2Test(void) {
+  return isInit;
 }
 
-void zRanger2Task(void* arg)
-{
+void zRanger2Task(void* arg) {
   TickType_t lastWakeTime;
 
   systemWaitStart();

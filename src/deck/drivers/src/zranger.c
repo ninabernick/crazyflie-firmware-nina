@@ -60,8 +60,7 @@ static bool isInit;
 
 static VL53L0xDev dev;
 
-void zRangerInit(DeckInfo* info)
-{
+void zRangerInit(DeckInfo* info) {
   if (isInit)
     return;
 
@@ -75,8 +74,7 @@ void zRangerInit(DeckInfo* info)
   isInit = true;
 }
 
-bool zRangerTest(void)
-{
+bool zRangerTest(void) {
   bool testStatus;
 
   if (!isInit)
@@ -87,8 +85,7 @@ bool zRangerTest(void)
   return testStatus;
 }
 
-void zRangerTask(void* arg)
-{
+void zRangerTask(void* arg) {
   systemWaitStart();
   TickType_t xLastWakeTime;
 
@@ -125,8 +122,7 @@ void zRangerTask(void* arg)
   }
 }
 
-bool zRangerReadRange(zDistance_t* zrange, const uint32_t tick)
-{
+bool zRangerReadRange(zDistance_t* zrange, const uint32_t tick) {
   bool updated = false;
 
   if (isInit) {

@@ -47,18 +47,15 @@
 #define NBR_OF_RANGES_IN_PACKET   5
 #define DEFAULT_EMERGENCY_STOP_TIMEOUT (1 * RATE_MAIN_LOOP)
 
-typedef enum
-{
+typedef enum {
   EXT_POSITION        = 0,
   GENERIC_TYPE        = 1,
   EXT_POSITION_PACKED = 2,
 } locsrvChannels_t;
 
-typedef struct
-{
+typedef struct {
   uint8_t type;
-  struct
-  {
+  struct {
     uint8_t id;
     float range;
   } __attribute__((packed)) ranges[NBR_OF_RANGES_IN_PACKET];
@@ -100,8 +97,7 @@ static void extPositionHandler(CRTPPacket* pk);
 static void genericLocHandle(CRTPPacket* pk);
 static void extPositionPackedHandler(CRTPPacket* pk);
 
-void locSrvInit()
-{
+void locSrvInit() {
   if (isInit) {
     return;
   }
@@ -113,10 +109,8 @@ void locSrvInit()
   isInit = true;
 }
 
-static void locSrvCrtpCB(CRTPPacket* pk)
-{
-  switch (pk->channel)
-  {
+static void locSrvCrtpCB(CRTPPacket* pk) {
+  switch (pk->channel) {
     case EXT_POSITION:
       extPositionHandler(pk);
       break;
@@ -131,8 +125,7 @@ static void locSrvCrtpCB(CRTPPacket* pk)
   }
 }
 
-static void extPositionHandler(CRTPPacket* pk)
-{
+static void extPositionHandler(CRTPPacket* pk) {
   const struct CrtpExtPosition* data = (const struct CrtpExtPosition*)pk->data;
 
   ext_pos.x = data->x;
@@ -143,8 +136,7 @@ static void extPositionHandler(CRTPPacket* pk)
   tickOfLastPacket = xTaskGetTickCount();
 }
 
-static void genericLocHandle(CRTPPacket* pk)
-{
+static void genericLocHandle(CRTPPacket* pk) {
   uint8_t type = pk->data[0];
   if (pk->size < 1) return;
 
@@ -192,8 +184,7 @@ static void genericLocHandle(CRTPPacket* pk)
   }
 }
 
-static void extPositionPackedHandler(CRTPPacket* pk)
-{
+static void extPositionPackedHandler(CRTPPacket* pk) {
   uint8_t numItems = pk->size / sizeof(extPositionPackedItem);
   for (uint8_t i = 0; i < numItems; ++i) {
     const extPositionPackedItem* item = (const extPositionPackedItem*)&pk->data[i * sizeof(extPositionPackedItem)];
@@ -209,8 +200,7 @@ static void extPositionPackedHandler(CRTPPacket* pk)
   }
 }
 
-void locSrvSendPacket(locsrv_t type, uint8_t *data, uint8_t length)
-{
+void locSrvSendPacket(locsrv_t type, uint8_t *data, uint8_t length) {
   CRTPPacket pk;
 
   ASSERT(length < CRTP_MAX_DATA_SIZE);
@@ -221,20 +211,17 @@ void locSrvSendPacket(locsrv_t type, uint8_t *data, uint8_t length)
   crtpSendPacket(&pk);
 }
 
-void locSrvSendRangeFloat(uint8_t id, float range)
-{
+void locSrvSendRangeFloat(uint8_t id, float range) {
   rangePacket *rp = (rangePacket *)pkRange.data;
 
   ASSERT(rangeIndex <= NBR_OF_RANGES_IN_PACKET);
 
-  if (enableRangeStreamFloat)
-  {
+  if (enableRangeStreamFloat) {
     rp->ranges[rangeIndex].id = id;
     rp->ranges[rangeIndex].range = range;
     rangeIndex++;
 
-    if (rangeIndex >= 5)
-    {
+    if (rangeIndex >= 5) {
       rp->type = RANGE_STREAM_FLOAT;
       pkRange.port = CRTP_PORT_LOCALIZATION;
       pkRange.channel = GENERIC_TYPE;

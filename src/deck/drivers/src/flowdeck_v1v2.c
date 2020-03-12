@@ -130,8 +130,7 @@ static void flowdeckTask(void *param) {
   }
 }
 
-static void flowdeck1Init()
-{
+static void flowdeck1Init() {
   if (isInit1 || isInit2) {
     return;
   }
@@ -140,8 +139,7 @@ static void flowdeck1Init()
   const DeckDriver *zRanger = deckFindDriverByName("bcZRanger");
   zRanger->init(NULL);
 
-  if (pmw3901Init(NCS_PIN))
-  {
+  if (pmw3901Init(NCS_PIN)) {
     xTaskCreate(flowdeckTask, FLOW_TASK_NAME, FLOW_TASK_STACKSIZE, NULL,
                 FLOW_TASK_PRI, NULL);
 
@@ -149,8 +147,7 @@ static void flowdeck1Init()
   }
 }
 
-static bool flowdeck1Test()
-{
+static bool flowdeck1Test() {
   if (!isInit1) {
     DEBUG_PRINT("Error while initializing the PMW3901 sensor\n");
   }
@@ -175,8 +172,7 @@ static const DeckDriver flowdeck1_deck = {
 
 DECK_DRIVER(flowdeck1_deck);
 
-static void flowdeck2Init()
-{
+static void flowdeck2Init() {
   if (isInit1 || isInit2) {
     return;
   }
@@ -185,8 +181,7 @@ static void flowdeck2Init()
   const DeckDriver *zRanger = deckFindDriverByName("bcZRanger2");
   zRanger->init(NULL);
 
-  if (pmw3901Init(NCS_PIN))
-  {
+  if (pmw3901Init(NCS_PIN)) {
     xTaskCreate(flowdeckTask, FLOW_TASK_NAME, FLOW_TASK_STACKSIZE, NULL,
                 FLOW_TASK_PRI, NULL);
 
@@ -194,8 +189,7 @@ static void flowdeck2Init()
   }
 }
 
-static bool flowdeck2Test()
-{
+static bool flowdeck2Test() {
   if (!isInit2) {
     DEBUG_PRINT("Error while initializing the PMW3901 sensor\n");
   }

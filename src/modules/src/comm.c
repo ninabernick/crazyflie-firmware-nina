@@ -43,8 +43,7 @@
 
 static bool isInit;
 
-void commInit(void)
-{
+void commInit(void) {
   if (isInit)
     return;
 
