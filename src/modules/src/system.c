@@ -63,6 +63,8 @@
 #include "sysload.h"
 #include "deck.h"
 #include "extrx.h"
+// guojun: add screen
+#include "cfal12864g.h"
 
 /* Private variable */
 static bool selftestPassed;
@@ -76,8 +78,7 @@ xSemaphoreHandle canStartMutex;
 static void systemTask(void *arg);
 
 /* Public functions */
-void systemLaunch(void)
-{
+void systemLaunch(void) {
   xTaskCreate(systemTask, SYSTEM_TASK_NAME,
               SYSTEM_TASK_STACKSIZE, NULL,
               SYSTEM_TASK_PRI, NULL);
@@ -85,8 +86,7 @@ void systemLaunch(void)
 }
 
 // This must be the first module to be initialized!
-void systemInit(void)
-{
+void systemInit(void) {
   if(isInit)
     return;
 
@@ -124,8 +124,7 @@ void systemInit(void)
   isInit = true;
 }
 
-bool systemTest()
-{
+bool systemTest() {
   bool pass=isInit;
 
   pass &= ledseqTest();
@@ -137,8 +136,7 @@ bool systemTest()
 
 /* Private functions implementation */
 
-void systemTask(void *arg)
-{
+void systemTask(void *arg) {
   bool pass = true;
 
   ledInit();
@@ -159,14 +157,16 @@ void systemTask(void *arg)
   systemInit();
   commInit();
   commanderInit();
-
+  // guojun: add screen
+  screenCFAL12864GInit();
+  
   StateEstimatorType estimator = anyEstimator;
   deckInit();
   estimator = deckGetRequiredEstimator();
   stabilizerInit(estimator);
 
-  if (deckGetRequiredLowInterferenceRadioMode() && platformConfigPhysicalLayoutAntennasAreClose())
-  {
+  if (deckGetRequiredLowInterferenceRadioMode() 
+    && platformConfigPhysicalLayoutAntennasAreClose()) {
     platformSetLowInterferenceRadioMode();
   }
   soundInit();
@@ -188,34 +188,26 @@ void systemTask(void *arg)
   pass &= watchdogNormalStartTest();
 
   //Start the firmware
-  if(pass)
-  {
+  if(pass) {
     selftestPassed = 1;
     systemStart();
     soundSetEffect(SND_STARTUP);
     ledseqRun(SYS_LED, seq_alive);
     ledseqRun(LINK_LED, seq_testPassed);
-  }
-  else
-  {
+  } else {
     selftestPassed = 0;
-    if (systemTest())
-    {
-      while(1)
-      {
+    if (systemTest()) {
+      while(1) {
         ledseqRun(SYS_LED, seq_testPassed); //Red passed == not passed!
         vTaskDelay(M2T(2000));
         // System can be forced to start by setting the param to 1 from the cfclient
-        if (selftestPassed)
-        {
+        if (selftestPassed) {
 	        DEBUG_PRINT("Start forced.\n");
           systemStart();
           break;
         }
       }
-    }
-    else
-    {
+    } else {
       ledInit();
       ledSet(SYS_LED, true);
     }
@@ -231,16 +223,14 @@ void systemTask(void *arg)
 
 
 /* Global system variables */
-void systemStart()
-{
+void systemStart() {
   xSemaphoreGive(canStartMutex);
 #ifndef DEBUG
   watchdogInit();
 #endif
 }
 
-void systemWaitStart(void)
-{
+void systemWaitStart(void) {
   //This permits to guarantee that the system task is initialized before other
   //tasks waits for the start event.
   while(!isInit)
@@ -250,24 +240,20 @@ void systemWaitStart(void)
   xSemaphoreGive(canStartMutex);
 }
 
-void systemSetCanFly(bool val)
-{
+void systemSetCanFly(bool val) {
   canFly = val;
 }
 
-bool systemCanFly(void)
-{
+bool systemCanFly(void) {
   return canFly;
 }
 
-void vApplicationIdleHook( void )
-{
+void vApplicationIdleHook(void) {
   static uint32_t tickOfLatestWatchdogReset = M2T(0);
 
   portTickType tickCount = xTaskGetTickCount();
 
-  if (tickCount - tickOfLatestWatchdogReset > M2T(WATCHDOG_RESET_PERIOD_MS))
-  {
+  if (tickCount - tickOfLatestWatchdogReset > M2T(WATCHDOG_RESET_PERIOD_MS)) {
     tickOfLatestWatchdogReset = tickCount;
     watchdogReset();
   }

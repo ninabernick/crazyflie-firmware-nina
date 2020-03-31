@@ -47,12 +47,12 @@ typedef enum {
   CRTP_PORT_SETPOINT_HL      = 0x08,
   CRTP_PORT_SETPOSITION      = 0x09, // guojun: add a new port for position hold
   CRTP_PORT_DEBUG            = 0x0A, // guojun: add a debug port
+  CRTP_PORT_TEXT             = 0x0B, // guojun: add a text transmisstion port
   CRTP_PORT_PLATFORM         = 0x0D,
   CRTP_PORT_LINK             = 0x0F,
 } CRTPPort;
 
-typedef struct _CRTPPacket
-{
+typedef struct _CRTPPacket {
   uint8_t size;                         //< Size of data
   union {
     struct {
@@ -72,7 +72,7 @@ typedef struct _CRTPPacket
       };
       uint8_t data[CRTP_MAX_DATA_SIZE]; //< Data
     };
-    uint8_t raw[CRTP_MAX_DATA_SIZE+1];  //< The full packet "raw"
+    uint8_t raw[CRTP_MAX_DATA_SIZE + 1];  //< The full packet "raw"
   };
 } __attribute__((packed)) CRTPPacket;
 

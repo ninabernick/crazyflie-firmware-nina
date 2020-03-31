@@ -81,8 +81,7 @@ static xQueueHandle queues[CRTP_NBR_OF_PORTS];
 static volatile CrtpCallback callbacks[CRTP_NBR_OF_PORTS];
 static void updateStats();
 
-void crtpInit(void)
-{
+void crtpInit(void) {
   if(isInit)
     return;
 
@@ -100,29 +99,25 @@ void crtpInit(void)
   isInit = true;
 }
 
-bool crtpTest(void)
-{
+bool crtpTest(void) {
   return isInit;
 }
 
-void crtpInitTaskQueue(CRTPPort portId)
-{
+void crtpInitTaskQueue(CRTPPort portId) {
   ASSERT(queues[portId] == NULL);
   
   queues[portId] = xQueueCreate(CRTP_RX_QUEUE_SIZE, sizeof(CRTPPacket));
   DEBUG_QUEUE_MONITOR_REGISTER(queues[portId]);
 }
 
-int crtpReceivePacket(CRTPPort portId, CRTPPacket *p)
-{
+int crtpReceivePacket(CRTPPort portId, CRTPPacket *p) {
   ASSERT(queues[portId]);
   ASSERT(p);
     
   return xQueueReceive(queues[portId], p, 0);
 }
 
-int crtpReceivePacketBlock(CRTPPort portId, CRTPPacket *p)
-{
+int crtpReceivePacketBlock(CRTPPort portId, CRTPPacket *p) {
   ASSERT(queues[portId]);
   ASSERT(p);
   

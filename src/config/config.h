@@ -124,12 +124,17 @@
 #define CMD_HIGH_LEVEL_TASK_NAME "CMDHL"
 #define MULTIRANGER_TASK_NAME   "MR"
 
-//Task stack sizes
-#define SYSTEM_TASK_STACKSIZE         (2* configMINIMAL_STACK_SIZE)
+/* guojun: add screen task */
+#define SCREEN_TASK_NAME        "SCREEN"
+#define SCREEN_TASK_STACKSIZE         configMINIMAL_STACK_SIZE
+#define SCREEN_TASK_PRI        3
+
+// Task stack sizes
+#define SYSTEM_TASK_STACKSIZE         (2 * configMINIMAL_STACK_SIZE)
 #define ADC_TASK_STACKSIZE            configMINIMAL_STACK_SIZE
 #define PM_TASK_STACKSIZE             configMINIMAL_STACK_SIZE
 #define CRTP_TX_TASK_STACKSIZE        configMINIMAL_STACK_SIZE
-#define CRTP_RX_TASK_STACKSIZE        (2* configMINIMAL_STACK_SIZE)
+#define CRTP_RX_TASK_STACKSIZE        (2 * configMINIMAL_STACK_SIZE)
 #define CRTP_RXTX_TASK_STACKSIZE      configMINIMAL_STACK_SIZE
 #define LOG_TASK_STACKSIZE            configMINIMAL_STACK_SIZE
 #define MEM_TASK_STACKSIZE            (2 * configMINIMAL_STACK_SIZE)

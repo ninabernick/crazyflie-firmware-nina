@@ -31,14 +31,17 @@
 #include "crtp.h"
 #include "log.h"
 #include "debug.h"
+#include "cfal12864g.h"
 
 
 static bool isInit;
 
 static void commanderCrtpCB(CRTPPacket* pk);
 
-// leo: add a debug function
+// guojun: add a debug function
 static void commanderCrtpDebug(CRTPPacket* pk);
+// guojun: add the text set function
+static void commanderSetText(CRTPPacket* pk);
 
 void crtpCommanderInit(void) {
   if(isInit) {
@@ -50,6 +53,7 @@ void crtpCommanderInit(void) {
   crtpRegisterPortCB(CRTP_PORT_SETPOSITION, commanderCrtpCB); // guojun: add set position port
   crtpRegisterPortCB(CRTP_PORT_SETPOINT, commanderCrtpCB);
   crtpRegisterPortCB(CRTP_PORT_SETPOINT_GENERIC, commanderCrtpCB);
+  crtpRegisterPortCB(CRTP_PORT_TEXT, commanderSetText);
 
   crtpRegisterPortCB(CRTP_PORT_DEBUG, commanderCrtpDebug);
   isInit = true;
@@ -85,4 +89,9 @@ struct debugStructure {
 static void commanderCrtpDebug(CRTPPacket* pk) {
   struct debugStructure *data = (struct debugStructure *) (char*)pk->data;
   motorsSetValue(data->id, data->value);
+}
+
+static void commanderSetText(CRTPPacket* pk) {
+  struct textContent_t *ct = (struct textContent_t *)(char*)pk;
+  screenTextSet(ct);
 }

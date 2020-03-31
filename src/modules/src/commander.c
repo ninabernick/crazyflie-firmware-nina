@@ -47,8 +47,7 @@ QueueHandle_t setpointQueue;
 QueueHandle_t priorityQueue;
 
 /* Public functions */
-void commanderInit(void)
-{
+void commanderInit(void) {
   setpointQueue = xQueueCreate(1, sizeof(setpoint_t));
   ASSERT(setpointQueue);
   xQueueSend(setpointQueue, &nullSetpoint, 0);
@@ -64,8 +63,7 @@ void commanderInit(void)
   isInit = true;
 }
 
-void commanderSetSetpoint(setpoint_t *setpoint, int priority)
-{
+void commanderSetSetpoint(setpoint_t *setpoint, int priority) {
   int currentPriority;
   xQueuePeek(priorityQueue, &currentPriority, 0);
 
@@ -77,8 +75,7 @@ void commanderSetSetpoint(setpoint_t *setpoint, int priority)
   }
 }
 
-void commanderGetSetpoint(setpoint_t *setpoint, const state_t *state)
-{
+void commanderGetSetpoint(setpoint_t *setpoint, const state_t *state) {
   xQueuePeek(setpointQueue, setpoint, 0);
   lastUpdate = setpoint->timestamp;
   uint32_t currentTime = xTaskGetTickCount();

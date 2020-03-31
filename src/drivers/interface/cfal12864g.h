@@ -102,6 +102,13 @@
 
 #define SCREEN_FRESH_RATE_HZ            30
 
+#define MAX_CONTENT_NUMBER				31
+struct textContent_t {
+  uint8_t num;
+  char ct[MAX_CONTENT_NUMBER];
+};
+
 void screenCFAL12864GInit(void);
+void screenTextSet(textContent_t *ct);
 
 #endif // __SCREEN_CFAL12864G_H__
