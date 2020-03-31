@@ -40,22 +40,19 @@ static platformConfig_t configs[] = {
     .sensorImplementation = SensorImplementation_mpu9250_lps25h,
     .physicalLayoutAntennasAreClose = true,
     .motorMap = motorMapDefaultBrushed,
-  },
-  {
+  }, {
     .deviceType = "CF21",
     .deviceTypeName = "Crazyflie 2.1",
     .sensorImplementation = SensorImplementation_bmi088_bmp388,
     .physicalLayoutAntennasAreClose = false,
     .motorMap = motorMapDefaultBrushed,
-  },
-  {  // Old ID of Crzyflie Bolt
+  }, {  // Old ID of Crzyflie Bolt
     .deviceType = "RZ10",
     .deviceTypeName = "Crazyflie Bolt",
     .sensorImplementation = SensorImplementation_bmi088_spi_bmp388,
     .physicalLayoutAntennasAreClose = false,
     .motorMap = motorMapIFlight,
-  },
-  {
+  }, {
     .deviceType = "CB10",
     .deviceTypeName = "Crazyflie Bolt",
     .sensorImplementation = SensorImplementation_bmi088_spi_bmp388,

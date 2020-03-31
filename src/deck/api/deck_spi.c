@@ -43,22 +43,22 @@
 #define SPI_IRQ_HANDLER               SPI1_IRQHandler
 #define SPI_IRQn                      SPI1_IRQn
 
-#define SPI_DMA_IRQ_PRIO        (NVIC_HIGH_PRI)
-#define SPI_DMA                 DMA2
-#define SPI_DMA_CLK             RCC_AHB1Periph_DMA2
-#define SPI_DMA_CLK_INIT        RCC_AHB1PeriphClockCmd
+#define SPI_DMA_IRQ_PRIO              (NVIC_HIGH_PRI)
+#define SPI_DMA                       DMA2
+#define SPI_DMA_CLK                   RCC_AHB1Periph_DMA2
+#define SPI_DMA_CLK_INIT              RCC_AHB1PeriphClockCmd
 
-#define SPI_TX_DMA_STREAM       DMA2_Stream5
-#define SPI_TX_DMA_IRQ          DMA2_Stream5_IRQn
-#define SPI_TX_DMA_IRQHandler   DMA2_Stream5_IRQHandler
-#define SPI_TX_DMA_CHANNEL      DMA_Channel_3
-#define SPI_TX_DMA_FLAG_TCIF    DMA_FLAG_TCIF5
+#define SPI_TX_DMA_STREAM             DMA2_Stream5
+#define SPI_TX_DMA_IRQ                DMA2_Stream5_IRQn
+#define SPI_TX_DMA_IRQHandler         DMA2_Stream5_IRQHandler
+#define SPI_TX_DMA_CHANNEL            DMA_Channel_3
+#define SPI_TX_DMA_FLAG_TCIF          DMA_FLAG_TCIF5
 
-#define SPI_RX_DMA_STREAM       DMA2_Stream0
-#define SPI_RX_DMA_IRQ          DMA2_Stream0_IRQn
-#define SPI_RX_DMA_IRQHandler   DMA2_Stream0_IRQHandler
-#define SPI_RX_DMA_CHANNEL      DMA_Channel_3
-#define SPI_RX_DMA_FLAG_TCIF    DMA_FLAG_TCIF0
+#define SPI_RX_DMA_STREAM             DMA2_Stream0
+#define SPI_RX_DMA_IRQ                DMA2_Stream0_IRQn
+#define SPI_RX_DMA_IRQHandler         DMA2_Stream0_IRQHandler
+#define SPI_RX_DMA_CHANNEL            DMA_Channel_3
+#define SPI_RX_DMA_FLAG_TCIF          DMA_FLAG_TCIF0
 
 #define SPI_SCK_PIN                   GPIO_Pin_5
 #define SPI_SCK_GPIO_PORT             GPIOA
@@ -89,8 +89,7 @@ static SemaphoreHandle_t spiMutex;
 static void spiDMAInit();
 static void spiConfigureWithSpeed(uint16_t baudRatePrescaler);
 
-void spiBegin(void)
-{
+void spiBegin(void) {
   GPIO_InitTypeDef GPIO_InitStructure;
 
   // binary semaphores created using xSemaphoreCreateBinary() are created in a state
@@ -146,8 +145,7 @@ void spiBegin(void)
   isInit = true;
 }
 
-static void spiDMAInit()
-{
+static void spiDMAInit() {
   DMA_InitTypeDef  DMA_InitStructure;
   NVIC_InitTypeDef NVIC_InitStructure;
 
@@ -190,8 +188,7 @@ static void spiDMAInit()
   NVIC_Init(&NVIC_InitStructure);
 }
 
-static void spiConfigureWithSpeed(uint16_t baudRatePrescaler)
-{
+static void spiConfigureWithSpeed(uint16_t baudRatePrescaler) {
   SPI_InitTypeDef  SPI_InitStructure;
 
   SPI_I2S_DeInit(SPI);
@@ -214,13 +211,11 @@ static void spiConfigureWithSpeed(uint16_t baudRatePrescaler)
   SPI_Init(SPI, &SPI_InitStructure);
 }
 
-bool spiTest(void)
-{
+bool spiTest(void) {
   return isInit;
 }
 
-bool spiExchange(size_t length, const uint8_t * data_tx, uint8_t * data_rx)
-{
+bool spiExchange(size_t length, const uint8_t * data_tx, uint8_t * data_rx) {
   // DMA already configured, just need to set memory addresses
   SPI_TX_DMA_STREAM->M0AR = (uint32_t)data_tx;
   SPI_TX_DMA_STREAM->NDTR = length;
@@ -256,19 +251,16 @@ bool spiExchange(size_t length, const uint8_t * data_tx, uint8_t * data_rx)
   return result;
 }
 
-void spiBeginTransaction(uint16_t baudRatePrescaler)
-{
+void spiBeginTransaction(uint16_t baudRatePrescaler) {
   xSemaphoreTake(spiMutex, portMAX_DELAY);
   spiConfigureWithSpeed(baudRatePrescaler);
 }
 
-void spiEndTransaction()
-{
+void spiEndTransaction() {
   xSemaphoreGive(spiMutex);
 }
 
-void __attribute__((used)) SPI_TX_DMA_IRQHandler(void)
-{
+void __attribute__((used)) SPI_TX_DMA_IRQHandler(void) {
   portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
   // Stop and cleanup DMA stream
@@ -293,8 +285,7 @@ void __attribute__((used)) SPI_TX_DMA_IRQHandler(void)
   }
 }
 
-void __attribute__((used)) SPI_RX_DMA_IRQHandler(void)
-{
+void __attribute__((used)) SPI_RX_DMA_IRQHandler(void) {
   portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
   // Stop and cleanup DMA stream
@@ -313,8 +304,7 @@ void __attribute__((used)) SPI_RX_DMA_IRQHandler(void)
   // Give the semaphore, allowing the SPI transaction to complete
   xSemaphoreGiveFromISR(rxComplete, &xHigherPriorityTaskWoken);
 
-  if (xHigherPriorityTaskWoken)
-  {
+  if (xHigherPriorityTaskWoken) {
     portYIELD();
   }
 }

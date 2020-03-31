@@ -25,15 +25,13 @@
  */
 #include <string.h>
 
+/*ST includes */
 #include "stm32fxxx.h"
 
 /*FreeRtos includes*/
 #include "FreeRTOS.h"
 #include "queue.h"
 #include "semphr.h"
-
-/*ST includes */
-#include "stm32fxxx.h"
 
 #include "config.h"
 #include "nvic.h"
@@ -65,8 +63,7 @@ static uint32_t initialDMACount;
   * Configures the UART DMA. Mainly used for FreeRTOS trace
   * data transfer.
   */
-static void uart1DmaInit(void)
-{
+static void uart1DmaInit(void) {
 #ifdef ENABLE_UART1_DMA
   NVIC_InitTypeDef NVIC_InitStructure;
 

@@ -141,8 +141,7 @@ static uint8_t spiRxBuffer[SPI_MAX_DMA_TRANSACTION_SIZE + 1];
 static xSemaphoreHandle spiTxDMAComplete;
 static xSemaphoreHandle spiRxDMAComplete;
 
-typedef struct
-{
+typedef struct {
   Axis3f     bias;
   Axis3f     variance;
   Axis3f     mean;
@@ -214,8 +213,7 @@ static void sensorsAccAlignToGravity(Axis3f* in, Axis3f* out);
 /***********************
  * SPI private methods *
  ***********************/
-static char spiSendByte(char byte)
-{
+static char spiSendByte(char byte) {
   /* Loop while DR register in not emplty */
   while (SPI_I2S_GetFlagStatus(BMI088_SPI, SPI_I2S_FLAG_TXE) == RESET);
 
@@ -229,13 +227,11 @@ static char spiSendByte(char byte)
   return SPI_I2S_ReceiveData(BMI088_SPI);
 }
 
-static char spiReceiveByte()
-{
+static char spiReceiveByte() {
   return spiSendByte(DUMMY_BYTE);
 }
 
-static void spiDMATransaction(uint8_t reg_addr, uint8_t *reg_data, uint16_t len)
-{
+static void spiDMATransaction(uint8_t reg_addr, uint8_t *reg_data, uint16_t len) {
   ASSERT(len < SPI_MAX_DMA_TRANSACTION_SIZE);
 
   // Disable peripheral before setting up for duplex DMA

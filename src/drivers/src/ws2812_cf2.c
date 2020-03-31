@@ -62,8 +62,7 @@ static union {
     } __attribute__((packed));
 } led_dma;
 
-void ws2812Init(void)
-{
+void ws2812Init(void) {
 	uint16_t PrescalerValue;
 
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
@@ -147,21 +146,20 @@ void ws2812Init(void)
 
 }
 
-static void fillLed(uint16_t *buffer, uint8_t *color)
-{
-    int i;
+static void fillLed(uint16_t *buffer, uint8_t *color) {
+  int i;
 
-    for(i=0; i<8; i++) // GREEN data
-	{
-	    buffer[i] = ((color[1]<<i) & 0x0080) ? TIMING_ONE:TIMING_ZERO;
+  for (i = 0; i < 8; i++) {
+    // GREEN data
+    buffer[i] = ((color[1]<<i) & 0x0080) ? TIMING_ONE:TIMING_ZERO;
 	}
-	for(i=0; i<8; i++) // RED
-	{
-	    buffer[8+i] = ((color[0]<<i) & 0x0080) ? TIMING_ONE:TIMING_ZERO;
+	for (i = 0; i < 8; i++) {
+    // RED
+    buffer[8 + i] = ((color[0]<<i) & 0x0080) ? TIMING_ONE:TIMING_ZERO;
 	}
-	for(i=0; i<8; i++) // BLUE
-	{
-	    buffer[16+i] = ((color[2]<<i) & 0x0080) ? TIMING_ONE:TIMING_ZERO;
+	for (i = 0; i < 8; i++) {
+    // BLUE
+    buffer[16 + i] = ((color[2]<<i) & 0x0080) ? TIMING_ONE:TIMING_ZERO;
 	}
 }
 
@@ -169,10 +167,9 @@ static int current_led = 0;
 static int total_led = 0;
 static uint8_t (*color_led)[3] = NULL;
 
-void ws2812Send(uint8_t (*color)[3], uint16_t len)
-{
+void ws2812Send(uint8_t (*color)[3], uint16_t len) {
     int i;
-	if(len<1) return;
+	if (len < 1) return;
 
 	//Wait for previous transfer to be finished
 	xSemaphoreTake(allLedDone, portMAX_DELAY);
@@ -182,18 +179,18 @@ void ws2812Send(uint8_t (*color)[3], uint16_t len)
 	total_led = len;
 	color_led = color;
 
-    for(i=0; (i<LED_PER_HALF) && (current_led<total_led+2); i++, current_led++) {
-        if (current_led<total_led)
-            fillLed(led_dma.begin+(24*i), color_led[current_led]);
+    for (i = 0; (i < LED_PER_HALF) && (current_led < total_led + 2); i++, current_led++) {
+        if (current_led < total_led)
+            fillLed(led_dma.begin + (24 * i), color_led[current_led]);
         else
-            bzero(led_dma.begin+(24*i), sizeof(led_dma.begin));
+            bzero(led_dma.begin + (24 * i), sizeof(led_dma.begin));
     }
 
-    for(i=0; (i<LED_PER_HALF) && (current_led<total_led+2); i++, current_led++) {
-        if (current_led<total_led)
-            fillLed(led_dma.end+(24*i), color_led[current_led]);
+    for (i = 0; (i < LED_PER_HALF) && (current_led < total_led + 2); i++, current_led++) {
+        if (current_led < total_led)
+            fillLed(led_dma.end + (24 * i), color_led[current_led]);
         else
-            bzero(led_dma.end+(24*i), sizeof(led_dma.end));
+            bzero(led_dma.end + (24 * i), sizeof(led_dma.end));
     }
 
 	DMA1_Stream5->NDTR = sizeof(led_dma.buffer) / sizeof(led_dma.buffer[0]); // load number of bytes to be transferred
@@ -201,38 +198,34 @@ void ws2812Send(uint8_t (*color)[3], uint16_t len)
 	TIM_Cmd(TIM3, ENABLE);                      // Go!!!
 }
 
-void ws2812DmaIsr(void)
-{
+void ws2812DmaIsr(void) {
     portBASE_TYPE xHigherPriorityTaskWoken;
     uint16_t * buffer;
     int i;
 
-    if (total_led == 0)
-    {
+    if (total_led == 0) {
       TIM_Cmd(TIM3, DISABLE);
     	DMA_Cmd(DMA1_Stream5, DISABLE);
     }
 
-    if (DMA_GetITStatus(DMA1_Stream5, DMA_IT_HTIF5))
-    {
+    if (DMA_GetITStatus(DMA1_Stream5, DMA_IT_HTIF5)) {
       DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_HTIF5);
       buffer = led_dma.begin;
     }
 
-    if (DMA_GetITStatus(DMA1_Stream5, DMA_IT_TCIF5))
-    {
+    if (DMA_GetITStatus(DMA1_Stream5, DMA_IT_TCIF5)) {
       DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_TCIF5);
       buffer = led_dma.end;
     }
 
-    for(i=0; (i<LED_PER_HALF) && (current_led<total_led+2); i++, current_led++) {
-      if (current_led<total_led)
-          fillLed(buffer+(24*i), color_led[current_led]);
+    for (i = 0; (i < LED_PER_HALF) && (current_led < total_led + 2); i++, current_led++) {
+      if (current_led < total_led)
+          fillLed(buffer + (24 * i), color_led[current_led]);
       else
-          bzero(buffer+(24*i), sizeof(led_dma.end));
+          bzero(buffer + (24 * i), sizeof(led_dma.end));
     }
 
-    if (current_led >= total_led+2) {
+    if (current_led >= total_led + 2) {
       xSemaphoreGiveFromISR(allLedDone, &xHigherPriorityTaskWoken);
 
 	    TIM_Cmd(TIM3, DISABLE); 					// disable Timer 3

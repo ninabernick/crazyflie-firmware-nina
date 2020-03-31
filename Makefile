@@ -33,7 +33,7 @@ include tools/make/platform.mk
 
 CFLAGS += -DCRAZYFLIE_FWs
 # leo; replace a cb mcu with cf one
-CFLAGS += -DDEVICE_TYPE_STRING_FORCE="CB10"
+# CFLAGS += -DDEVICE_TYPE_STRING_FORCE="CB10"
 
 ######### Stabilizer configuration ##########
 ## These are set by the platform (see tools/make/platforms/*.mk), can be overwritten here
@@ -129,6 +129,8 @@ PROJ_OBJ += bmi055_accel.o bmi055_gyro.o bmi160.o bmp280.o bstdr_comm_support.o 
 PROJ_OBJ += bmi088_accel.o bmi088_gyro.o bmi088_fifo.o bmp3.o
 PROJ_OBJ += pca9685.o vl53l0x.o pca95x4.o pca9555.o vl53l1x.o pmw3901.o
 PROJ_OBJ += amg8833.o lh_bootloader.o
+# guojun: add cfal12864g
+# PROJ_OBJ += cfal12864g.o
 
 # USB Files
 PROJ_OBJ += usb_bsp.o usblink.o usbd_desc.o usb.o

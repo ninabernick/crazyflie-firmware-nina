@@ -40,8 +40,7 @@ static EstimatorFcns estimatorFunctions[] = {
     .estimatorEnqueueTOF = NOT_IMPLEMENTED,
     .estimatorEnqueueAbsoluteHeight = NOT_IMPLEMENTED,
     .estimatorEnqueueFlow = NOT_IMPLEMENTED,
-  }, // Any estimator
-  {
+  }, {
     .init = estimatorComplementaryInit,
     .test = estimatorComplementaryTest,
     .update = estimatorComplementary,
@@ -53,8 +52,7 @@ static EstimatorFcns estimatorFunctions[] = {
     .estimatorEnqueueTOF = NOT_IMPLEMENTED,
     .estimatorEnqueueAbsoluteHeight = NOT_IMPLEMENTED,
     .estimatorEnqueueFlow = NOT_IMPLEMENTED,
-  },
-  {
+  }, {
     .init = estimatorKalmanInit,
     .test = estimatorKalmanTest,
     .update = estimatorKalman,
@@ -66,7 +64,7 @@ static EstimatorFcns estimatorFunctions[] = {
     .estimatorEnqueueTOF = estimatorKalmanEnqueueTOF,
     .estimatorEnqueueAbsoluteHeight = estimatorKalmanEnqueueAbsoluteHeight,
     .estimatorEnqueueFlow = estimatorKalmanEnqueueFlow,
-    },
+  },
 };
 
 

@@ -206,11 +206,10 @@ void DONT_DISCARD UsageFault_Handler(void)
 /**
  * @brief  This function handles Debug Monitor exception.
  */
-void DONT_DISCARD DebugMon_Handler(void)
-{
+void DONT_DISCARD DebugMon_Handler(void) {
 }
 
-void DONT_DISCARD DMA1_Stream5_IRQHandler(void)
-{
-  ws2812DmaIsr();
-}
+// guojun: delete this function for I2C DMA stream change
+// void DONT_DISCARD DMA1_Stream5_IRQHandler(void) {
+//   ws2812DmaIsr();
+// }

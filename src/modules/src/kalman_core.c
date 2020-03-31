@@ -189,7 +189,7 @@ void kalmanCoreInit(kalmanCoreData_t* this) {
   // then set the initial rotation matrix to the identity. This only affects
   // the first prediction step, since in the finalization, after shifting
   // attitude errors into the attitude state, the rotation matrix is updated.
-  for(int i=0; i<3; i++) { for(int j=0; j<3; j++) { this->R[i][j] = i==j ? 1 : 0; }}
+  for (int i = 0; i < 3; i++) { for (int j = 0; j < 3; j++) { this->R[i][j] = i==j ? 1 : 0; }}
 
   for (int i=0; i< KC_STATE_DIM; i++) {
     for (int j=0; j < KC_STATE_DIM; j++) {
@@ -217,8 +217,7 @@ void kalmanCoreInit(kalmanCoreData_t* this) {
   this->baroReferenceHeight = 0.0;
 }
 
-static void scalarUpdate(kalmanCoreData_t* this, arm_matrix_instance_f32 *Hm, float error, float stdMeasNoise)
-{
+static void scalarUpdate(kalmanCoreData_t* this, arm_matrix_instance_f32 *Hm, float error, float stdMeasNoise) {
   // The Kalman gain as a column vector
   static float K[KC_STATE_DIM];
   static arm_matrix_instance_f32 Km = {KC_STATE_DIM, 1, (float *)K};
@@ -248,14 +247,14 @@ static void scalarUpdate(kalmanCoreData_t* this, arm_matrix_instance_f32 *Hm, fl
   mat_mult(&this->Pm, &HTm, &PHTm); // PH'
   float R = stdMeasNoise*stdMeasNoise;
   float HPHR = R; // HPH' + R
-  for (int i=0; i<KC_STATE_DIM; i++) { // Add the element of HPH' to the above
-    HPHR += Hm->pData[i]*PHTd[i]; // this obviously only works if the update is scalar (as in this function)
+  for (int i = 0; i < KC_STATE_DIM; i++) { // Add the element of HPH' to the above
+    HPHR += Hm->pData[i] * PHTd[i]; // this obviously only works if the update is scalar (as in this function)
   }
   ASSERT(!isnan(HPHR));
 
   // ====== MEASUREMENT UPDATE ======
   // Calculate the Kalman gain and perform the state update
-  for (int i=0; i<KC_STATE_DIM; i++) {
+  for (int i = 0; i < KC_STATE_DIM; i++) {
     K[i] = PHTd[i]/HPHR; // kalman gain = (PH' (HPH' + R )^-1)
     this->S[i] = this->S[i] + K[i] * error; // state update
   }
@@ -263,20 +262,20 @@ static void scalarUpdate(kalmanCoreData_t* this, arm_matrix_instance_f32 *Hm, fl
 
   // ====== COVARIANCE UPDATE ======
   mat_mult(&Km, Hm, &tmpNN1m); // KH
-  for (int i=0; i<KC_STATE_DIM; i++) { tmpNN1d[KC_STATE_DIM*i+i] -= 1; } // KH - I
+  for (int i = 0; i < KC_STATE_DIM; i++) { tmpNN1d[KC_STATE_DIM * i + i] -= 1; } // KH - I
   mat_trans(&tmpNN1m, &tmpNN2m); // (KH - I)'
   mat_mult(&tmpNN1m, &this->Pm, &tmpNN3m); // (KH - I)*P
   mat_mult(&tmpNN3m, &tmpNN2m, &this->Pm); // (KH - I)*P*(KH - I)'
   assertStateNotNaN(this);
   // add the measurement variance and ensure boundedness and symmetry
   // TODO: Why would it hit these bounds? Needs to be investigated.
-  for (int i=0; i<KC_STATE_DIM; i++) {
-    for (int j=i; j<KC_STATE_DIM; j++) {
+  for (int i = 0; i < KC_STATE_DIM; i++) {
+    for (int j = i; j < KC_STATE_DIM; j++) {
       float v = K[i] * R * K[j];
-      float p = 0.5f*this->P[i][j] + 0.5f*this->P[j][i] + v; // add measurement noise
+      float p = 0.5f * this->P[i][j] + 0.5f * this->P[j][i] + v; // add measurement noise
       if (isnan(p) || p > MAX_COVARIANCE) {
         this->P[i][j] = this->P[j][i] = MAX_COVARIANCE;
-      } else if ( i==j && p < MIN_COVARIANCE ) {
+      } else if (i == j && p < MIN_COVARIANCE) {
         this->P[i][j] = this->P[j][i] = MIN_COVARIANCE;
       } else {
         this->P[i][j] = this->P[j][i] = p;
@@ -288,8 +287,7 @@ static void scalarUpdate(kalmanCoreData_t* this, arm_matrix_instance_f32 *Hm, fl
 }
 
 
-void kalmanCoreUpdateWithBaro(kalmanCoreData_t* this, baro_t *baro, bool quadIsFlying)
-{
+void kalmanCoreUpdateWithBaro(kalmanCoreData_t* this, baro_t *baro, bool quadIsFlying) {
   float h[KC_STATE_DIM] = {0};
   arm_matrix_instance_f32 H = {1, KC_STATE_DIM, h};
 
@@ -322,8 +320,7 @@ void kalmanCoreUpdateWithPosition(kalmanCoreData_t* this, positionMeasurement_t 
   }
 }
 
-void kalmanCoreUpdateWithPose(kalmanCoreData_t* this, poseMeasurement_t *pose)
-{
+void kalmanCoreUpdateWithPose(kalmanCoreData_t* this, poseMeasurement_t *pose) {
   // a direct measurement of states x, y, and z, and orientation
   // do a scalar update for each state, since this should be faster than updating all together
   for (int i = 0; i < 3; i++) {
@@ -357,8 +354,7 @@ void kalmanCoreUpdateWithPose(kalmanCoreData_t* this, poseMeasurement_t *pose)
   }
 }
 
-void kalmanCoreUpdateWithDistance(kalmanCoreData_t* this, distanceMeasurement_t *d)
-{
+void kalmanCoreUpdateWithDistance(kalmanCoreData_t* this, distanceMeasurement_t *d) {
   // a measurement of distance to point (x, y, z)
   float h[KC_STATE_DIM] = {0};
   arm_matrix_instance_f32 H = {1, KC_STATE_DIM, h};
@@ -370,15 +366,12 @@ void kalmanCoreUpdateWithDistance(kalmanCoreData_t* this, distanceMeasurement_t 
   float measuredDistance = d->distance;
 
   float predictedDistance = arm_sqrt(powf(dx, 2) + powf(dy, 2) + powf(dz, 2));
-  if (predictedDistance != 0.0f)
-  {
+  if (predictedDistance != 0.0f) {
     // The measurement is: z = sqrt(dx^2 + dy^2 + dz^2). The derivative dz/dX gives h.
     h[KC_STATE_X] = dx/predictedDistance;
     h[KC_STATE_Y] = dy/predictedDistance;
     h[KC_STATE_Z] = dz/predictedDistance;
-  }
-  else
-  {
+  } else {
     // Avoid divide by zero
     h[KC_STATE_X] = 1.0f;
     h[KC_STATE_Y] = 0.0f;
@@ -389,10 +382,8 @@ void kalmanCoreUpdateWithDistance(kalmanCoreData_t* this, distanceMeasurement_t 
 }
 
 
-void kalmanCoreUpdateWithTDOA(kalmanCoreData_t* this, tdoaMeasurement_t *tdoa)
-{
-  if (tdoaCount >= 100)
-  {
+void kalmanCoreUpdateWithTDOA(kalmanCoreData_t* this, tdoaMeasurement_t *tdoa) {
+  if (tdoaCount >= 100) {
     /**
      * Measurement equation:
      * dR = dT + d1 - d0
@@ -460,8 +451,7 @@ static float predictedNY;
 static float measuredNX;
 static float measuredNY;
 
-void kalmanCoreUpdateWithFlow(kalmanCoreData_t* this, flowMeasurement_t *flow, sensorData_t *sensors)
-{
+void kalmanCoreUpdateWithFlow(kalmanCoreData_t* this, flowMeasurement_t *flow, sensorData_t *sensors) {
   // Inclusion of flow measurements in the EKF done by two scalar updates
 
   // ~~~ Camera constants ~~~
@@ -528,14 +518,13 @@ void kalmanCoreUpdateWithFlow(kalmanCoreData_t* this, flowMeasurement_t *flow, s
 }
 
 
-void kalmanCoreUpdateWithTof(kalmanCoreData_t* this, tofMeasurement_t *tof)
-{
+void kalmanCoreUpdateWithTof(kalmanCoreData_t* this, tofMeasurement_t *tof) {
   // Updates the filter with a measured distance in the zb direction using the
   float h[KC_STATE_DIM] = {0};
   arm_matrix_instance_f32 H = {1, KC_STATE_DIM, h};
 
   // Only update the filter if the measurement is reliable (\hat{h} -> infty when R[2][2] -> 0)
-  if (fabs(this->R[2][2]) > 0.1 && this->R[2][2] > 0){
+  if (fabs(this->R[2][2]) > 0.1 && this->R[2][2] > 0) {
     float angle = fabsf(acosf(this->R[2][2])) - DEG_TO_RAD * (15.0f / 2.0f);
     if (angle < 0.0f) {
       angle = 0.0f;
@@ -551,13 +540,12 @@ void kalmanCoreUpdateWithTof(kalmanCoreData_t* this, tofMeasurement_t *tof)
     //h[KC_STATE_Z] = 1 / cosf(angle);
 
     // Scalar update
-    scalarUpdate(this, &H, measuredDistance-predictedDistance, tof->stdDev);
+    scalarUpdate(this, &H, measuredDistance - predictedDistance, tof->stdDev);
   }
 }
 
 
-void kalmanCorePredict(kalmanCoreData_t* this, float cmdThrust, Axis3f *acc, Axis3f *gyro, float dt, bool quadIsFlying)
-{
+void kalmanCorePredict(kalmanCoreData_t* this, float cmdThrust, Axis3f *acc, Axis3f *gyro, float dt, bool quadIsFlying) {
   /* Here we discretize (euler forward) and linearise the quadrocopter dynamics in order
    * to push the covariance forward.
    *
@@ -705,8 +693,7 @@ void kalmanCorePredict(kalmanCoreData_t* this, float cmdThrust, Axis3f *acc, Axi
   float tmpSPX, tmpSPY, tmpSPZ;
   float zacc;
 
-  if (quadIsFlying) // only acceleration in z direction
-  {
+  if (quadIsFlying) { // only acceleration in z direction 
     // TODO: In the next lines, can either use cmdThrust/mass, or acc->z. Need to test which is more reliable.
     // cmdThrust's error comes from poorly calibrated mass, and inexact cmdThrust -> thrust map
     // acc->z's error comes from measurement noise and accelerometer scaling
@@ -732,8 +719,7 @@ void kalmanCorePredict(kalmanCoreData_t* this, float cmdThrust, Axis3f *acc, Axi
     this->S[KC_STATE_PX] += dt * (gyro->z * tmpSPY - gyro->y * tmpSPZ - GRAVITY_MAGNITUDE * this->R[2][0]);
     this->S[KC_STATE_PY] += dt * (-gyro->z * tmpSPX + gyro->x * tmpSPZ - GRAVITY_MAGNITUDE * this->R[2][1]);
     this->S[KC_STATE_PZ] += dt * (zacc + gyro->y * tmpSPX - gyro->x * tmpSPY - GRAVITY_MAGNITUDE * this->R[2][2]);
-  }
-  else // Acceleration can be in any direction, as measured by the accelerometer. This occurs, eg. in freefall or while being carried.
+  } else // Acceleration can be in any direction, as measured by the accelerometer. This occurs, eg. in freefall or while being carried.
   {
     // position updates in the body frame (will be rotated to inertial frame)
     dx = this->S[KC_STATE_PX] * dt + acc->x * dt2 / 2.0f;
@@ -779,7 +765,7 @@ void kalmanCorePredict(kalmanCoreData_t* this, float cmdThrust, Axis3f *acc, Axi
   tmpq2 = dq[2]*this->q[0] - dq[3]*this->q[1] + dq[0]*this->q[2] + dq[1]*this->q[3];
   tmpq3 = dq[3]*this->q[0] + dq[2]*this->q[1] - dq[1]*this->q[2] + dq[0]*this->q[3];
 
-  if (! quadIsFlying) {
+  if (!quadIsFlying) {
     float keep = 1.0f - ROLLPITCH_ZERO_REVERSION;
 
     tmpq0 = keep * tmpq0 + ROLLPITCH_ZERO_REVERSION * initialQuaternion[0];
@@ -795,8 +781,7 @@ void kalmanCorePredict(kalmanCoreData_t* this, float cmdThrust, Axis3f *acc, Axi
 }
 
 
-void kalmanCoreAddProcessNoise(kalmanCoreData_t* this, float dt)
-{
+void kalmanCoreAddProcessNoise(kalmanCoreData_t* this, float dt) {
   if (dt > 0)
   {
     this->P[KC_STATE_X][KC_STATE_X] += powf(procNoiseAcc_xy*dt*dt + procNoiseVel*dt + procNoisePos, 2);  // add process noise on position
@@ -830,8 +815,7 @@ void kalmanCoreAddProcessNoise(kalmanCoreData_t* this, float dt)
 
 
 
-void kalmanCoreFinalize(kalmanCoreData_t* this, sensorData_t *sensors, uint32_t tick)
-{
+void kalmanCoreFinalize(kalmanCoreData_t* this, sensorData_t *sensors, uint32_t tick) {
   // Matrix to rotate the attitude covariances once updated
   static float A[KC_STATE_DIM][KC_STATE_DIM];
   static arm_matrix_instance_f32 Am = {KC_STATE_DIM, KC_STATE_DIM, (float *)A};
@@ -944,8 +928,7 @@ void kalmanCoreFinalize(kalmanCoreData_t* this, sensorData_t *sensors, uint32_t 
   assertStateNotNaN(this);
 }
 
-void kalmanCoreExternalizeState(kalmanCoreData_t* this, state_t *state, sensorData_t *sensors, uint32_t tick)
-{
+void kalmanCoreExternalizeState(kalmanCoreData_t* this, state_t *state, sensorData_t *sensors, uint32_t tick) {
   // position state is already in world frame
   state->position = (point_t){
       .timestamp = tick,
@@ -1000,8 +983,7 @@ void kalmanCoreExternalizeState(kalmanCoreData_t* this, state_t *state, sensorDa
 
 // Reset a state to 0 with max covariance
 // If called often, this decouples the state to the rest of the filter
-static void decoupleState(kalmanCoreData_t* this, kalmanCoreStateIdx_t state)
-{
+static void decoupleState(kalmanCoreData_t* this, kalmanCoreStateIdx_t state) {
   // Set all covariance to 0
   for(int i=0; i<KC_STATE_DIM; i++) {
     this->P[state][i] = 0;
@@ -1013,8 +995,7 @@ static void decoupleState(kalmanCoreData_t* this, kalmanCoreStateIdx_t state)
   this->S[state] = 0;
 }
 
-void kalmanCoreDecoupleXY(kalmanCoreData_t* this)
-{
+void kalmanCoreDecoupleXY(kalmanCoreData_t* this) {
   decoupleState(this, KC_STATE_X);
   decoupleState(this, KC_STATE_PX);
   decoupleState(this, KC_STATE_Y);

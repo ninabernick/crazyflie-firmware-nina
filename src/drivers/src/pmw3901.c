@@ -39,8 +39,7 @@
 
 static bool isInit = false;
 
-static void registerWrite(uint32_t csPin, uint8_t reg, uint8_t value)
-{
+static void registerWrite(uint32_t csPin, uint8_t reg, uint8_t value) {
   // Set MSB to 1 for write
   reg |= 0x80u;
 
@@ -60,8 +59,7 @@ static void registerWrite(uint32_t csPin, uint8_t reg, uint8_t value)
   sleepus(200);
 }
 
-static uint8_t registerRead(uint32_t csPin, uint8_t reg)
-{
+static uint8_t registerRead(uint32_t csPin, uint8_t reg) {
   uint8_t data = 0;
   uint8_t dummy = 0;
 
@@ -86,8 +84,7 @@ static uint8_t registerRead(uint32_t csPin, uint8_t reg)
   return data;
 }
 
-static void InitRegisters(uint32_t csPin)
-{
+static void InitRegisters(uint32_t csPin) {
   registerWrite(csPin, 0x7F, 0x00);
   registerWrite(csPin, 0x61, 0xAD);
   registerWrite(csPin, 0x7F, 0x03);
@@ -170,8 +167,7 @@ static void InitRegisters(uint32_t csPin)
   registerWrite(csPin, 0x54, 0x00);
 }
 
-bool pmw3901Init(uint32_t csPin)
-{
+bool pmw3901Init(uint32_t csPin) {
   if (isInit) {
     return true;
   }
@@ -195,8 +191,7 @@ bool pmw3901Init(uint32_t csPin)
 
   DEBUG_PRINT("Motion chip id: 0x%x:0x%x\n", chipId, invChipId);
 
-  if (chipId == 0x49 && invChipId == 0xB6)
-  {
+  if (chipId == 0x49 && invChipId == 0xB6) {
     // Power on reset
     registerWrite(csPin, 0x3a, 0x5a);
     vTaskDelay(M2T(5));
@@ -217,8 +212,7 @@ bool pmw3901Init(uint32_t csPin)
   return isInit;
 }
 
-void pmw3901ReadMotion(uint32_t csPin, motionBurst_t * motion)
-{
+void pmw3901ReadMotion(uint32_t csPin, motionBurst_t * motion) {
   uint8_t address = 0x16;
 
   spiBeginTransaction(SPI_BAUDRATE_2MHZ);

@@ -40,8 +40,7 @@ static void commanderCrtpCB(CRTPPacket* pk);
 // leo: add a debug function
 static void commanderCrtpDebug(CRTPPacket* pk);
 
-void crtpCommanderInit(void)
-{
+void crtpCommanderInit(void) {
   if(isInit) {
     return;
   }
@@ -56,8 +55,7 @@ void crtpCommanderInit(void)
   isInit = true;
 }
 
-static void commanderCrtpCB(CRTPPacket* pk)
-{
+static void commanderCrtpCB(CRTPPacket* pk) {
   static setpoint_t setpoint;
 
   if(pk->port == CRTP_PORT_SETPOINT && pk->channel == 0) {

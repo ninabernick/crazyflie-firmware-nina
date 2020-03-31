@@ -49,11 +49,10 @@
 #endif
 
 // Set the start address 8 step after the VL53L0 dynamic addresses
-static int nextI2CAddress = VL53L1X_DEFAULT_ADDRESS+8;
+static int nextI2CAddress = VL53L1X_DEFAULT_ADDRESS + 8;
 
 
-bool vl53l1xInit(VL53L1_Dev_t *pdev, I2C_Dev *I2Cx)
-{
+bool vl53l1xInit(VL53L1_Dev_t *pdev, I2C_Dev *I2Cx) {
   VL53L1_Error status = VL53L1_ERROR_NONE;
 
   pdev->I2Cx = I2Cx;
@@ -71,16 +70,14 @@ bool vl53l1xInit(VL53L1_Dev_t *pdev, I2C_Dev *I2Cx)
 
   status = VL53L1_DataInit(pdev);
 
-  if (status == VL53L1_ERROR_NONE)
-  {
+  if (status == VL53L1_ERROR_NONE) {
     status = VL53L1_StaticInit(pdev);
   }
 
   return status == VL53L1_ERROR_NONE;
 }
 
-bool vl53l1xTestConnection(VL53L1_Dev_t* pdev)
-{
+bool vl53l1xTestConnection(VL53L1_Dev_t* pdev) {
   VL53L1_DeviceInfo_t info;
   VL53L1_Error status = VL53L1_ERROR_NONE;
 
@@ -94,8 +91,7 @@ bool vl53l1xTestConnection(VL53L1_Dev_t* pdev)
  * The address passed is the 7bit I2C address from LSB (ie. without the
  * read/write bit)
  */
-VL53L1_Error vl53l1xSetI2CAddress(VL53L1_Dev_t* pdev, uint8_t address)
-{
+VL53L1_Error vl53l1xSetI2CAddress(VL53L1_Dev_t* pdev, uint8_t address) {
   VL53L1_Error status = VL53L1_ERROR_NONE;
 
   status = VL53L1_SetDeviceAddress(pdev, address);

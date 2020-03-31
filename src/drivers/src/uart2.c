@@ -57,8 +57,7 @@ static uint32_t initialDMACount;
   * Configures the UART DMA. Mainly used for FreeRTOS trace
   * data transfer.
   */
-static void uart2DmaInit(void)
-{
+static void uart2DmaInit(void) {
   NVIC_InitTypeDef NVIC_InitStructure;
 
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1, ENABLE);
@@ -89,8 +88,7 @@ static void uart2DmaInit(void)
   isUartDmaInitialized = true;
 }
 
-void uart2Init(const uint32_t baudrate)
-{
+void uart2Init(const uint32_t baudrate) {
 
   USART_InitTypeDef USART_InitStructure;
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -151,15 +149,12 @@ void uart2Init(const uint32_t baudrate)
   isInit = true;
 }
 
-bool uart2Test(void)
-{
+bool uart2Test(void) {
   return isInit;
 }
 
-bool uart2GetDataWithTimout(uint8_t *c)
-{
-  if (xQueueReceive(uart2queue, c, UART2_DATA_TIMEOUT_TICKS) == pdTRUE)
-  {
+bool uart2GetDataWithTimout(uint8_t *c) {
+  if (xQueueReceive(uart2queue, c, UART2_DATA_TIMEOUT_TICKS) == pdTRUE) {
     return true;
   }
 
@@ -167,24 +162,20 @@ bool uart2GetDataWithTimout(uint8_t *c)
   return false;
 }
 
-void uart2SendData(uint32_t size, uint8_t* data)
-{
+void uart2SendData(uint32_t size, uint8_t* data) {
   uint32_t i;
 
   if (!isInit)
     return;
 
-  for(i = 0; i < size; i++)
-  {
+  for(i = 0; i < size; i++) {
     while (!(UART2_TYPE->SR & USART_FLAG_TXE));
     UART2_TYPE->DR = (data[i] & 0x00FF);
   }
 }
 
-void uart2SendDataDmaBlocking(uint32_t size, uint8_t* data)
-{
-  if (isUartDmaInitialized)
-  {
+void uart2SendDataDmaBlocking(uint32_t size, uint8_t* data) {
+  if (isUartDmaInitialized) {
     xSemaphoreTake(uartBusy, portMAX_DELAY);
     // Wait for DMA to be free
     while(DMA_GetCmdStatus(UART2_DMA_STREAM) != DISABLE);
@@ -207,28 +198,24 @@ void uart2SendDataDmaBlocking(uint32_t size, uint8_t* data)
   }
 }
 
-int uart2Putchar(int ch)
-{
+int uart2Putchar(int ch) {
     uart2SendData(1, (uint8_t *)&ch);
     
     return (unsigned char)ch;
 }
 
-void uart2Getchar(char * ch)
-{
+void uart2Getchar(char * ch) {
   xQueueReceive(uart2queue, ch, portMAX_DELAY);
 }
 
-bool uart2DidOverrun()
-{
+bool uart2DidOverrun() {
   bool result = hasOverrun;
   hasOverrun = false;
 
   return result;
 }
 
-void __attribute__((used)) DMA1_Stream6_IRQHandler(void)
-{
+void __attribute__((used)) DMA1_Stream6_IRQHandler(void) {
   portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
   // Stop and cleanup DMA stream
@@ -240,18 +227,15 @@ void __attribute__((used)) DMA1_Stream6_IRQHandler(void)
   xSemaphoreGiveFromISR(waitUntilSendDone, &xHigherPriorityTaskWoken);
 }
 
-void __attribute__((used)) USART2_IRQHandler(void)
-{
+void __attribute__((used)) USART2_IRQHandler(void) {
   uint8_t rxData;
   portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
-  if ((UART2_TYPE->SR & (1<<5)) != 0) // fast check if the RXNE interrupt has occurred
-  {
+  if ((UART2_TYPE->SR & (1<<5)) != 0) {
+    // fast check if the RXNE interrupt has occurred
     rxData = USART_ReceiveData(UART2_TYPE) & 0x00FF;
     xQueueSendFromISR(uart2queue, &rxData, &xHigherPriorityTaskWoken);
-  }
-  else
-  {
+  } else {
     /** if we get here, the error is most likely caused by an overrun!
      * - PE (Parity error), FE (Framing error), NE (Noise error), ORE (OverRun error)
      * - and IDLE (Idle line detected) pending bits are cleared by software sequence:
