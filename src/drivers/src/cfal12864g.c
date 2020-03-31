@@ -326,7 +326,6 @@ void SPIDMAInit(void) {
 static void screenTask(void *param) {
   systemWaitStart();
 
-  Axis3f accScaled;
   /* wait an additional second the keep bus free
    * this is only required by the z-ranger, since the
    * configuration will be done after system start-up */
@@ -339,12 +338,6 @@ static void screenTask(void *param) {
       sensorsGyroGet(&gyroRaw);
       sensorsAccelGet(&accelRaw);
 
-      /* calibrate if necessary */
-#ifdef GYRO_BIAS_LIGHT_WEIGHT
-      gyroBiasFound = processGyroBiasNoBuffer(gyroRaw.x, gyroRaw.y, gyroRaw.z, &gyroBias);
-#else
-      gyroBiasFound = processGyroBias(gyroRaw.x, gyroRaw.y, gyroRaw.z, &gyroBias);
-#endif
       if (gyroBiasFound) {
          processAccScale(accelRaw.x, accelRaw.y, accelRaw.z);
       }
