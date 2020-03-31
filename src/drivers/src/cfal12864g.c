@@ -334,10 +334,6 @@ static void screenTask(void *param) {
     if (pdTRUE == xSemaphoreTake(sensorsDataReady, portMAX_DELAY)) {
       sensorData.interruptTimestamp = imuIntTimestamp;
 
-      /* get data from chosen sensors */
-      sensorsGyroGet(&gyroRaw);
-      sensorsAccelGet(&accelRaw);
-
       if (gyroBiasFound) {
          processAccScale(accelRaw.x, accelRaw.y, accelRaw.z);
       }
