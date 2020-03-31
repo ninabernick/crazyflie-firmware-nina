@@ -337,11 +337,7 @@ static void screenTask(void *param) {
       if (gyroBiasFound) {
          processAccScale(accelRaw.x, accelRaw.y, accelRaw.z);
       }
-      /* Gyro */
-      sensorData.gyro.x =  (gyroRaw.x - gyroBias.x) * SENSORS_CFAL12864G_DEG_PER_LSB_CFG;
-      sensorData.gyro.y =  (gyroRaw.y - gyroBias.y) * SENSORS_CFAL12864G_DEG_PER_LSB_CFG;
-      sensorData.gyro.z =  (gyroRaw.z - gyroBias.z) * SENSORS_CFAL12864G_DEG_PER_LSB_CFG;
-      applyAxis3fLpf((lpf2pData*)(&gyroLpf), &sensorData.gyro);
+      
 
       /* Acelerometer */
       accScaled.x = accelRaw.x * SENSORS_CFAL12864G_G_PER_LSB_CFG / accScale;
