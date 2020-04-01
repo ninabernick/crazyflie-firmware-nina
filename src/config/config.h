@@ -127,7 +127,7 @@
 /* guojun: add screen task */
 #define SCREEN_TASK_NAME        "SCREEN"
 #define SCREEN_TASK_STACKSIZE         configMINIMAL_STACK_SIZE
-#define SCREEN_TASK_PRI        3
+#define SCREEN_TASK_PRI        5
 
 // Task stack sizes
 #define SYSTEM_TASK_STACKSIZE         (2 * configMINIMAL_STACK_SIZE)

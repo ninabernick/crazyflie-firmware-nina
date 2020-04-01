@@ -815,11 +815,16 @@ uint16_t SPI_I2S_ReceiveData(SPI_TypeDef* SPIx)
   */
 void SPI_I2S_SendData(SPI_TypeDef* SPIx, uint16_t Data)
 {
+  // guojun: add wait for tx buffer being empty
+  while (!(SPIx->SR & SPI_SR_TXE));
   /* Check the parameters */
   assert_param(IS_SPI_ALL_PERIPH_EXT(SPIx));
   
   /* Write in the DR register the data to be sent */
   SPIx->DR = Data;
+  
+  // guojun: add wait for tx buffer being empty
+  while (!(SPIx->SR & SPI_SR_TXE));
 }
 
 /**

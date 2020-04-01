@@ -157,12 +157,15 @@ void systemTask(void *arg) {
   systemInit();
   commInit();
   commanderInit();
-  // guojun: add screen
-  screenCFAL12864GInit();
+  
   
   StateEstimatorType estimator = anyEstimator;
   deckInit();
   estimator = deckGetRequiredEstimator();
+
+  // guojun: add screen
+  screenCFAL12864GInit();
+
   stabilizerInit(estimator);
 
   if (deckGetRequiredLowInterferenceRadioMode() 

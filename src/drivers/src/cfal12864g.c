@@ -40,6 +40,7 @@
 
 #include "system.h"
 #include "configblock.h"
+#include "nvicconf.h"
 #include "param.h"
 #include "log.h"
 #include "debug.h"
@@ -57,6 +58,7 @@
 #define SCREEN_DATA_H 8
 #define SCRREN_DATA_W 128
 static uint8_t SPITxBuffer[SCREEN_DATA_H][SCRREN_DATA_W];
+static xSemaphoreHandle SPITxDMAComplete;
 
 static bool isInit = false;
 
@@ -79,6 +81,7 @@ void SPISendData(uint8_t data) {
 }
 
 void SetAddress(uint8_t column, uint8_t page) {
+  DEBUG_PRINT("add:%d\n", page);
   // set column-lower nibble
   SPISendCommand(SSD1309_00_SET_LOWER_COLUMN_ADDRESS_BIT | (column & 0x0F));
   // set column-upper nibble
@@ -94,6 +97,10 @@ void SetBrightness(uint8_t brightness) {
 }
 
 void CFAL12864GInit(uint8_t brightness) {
+  CLR_RESET;
+  CLR_RS;
+  CLR_MOSI;
+  CLR_SCK;
   // thump the hardware reset line.
   CFAL12864G_ms_delay(10);
   CLR_RESET;
@@ -109,14 +116,14 @@ void CFAL12864GInit(uint8_t brightness) {
   SPISendCommand(SSD1309_02_ADRESSING_PAGE_PARAMETER);
 
   // Point to the upper-left
-  SetAddress(0,0);
+  SetAddress(0, 0);
 
   // Set the "contrast" (brightness, max determined by IREF current)
   SPISendCommand(SSD1309_81_CONTRAST_PREFIX);
   SPISendCommand(brightness);
 
   // Set start line to 0
-  SPISendCommand(SSD1309_40_SET_DISPLAY_START_LINE_BIT);//Set Display Start Line
+  SPISendCommand(SSD1309_40_SET_DISPLAY_START_LINE_BIT); //Set Display Start Line
 
   // Set Segment remap for the CFAL12864G, we want the lower-left to be 0,0
   SPISendCommand(SSD1309_A1_SEGMENT_REMAP_REVERSE);
@@ -247,6 +254,7 @@ void SPIInit(void) {
   GPIO_InitStructure.GPIO_Pin = CFAL12864G_GPIO_SPI_SCK |  CFAL12864G_GPIO_SPI_MOSI;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN; // SPI should be pull-down
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(CFAL12864G_GPIO_SPI_PORT, &GPIO_InitStructure);
 
@@ -275,20 +283,22 @@ void SPIInit(void) {
   SPI_InitStructure.SPI_Direction = SPI_Direction_1Line_Tx;
   SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
   SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
-  SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
+  SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
   SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
   SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
+  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8; //~4: 10.5 MHz
   SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
   SPI_InitStructure.SPI_CRCPolynomial = 0; // Not used
 
-  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4; //~10.5 MHz
   SPI_Init(CFAL12864G_SPI, &SPI_InitStructure);
   /* Enable the SPI  */
-  // SPI_Cmd(CFAL12864G_SPI, ENABLE);
+  SPI_Cmd(CFAL12864G_SPI, ENABLE);
 }
 
 void SPIDMAInit(void) {
+  /* Init structure */
   DMA_InitTypeDef  DMA_InitStructure;
+  NVIC_InitTypeDef NVIC_InitStructure;
 
   /*!< Enable DMA Clocks */
   CFAL12864G_SPI_DMA_CLK_INIT(CFAL12864G_SPI_DMA_CLK, ENABLE);
@@ -304,28 +314,29 @@ void SPIDMAInit(void) {
   DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
   DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
   DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
-  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
   DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;
-  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_1QuarterFull;
+  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
   DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
   DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
   
-  DMA_Cmd(CFAL12864G_SPI_TX_DMA_STREAM, DISABLE);
-  DMA_Init(CFAL12864G_SPI_TX_DMA_STREAM, &DMA_InitStructure);
 
+  DMA_Init(CFAL12864G_SPI_TX_DMA_STREAM, &DMA_InitStructure);
+  DMA_Cmd(CFAL12864G_SPI_TX_DMA_STREAM, DISABLE);
   // DMA_Cmd(CFAL12864G_SPI_TX_DMA_STREAM,ENABLE);
   // Enable SPI DMA requests
-  SPI_I2S_DMACmd(CFAL12864G_SPI, SPI_I2S_DMAReq_Tx, ENABLE);
+  SPI_I2S_DMACmd(CFAL12864G_SPI, SPI_I2S_DMAReq_Tx, DISABLE);
   // Enable peripheral to begin the transaction
   SPI_Cmd(CFAL12864G_SPI, ENABLE);
 
   // Configure interrupts
-  // NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = NVIC_HIGH_PRI;
-  // NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  // NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = NVIC_HIGH_PRI;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_InitStructure.NVIC_IRQChannel = CFAL12864G_SPI_TX_DMA_IRQ;
+  NVIC_Init(&NVIC_InitStructure);
 
-  // NVIC_InitStructure.NVIC_IRQChannel = CFAL12864G_SPI_TX_DMA_IRQ;
-  // NVIC_Init(&NVIC_InitStructure);
+  SPITxDMAComplete = xSemaphoreCreateBinary();
 }
 
 QueueHandle_t textContentQueue;
@@ -345,65 +356,59 @@ bool screenTextGet(textContent_t *ct) {
   return (pdTRUE == xQueueReceive(textContentQueue, ct, 0));
 }
 
-static void screenTask(void *param) {
-  systemWaitStart();
-  uint32_t tick = 0;
-  static portTickType xLastWakeTime;
-  xLastWakeTime = xTaskGetTickCount();
-         
-
-  /* wait an additional second the keep bus free
-   * this is only required by the z-ranger, since the
-   * configuration will be done after system start-up */
-  //vTaskDelayUntil(&lastWakeTime, M2T(1500));
-  while (1) {
-    vTaskDelayUntil(&xLastWakeTime, SCREEN_FRESH_RATE);
-    
-  }
-}
-
-void screenCFAL12864GInit(void) {
-  if (isInit) {
-    return;
-  }
-
-  SPIInit();
-  SPIDMAInit();
-  CFAL12864GInit(255);
-  screenTextInit();
-  xTaskCreate(screenTask, SCREEN_TASK_NAME, SCREEN_TASK_STACKSIZE, NULL, SCREEN_TASK_PRI, NULL);
-}
+static int page;
 
 void refreshContent() {
-  uint8_t page;
-
+  // textContent_t ct;
+  // if (screenTextGet(&ct)) {
+  //   memset(SPITxBuffer, 0, sizeof(SPITxBuffer));
+  //   // update content
+  // }
+  // int ct;
+  // uint8_t page;
   for (page = 0; page < 8; page++) {
     //Set the LCD to the left of this line.
+    SPI_Cmd(CFAL12864G_SPI, ENABLE);
     SetAddress(0, page);
-    //Move across the columns, alternating the two data
-    //bytes.
+    // Move across the columns, alternating the two data
     // Select the LCD's data register
     SET_RS;
-    // Select the LCD controller
-    // CLR_CS;
-    CFAL12864G_SPI_TX_DMA_STREAM->M0AR = (uint32_t) &SPITxBuffer[page];
+
+    // SET_MOSI;
+    // SET_SCK;
+    SPI_Cmd(CFAL12864G_SPI, DISABLE);
+
+    CFAL12864G_SPI_TX_DMA_STREAM->M0AR = (uint32_t) SPITxBuffer[page];
+    
+    DMA_ClearFlag(CFAL12864G_SPI_TX_DMA_STREAM, DMA_FLAG_FEIF7|DMA_FLAG_DMEIF7|
+                DMA_FLAG_TEIF7|DMA_FLAG_HTIF7|DMA_FLAG_TCIF7);
+    DMA_ITConfig(CFAL12864G_SPI_TX_DMA_STREAM, DMA_IT_TC, ENABLE);
+
     DMA_Cmd(CFAL12864G_SPI_TX_DMA_STREAM, ENABLE);
-    // Deselect the LCD controller
-    // SET_CS;
+    SPI_I2S_DMACmd(CFAL12864G_SPI, SPI_I2S_DMAReq_Tx, ENABLE);
+
+    SPI_Cmd(CFAL12864G_SPI, ENABLE);
+    xSemaphoreTake(SPITxDMAComplete, portMAX_DELAY);
+
   }
+}
+
+void clearBuffer(uint8_t v) {
+  uint8_t *tmp = SPITxBuffer[0];
+  for (int x = 0; x < 1024; x++) tmp[x] = v;
 }
 
 void horizontal_line(uint8_t x1, uint8_t y, uint8_t x2) {
-  register uint8_t *LCD_Memory;
-  register uint8_t column;
-  register uint8_t Set_Mask;
+  uint8_t *LCD_Memory;
+  uint8_t column;
+  uint8_t Set_Mask;
 
   //Bail for bogus parametrers.
   if ((x2 < x1) || (127 < x1) || (127 < x2) || (63 < y))
     return;
 
   //Calculate the address of the first uint8_t in display in LCD_Memory
-  LCD_Memory =& SPITxBuffer[y >> 3][x1];
+  LCD_Memory = &SPITxBuffer[y >> 3][x1];
 
   //Calculate Set_Mask, the vertical mask that we will or with
   //LCD_Memory to clear the space before we or in the data from the
@@ -415,4 +420,62 @@ void horizontal_line(uint8_t x1, uint8_t y, uint8_t x2) {
     LCD_Memory[0] |= Set_Mask;
     LCD_Memory++;
   }
+}
+
+static void screenTask(void *param) {
+  systemWaitStart();
+  static portTickType lastWakeTime;
+  lastWakeTime = xTaskGetTickCount();
+
+  static int cnt = 0;
+  while (1) {
+    vTaskDelayUntil(&lastWakeTime, M2T(100));
+    // vTaskDelay(M2T(2000));
+    clearBuffer(0x00);
+    horizontal_line(110, cnt, 127);
+    refreshContent();
+
+    cnt++;
+    if (cnt % 1 == 0)
+      DEBUG_PRINT("1round\n");
+    if (cnt > 60) cnt = 0;
+  }
+}
+
+void screenCFAL12864GInit(void) {
+  if (isInit) {
+    return;
+  }
+
+  SPIInit();
+  SPIDMAInit();
+  CFAL12864GInit(255);
+  // test
+  clearBuffer(0x00);
+  // horizontal_line(110, 10, 127);
+  // refreshContent();
+  // screenTextInit();
+  xTaskCreate(screenTask, SCREEN_TASK_NAME, SCREEN_TASK_STACKSIZE, NULL, SCREEN_TASK_PRI, NULL);
+  isInit = true;
+}
+
+void __attribute__((used)) CFAL12864G_SPI_TX_DMA_IRQHandler(void) {
+  portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+  // Stop and cleanup DMA stream
+  DMA_ITConfig(CFAL12864G_SPI_TX_DMA_STREAM, DMA_IT_TC, DISABLE);
+  DMA_ClearITPendingBit(CFAL12864G_SPI_TX_DMA_STREAM, CFAL12864G_SPI_TX_DMA_FLAG_TCIF);
+
+  // Clear stream flags
+  DMA_ClearFlag(CFAL12864G_SPI_TX_DMA_STREAM, CFAL12864G_SPI_TX_DMA_FLAG_TCIF);
+
+  // Disable SPI DMA requests
+  SPI_I2S_DMACmd(CFAL12864G_SPI, SPI_I2S_DMAReq_Tx, DISABLE);
+
+  // Disable streams
+  DMA_Cmd(CFAL12864G_SPI_TX_DMA_STREAM, DISABLE);
+
+  // Give the semaphore, allowing the SPI transaction to complete
+  xSemaphoreGiveFromISR(SPITxDMAComplete, &xHigherPriorityTaskWoken);
+  // xSemaphoreGive(SPITxDMAComplete);
+
 }
