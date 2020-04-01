@@ -54,8 +54,9 @@
 #define SET_SCK   GPIO_SetBits(CFAL12864G_GPIO_SPI_PORT, CFAL12864G_GPIO_SPI_SCK)
 
 /* Defines and buffers for full duplex SPI DMA transactions */
-#define SPI_DMA_BUFFER_SIZE    (8*128)
-static uint8_t SPITxBuffer[SPI_DMA_BUFFER_SIZE + 1];
+#define SCREEN_DATA_H 8
+#define SCRREN_DATA_W 128
+static uint8_t SPITxBuffer[SCREEN_DATA_H][SCRREN_DATA_W];
 
 static bool isInit = false;
 
@@ -295,9 +296,9 @@ void SPIDMAInit(void) {
   /* Configure DMA Initialization Structure */
   DMA_InitStructure.DMA_Channel = CFAL12864G_SPI_TX_DMA_CHANNEL;
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&(CFAL12864G_SPI->DR));
-  DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)&spiTxBuffer[0];
+  DMA_InitStructure.DMA_Memory0BaseAddr = 0;                  // set later
   DMA_InitStructure.DMA_DIR = DMA_DIR_MemoryToPeripheral;
-  DMA_InitStructure.DMA_BufferSize = SPI_DMA_BUFFER_SIZE;
+  DMA_InitStructure.DMA_BufferSize = SCRREN_DATA_W;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
   DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
@@ -312,7 +313,7 @@ void SPIDMAInit(void) {
   DMA_Cmd(CFAL12864G_SPI_TX_DMA_STREAM, DISABLE);
   DMA_Init(CFAL12864G_SPI_TX_DMA_STREAM, &DMA_InitStructure);
 
-  DMA_Cmd(CFAL12864G_SPI_TX_DMA_STREAM,ENABLE);
+  // DMA_Cmd(CFAL12864G_SPI_TX_DMA_STREAM,ENABLE);
   // Enable SPI DMA requests
   SPI_I2S_DMACmd(CFAL12864G_SPI, SPI_I2S_DMAReq_Tx, ENABLE);
   // Enable peripheral to begin the transaction
@@ -347,15 +348,17 @@ bool screenTextGet(textContent_t *ct) {
 static void screenTask(void *param) {
   systemWaitStart();
   uint32_t tick = 0;
+  static portTickType xLastWakeTime;
+  xLastWakeTime = xTaskGetTickCount();
+         
+
   /* wait an additional second the keep bus free
    * this is only required by the z-ranger, since the
    * configuration will be done after system start-up */
   //vTaskDelayUntil(&lastWakeTime, M2T(1500));
   while (1) {
-    if (RATE_DO_EXECUTE(SCREEN_FRESH_RATE, tick)) {
-
-    }
-    tick++;
+    vTaskDelayUntil(&xLastWakeTime, SCREEN_FRESH_RATE);
+    
   }
 }
 
@@ -369,4 +372,47 @@ void screenCFAL12864GInit(void) {
   CFAL12864GInit(255);
   screenTextInit();
   xTaskCreate(screenTask, SCREEN_TASK_NAME, SCREEN_TASK_STACKSIZE, NULL, SCREEN_TASK_PRI, NULL);
+}
+
+void refreshContent() {
+  uint8_t page;
+
+  for (page = 0; page < 8; page++) {
+    //Set the LCD to the left of this line.
+    SetAddress(0, page);
+    //Move across the columns, alternating the two data
+    //bytes.
+    // Select the LCD's data register
+    SET_RS;
+    // Select the LCD controller
+    // CLR_CS;
+    CFAL12864G_SPI_TX_DMA_STREAM->M0AR = (uint32_t) &SPITxBuffer[page];
+    DMA_Cmd(CFAL12864G_SPI_TX_DMA_STREAM, ENABLE);
+    // Deselect the LCD controller
+    // SET_CS;
+  }
+}
+
+void horizontal_line(uint8_t x1, uint8_t y, uint8_t x2) {
+  register uint8_t *LCD_Memory;
+  register uint8_t column;
+  register uint8_t Set_Mask;
+
+  //Bail for bogus parametrers.
+  if ((x2 < x1) || (127 < x1) || (127 < x2) || (63 < y))
+    return;
+
+  //Calculate the address of the first uint8_t in display in LCD_Memory
+  LCD_Memory =& SPITxBuffer[y >> 3][x1];
+
+  //Calculate Set_Mask, the vertical mask that we will or with
+  //LCD_Memory to clear the space before we or in the data from the
+  //font. It is 9 pixels.
+  Set_Mask = 0x01 << (y & 0x07);
+
+  //Move across memory, oring the mask in.
+  for (column = x1; column <= x2; column++) {
+    LCD_Memory[0] |= Set_Mask;
+    LCD_Memory++;
+  }
 }

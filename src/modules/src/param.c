@@ -90,13 +90,12 @@ static CRTPPacket p;
 
 static bool isInit = false;
 
-void paramInit(void)
-{
+void paramInit(void) {
   int i;
   const char* group = NULL;
   int groupLength = 0;
 
-  if(isInit)
+  if (isInit)
     return;
 
   params = &_param_start;
@@ -105,8 +104,7 @@ void paramInit(void)
   // Calculate a hash of the toc by chaining description of each elements
   // Using the CRTP packet as temporary buffer
   paramsCrc = 0;
-  for (int i=0; i<paramsLen; i++)
-  {
+  for (int i = 0; i < paramsLen; i++) {
     int len = 5;
     memcpy(&p.data[0], &paramsCrc, 4);
     p.data[4] = params[i].type;
@@ -130,9 +128,8 @@ void paramInit(void)
     paramsCrc = crcSlow(p.data, len);
   }
 
-  for (i=0; i<paramsLen; i++)
-  {
-    if(!(params[i].type & PARAM_GROUP))
+  for (i = 0; i < paramsLen; i++) {
+    if (!(params[i].type & PARAM_GROUP))
       paramsCount++;
   }
 
@@ -146,25 +143,23 @@ void paramInit(void)
   isInit = true;
 }
 
-bool paramTest(void)
-{
+bool paramTest(void) {
   return isInit;
 }
 
-void paramTask(void * prm)
-{
+void paramTask(void * prm) {
 	crtpInitTaskQueue(CRTP_PORT_PARAM);
 
 	while(1) {
 		crtpReceivePacketBlock(CRTP_PORT_PARAM, &p);
 
-		if (p.channel==TOC_CH)
+		if (p.channel == TOC_CH)
 		  paramTOCProcess(p.data[0]);
-	  else if (p.channel==READ_CH)
+	  else if (p.channel == READ_CH)
 		  paramReadProcess();
-		else if (p.channel==WRITE_CH)
+		else if (p.channel == WRITE_CH)
 		  paramWriteProcess();
-    else if (p.channel==MISC_CH) {
+    else if (p.channel == MISC_CH) {
       if (p.data[0] == MISC_SETBYNAME) {
         int i, nzero = 0;
         char *group;
@@ -175,43 +170,41 @@ void paramTask(void * prm)
 
         // If the packet contains at least 2 zeros in the first 28 bytes
         // The packet decoding algorithm will not crash
-        for (i=0; i<CRTP_MAX_DATA_SIZE; i++) {
+        for (i = 0; i < CRTP_MAX_DATA_SIZE; i++) {
           if (p.data[i] == '\0') nzero++;
         }
 
         if (nzero < 2) return;
 
         group = (char*)&p.data[1];
-        name = (char*)&p.data[1+strlen(group)+1];
-        type = p.data[1+strlen(group)+1+strlen(name)+1];
-        valPtr = &p.data[1+strlen(group)+1+strlen(name)+2];
+        name = (char*)&p.data[1 + strlen(group) + 1];
+        type = p.data[1 + strlen(group) + 1 + strlen(name) + 1];
+        valPtr = &p.data[1 + strlen(group) + 1 + strlen(name) + 2];
 
         error = paramWriteByNameProcess(group, name, type, valPtr);
 
-        p.data[1+strlen(group)+1+strlen(name)+1] = error;
-        p.size = 1+strlen(group)+1+strlen(name)+1+1;
+        p.data[1 + strlen(group) + 1 + strlen(name) + 1] = error;
+        p.size = 1 + strlen(group) + 1 + strlen(name) + 1 + 1;
         crtpSendPacket(&p);
       }
     }
 	}
 }
 
-void paramTOCProcess(int command)
-{
+void paramTOCProcess(int command) {
   int ptr = 0;
   char * group = "";
   uint16_t n=0;
   uint16_t paramId=0;
 
-  switch (command)
-  {
+  switch (command) {
   case CMD_GET_INFO: //Get info packet about the param implementation
     DEBUG_PRINT("Client uses old param API!\n");
     ptr = 0;
     group = "";
-    p.header=CRTP_HEADER(CRTP_PORT_PARAM, TOC_CH);
-    p.size=6;
-    p.data[0]=CMD_GET_INFO;
+    p.header = CRTP_HEADER(CRTP_PORT_PARAM, TOC_CH);
+    p.size = 6;
+    p.data[0] = CMD_GET_INFO;
     if (paramsCount < 255) {
       p.data[1]=paramsCount;
     } else {
@@ -221,47 +214,44 @@ void paramTOCProcess(int command)
     crtpSendPacket(&p);
     break;
   case CMD_GET_ITEM:  //Get param variable
-    for (ptr=0; ptr<paramsLen; ptr++) //Ptr points a group
-    {
-      if (params[ptr].type & PARAM_GROUP)
-      {
+    for (ptr = 0; ptr < paramsLen; ptr++) {
+      //Ptr points a group
+      if (params[ptr].type & PARAM_GROUP) {
         if (params[ptr].type & PARAM_START)
           group = params[ptr].name;
         else
           group = "";
-      }
-      else                          //Ptr points a variable
-      {
-        if (n==p.data[1])
+      } else {
+        //Ptr points a variable
+        if (n == p.data[1])
           break;
         n++;
       }
     }
 
-    if (ptr<paramsLen)
-    {
-      p.header=CRTP_HEADER(CRTP_PORT_PARAM, TOC_CH);
-      p.data[0]=CMD_GET_ITEM;
-      p.data[1]=n;
-      p.data[2]=params[ptr].type;
-      p.size=3+2+strlen(group)+strlen(params[ptr].name);
+    if (ptr<paramsLen) {
+      p.header = CRTP_HEADER(CRTP_PORT_PARAM, TOC_CH);
+      p.data[0] = CMD_GET_ITEM;
+      p.data[1] = n;
+      p.data[2] = params[ptr].type;
+      p.size = 3 + 2 + strlen(group) + strlen(params[ptr].name);
       ASSERT(p.size <= CRTP_MAX_DATA_SIZE); // Too long! The name of the group or the parameter may be too long.
-      memcpy(p.data+3, group, strlen(group)+1);
-      memcpy(p.data+3+strlen(group)+1, params[ptr].name, strlen(params[ptr].name)+1);
+      memcpy(p.data + 3, group, strlen(group) + 1);
+      memcpy(p.data + 3 + strlen(group) + 1, params[ptr].name, strlen(params[ptr].name) + 1);
       crtpSendPacket(&p);
     } else {
-      p.header=CRTP_HEADER(CRTP_PORT_PARAM, TOC_CH);
-      p.data[0]=CMD_GET_ITEM;
-      p.size=1;
+      p.header = CRTP_HEADER(CRTP_PORT_PARAM, TOC_CH);
+      p.data[0] = CMD_GET_ITEM;
+      p.size = 1;
       crtpSendPacket(&p);
     }
     break;
   case CMD_GET_INFO_V2: //Get info packet about the param implementation
     ptr = 0;
     group = "";
-    p.header=CRTP_HEADER(CRTP_PORT_PARAM, TOC_CH);
-    p.size=7;
-    p.data[0]=CMD_GET_INFO_V2;
+    p.header = CRTP_HEADER(CRTP_PORT_PARAM, TOC_CH);
+    p.size = 7;
+    p.data[0] = CMD_GET_INFO_V2;
     memcpy(&p.data[1], &paramsCount, 2);
     memcpy(&p.data[3], &paramsCrc, 4);
     crtpSendPacket(&p);
@@ -269,46 +259,42 @@ void paramTOCProcess(int command)
     break;
   case CMD_GET_ITEM_V2:  //Get param variable
     memcpy(&paramId, &p.data[1], 2);
-    for (ptr=0; ptr<paramsLen; ptr++) //Ptr points a group
-    {
-      if (params[ptr].type & PARAM_GROUP)
-      {
+    for (ptr = 0; ptr < paramsLen; ptr++) {
+      //Ptr points a group
+      if (params[ptr].type & PARAM_GROUP) {
         if (params[ptr].type & PARAM_START)
           group = params[ptr].name;
         else
           group = "";
-      }
-      else                          //Ptr points a variable
-      {
-        if (n==paramId)
+      } else {
+        //Ptr points a variable
+        if (n == paramId)
           break;
         n++;
       }
     }
 
-    if (ptr<paramsLen)
-    {
-      p.header=CRTP_HEADER(CRTP_PORT_PARAM, TOC_CH);
-      p.data[0]=CMD_GET_ITEM_V2;
+    if (ptr < paramsLen) {
+      p.header = CRTP_HEADER(CRTP_PORT_PARAM, TOC_CH);
+      p.data[0] = CMD_GET_ITEM_V2;
       memcpy(&p.data[1], &paramId, 2);
-      p.data[3]=params[ptr].type;
-      p.size=4+2+strlen(group)+strlen(params[ptr].name);
+      p.data[3] = params[ptr].type;
+      p.size = 4 + 2 + strlen(group) + strlen(params[ptr].name);
       ASSERT(p.size <= CRTP_MAX_DATA_SIZE); // Too long! The name of the group or the parameter may be too long.
-      memcpy(p.data+4, group, strlen(group)+1);
-      memcpy(p.data+4+strlen(group)+1, params[ptr].name, strlen(params[ptr].name)+1);
+      memcpy(p.data + 4, group, strlen(group) + 1);
+      memcpy(p.data + 4 + strlen(group) + 1, params[ptr].name, strlen(params[ptr].name) + 1);
       crtpSendPacket(&p);
     } else {
-      p.header=CRTP_HEADER(CRTP_PORT_PARAM, TOC_CH);
-      p.data[0]=CMD_GET_ITEM_V2;
-      p.size=1;
+      p.header = CRTP_HEADER(CRTP_PORT_PARAM, TOC_CH);
+      p.data[0] = CMD_GET_ITEM_V2;
+      p.size = 1;
       crtpSendPacket(&p);
     }
     break;
   }
 }
 
-static void paramWriteProcess()
-{
+static void paramWriteProcess() {
   if (useV2) {
     uint16_t ident;
     memcpy(&ident, &p.data[0], 2);
@@ -318,7 +304,7 @@ static void paramWriteProcess()
 
     id = variableGetIndex(ident);
 
-    if (id<0) {
+    if (id < 0) {
       p.data[2] = ENOENT;
       p.size = 3;
 
@@ -329,8 +315,7 @@ static void paramWriteProcess()
     if (params[id].type & PARAM_RONLY)
       return;
 
-    switch (params[id].type & PARAM_BYTES_MASK)
-    {
+    switch (params[id].type & PARAM_BYTES_MASK) {
     case PARAM_1BYTE:
       *(uint8_t*)params[id].address = *(uint8_t*)valptr;
       break;
@@ -353,7 +338,7 @@ static void paramWriteProcess()
 
     id = variableGetIndex(ident);
 
-    if (id<0) {
+    if (id < 0) {
       p.data[0] = -1;
       p.data[1] = ident;
       p.data[2] = ENOENT;
@@ -366,8 +351,7 @@ static void paramWriteProcess()
   	if (params[id].type & PARAM_RONLY)
   		return;
 
-    switch (params[id].type & PARAM_BYTES_MASK)
-    {
+    switch (params[id].type & PARAM_BYTES_MASK) {
    	case PARAM_1BYTE:
    		*(uint8_t*)params[id].address = *(uint8_t*)valptr;
    		break;
@@ -390,17 +374,15 @@ static char paramWriteByNameProcess(char* group, char* name, int type, void *val
   int ptr;
   char *pgroup = "";
 
-  for (ptr=0; ptr<paramsLen; ptr++) //Ptr points a group
-  {
-    if (params[ptr].type & PARAM_GROUP)
-    {
+  for (ptr = 0; ptr < paramsLen; ptr++) {
+    //Ptr points a group
+    if (params[ptr].type & PARAM_GROUP) {
       if (params[ptr].type & PARAM_START)
         pgroup = params[ptr].name;
       else
         pgroup = "";
-    }
-    else                          //Ptr points a variable
-    {
+    } else {
+      //Ptr points a variable
       if (!strcmp(params[ptr].name, name) && !strcmp(pgroup, group))
         break;
     }
@@ -418,8 +400,7 @@ static char paramWriteByNameProcess(char* group, char* name, int type, void *val
     return EACCES;
   }
 
-  switch (params[ptr].type & PARAM_BYTES_MASK)
-  {
+  switch (params[ptr].type & PARAM_BYTES_MASK) {
  	case PARAM_1BYTE:
  		*(uint8_t*)params[ptr].address = *(uint8_t*)valptr;
  		break;
@@ -437,14 +418,13 @@ static char paramWriteByNameProcess(char* group, char* name, int type, void *val
   return 0;
 }
 
-static void paramReadProcess()
-{
+static void paramReadProcess() {
   if (useV2) {
     uint16_t ident;
     memcpy(&ident, &p.data[0], 2);
     int id = variableGetIndex(ident);
 
-    if (id<0) {
+    if (id < 0) {
       p.data[2] = ENOENT;
       p.size = 3;
 
@@ -453,31 +433,30 @@ static void paramReadProcess()
     }
 
     p.data[2] = 0;
-    switch (params[id].type & PARAM_BYTES_MASK)
-    {
+    switch (params[id].type & PARAM_BYTES_MASK) {
     case PARAM_1BYTE:
         memcpy(&p.data[3], params[id].address, sizeof(uint8_t));
-        p.size = 3+sizeof(uint8_t);
+        p.size = 3 + sizeof(uint8_t);
         break;
       break;
       case PARAM_2BYTES:
         memcpy(&p.data[3], params[id].address, sizeof(uint16_t));
-        p.size = 3+sizeof(uint16_t);
+        p.size = 3 + sizeof(uint16_t);
         break;
       case PARAM_4BYTES:
         memcpy(&p.data[3], params[id].address, sizeof(uint32_t));
-        p.size = 3+sizeof(uint32_t);
+        p.size = 3 + sizeof(uint32_t);
         break;
       case PARAM_8BYTES:
         memcpy(&p.data[3], params[id].address, sizeof(uint64_t));
-        p.size = 3+sizeof(uint64_t);
+        p.size = 3 + sizeof(uint64_t);
         break;
     }
   } else {
     uint8_t ident = p.data[0];
     int id = variableGetIndex(ident);
 
-    if (id<0) {
+    if (id < 0) {
       p.data[0] = -1;
       p.data[1] = ident;
       p.data[2] = ENOENT;
@@ -487,24 +466,23 @@ static void paramReadProcess()
       return;
     }
 
-    switch (params[id].type & PARAM_BYTES_MASK)
-    {
+    switch (params[id].type & PARAM_BYTES_MASK) {
    	case PARAM_1BYTE:
      		memcpy(&p.data[1], params[id].address, sizeof(uint8_t));
-     		p.size = 1+sizeof(uint8_t);
+     		p.size = 1 + sizeof(uint8_t);
      		break;
    		break;
       case PARAM_2BYTES:
      		memcpy(&p.data[1], params[id].address, sizeof(uint16_t));
-     		p.size = 1+sizeof(uint16_t);
+     		p.size = 1 + sizeof(uint16_t);
      		break;
       case PARAM_4BYTES:
         memcpy(&p.data[1], params[id].address, sizeof(uint32_t));
-     		p.size = 1+sizeof(uint32_t);
+     		p.size = 1 + sizeof(uint32_t);
      		break;
    	  case PARAM_8BYTES:
         memcpy(&p.data[1], params[id].address, sizeof(uint64_t));
-     		p.size = 1+sizeof(uint64_t);
+     		p.size = 1 + sizeof(uint64_t);
      		break;
     }
   }
@@ -512,22 +490,19 @@ static void paramReadProcess()
   crtpSendPacket(&p);
 }
 
-static int variableGetIndex(int id)
-{
+static int variableGetIndex(int id) {
   int i;
-  int n=0;
+  int n = 0;
 
-  for (i=0; i<paramsLen; i++)
-  {
-    if(!(params[i].type & PARAM_GROUP))
-    {
-      if(n==id)
+  for (i = 0; i < paramsLen; i++) {
+    if (!(params[i].type & PARAM_GROUP)) {
+      if (n == id)
         break;
       n++;
     }
   }
 
-  if (i>=paramsLen)
+  if (i >= paramsLen)
     return -1;
 
   return i;

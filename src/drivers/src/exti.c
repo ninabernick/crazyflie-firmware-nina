@@ -34,8 +34,7 @@
 static bool isInit;
 
 /* Interruption initialisation */
-void extiInit()
-{
+void extiInit() {
   static NVIC_InitTypeDef NVIC_InitStructure;
 
   if (isInit)
@@ -84,43 +83,36 @@ void extiInit()
   isInit = true;
 }
 
-bool extiTest(void)
-{
+bool extiTest(void) {
   return isInit;
 }
 
-void __attribute__((used)) EXTI0_IRQHandler(void)
-{
+void __attribute__((used)) EXTI0_IRQHandler(void) {
   EXTI_ClearITPendingBit(EXTI_Line0);
   EXTI0_Callback();
 }
 
-void __attribute__((used)) EXTI1_IRQHandler(void)
-{
+void __attribute__((used)) EXTI1_IRQHandler(void) {
   EXTI_ClearITPendingBit(EXTI_Line1);
   EXTI1_Callback();
 }
 
-void __attribute__((used)) EXTI2_IRQHandler(void)
-{
+void __attribute__((used)) EXTI2_IRQHandler(void) {
   EXTI_ClearITPendingBit(EXTI_Line2);
   EXTI2_Callback();
 }
 
-void __attribute__((used)) EXTI3_IRQHandler(void)
-{
+void __attribute__((used)) EXTI3_IRQHandler(void) {
   EXTI_ClearITPendingBit(EXTI_Line3);
   EXTI3_Callback();
 }
 
-void __attribute__((used)) EXTI4_IRQHandler(void)
-{
+void __attribute__((used)) EXTI4_IRQHandler(void) {
   EXTI_ClearITPendingBit(EXTI_Line4);
   EXTI4_Callback();
 }
 
-void __attribute__((used)) EXTI9_5_IRQHandler(void)
-{
+void __attribute__((used)) EXTI9_5_IRQHandler(void) {
   if (EXTI_GetITStatus(EXTI_Line5) == SET) {
     EXTI_ClearITPendingBit(EXTI_Line5);
     EXTI5_Callback();
@@ -147,8 +139,7 @@ void __attribute__((used)) EXTI9_5_IRQHandler(void)
   }
 }
 
-void __attribute__((used)) EXTI15_10_IRQHandler(void)
-{
+void __attribute__((used)) EXTI15_10_IRQHandler(void) {
   if (EXTI_GetITStatus(EXTI_Line10) == SET) {
     EXTI_ClearITPendingBit(EXTI_Line10);
     EXTI10_Callback();

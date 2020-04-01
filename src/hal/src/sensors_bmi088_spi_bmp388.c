@@ -571,7 +571,7 @@ static void sensorsTask(void *param) {
     }
 
     xSemaphoreGive(dataReady);
-  }
+  }                                 
 }
 
 void sensorsBmi088SpiBmp388WaitDataReady(void) {

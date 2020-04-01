@@ -16,8 +16,8 @@ crtp_commander.o: src/modules/src/crtp_commander.c \
  src/modules/interface/log.h src/utils/interface/debug.h \
  src/modules/interface/console.h src/utils/interface/eprintf.h \
  /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h \
- src/drivers/interface/motors.h src/config/stm32fxxx.h \
- src/lib/CMSIS/STM32F4xx/Include/stm32f4xx.h \
+ src/drivers/interface/cfal12864g.h src/drivers/interface/motors.h \
+ src/config/stm32fxxx.h src/lib/CMSIS/STM32F4xx/Include/stm32f4xx.h \
  vendor/CMSIS/CMSIS/Include/core_cm4.h \
  vendor/CMSIS/CMSIS/Include/core_cmInstr.h \
  vendor/CMSIS/CMSIS/Include/cmsis_gcc.h \
@@ -99,6 +99,8 @@ src/modules/interface/console.h:
 src/utils/interface/eprintf.h:
 
 /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h:
+
+src/drivers/interface/cfal12864g.h:
 
 src/drivers/interface/motors.h:
 

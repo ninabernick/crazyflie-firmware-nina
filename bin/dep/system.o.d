@@ -87,7 +87,8 @@ system.o: src/modules/src/system.c \
  /usr/arm-none-eabi/include/sys/cdefs.h \
  /usr/arm-none-eabi/include/xlocale.h \
  /usr/arm-none-eabi/include/strings.h \
- /usr/arm-none-eabi/include/sys/string.h src/modules/interface/extrx.h
+ /usr/arm-none-eabi/include/sys/string.h src/modules/interface/extrx.h \
+ src/drivers/interface/cfal12864g.h
 
 /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdbool.h:
 
@@ -330,3 +331,5 @@ src/deck/interface/deck_spi.h:
 /usr/arm-none-eabi/include/sys/string.h:
 
 src/modules/interface/extrx.h:
+
+src/drivers/interface/cfal12864g.h:

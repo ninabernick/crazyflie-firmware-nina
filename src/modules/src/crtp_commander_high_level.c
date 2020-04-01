@@ -168,8 +168,7 @@ static int start_trajectory(const struct data_start_trajectory* data);
 static int define_trajectory(const struct data_define_trajectory* data);
 
 // Helper functions
-static struct vec state2vec(struct vec3_s v)
-{
+static struct vec state2vec(struct vec3_s v) {
   return mkvec(v.x, v.y, v.z);
 }
 
@@ -177,8 +176,7 @@ bool isInGroup(uint8_t g) {
   return g == 0 || (g & group_mask) != 0;
 }
 
-void crtpCommanderHighLevelInit(void)
-{
+void crtpCommanderHighLevelInit(void) {
   if (isInit) {
     return;
   }
@@ -197,18 +195,15 @@ void crtpCommanderHighLevelInit(void)
   isInit = true;
 }
 
-void crtpCommanderHighLevelStop()
-{
+void crtpCommanderHighLevelStop() {
   plan_stop(&planner);
 }
 
-bool crtpCommanderHighLevelIsStopped()
-{
+bool crtpCommanderHighLevelIsStopped() {
   return plan_is_stopped(&planner);
 }
 
-void crtpCommanderHighLevelGetSetpoint(setpoint_t* setpoint, const state_t *state)
-{
+void crtpCommanderHighLevelGetSetpoint(setpoint_t* setpoint, const state_t *state) {
   xSemaphoreTake(lockTraj, portMAX_DELAY);
   float t = usecTimestamp() / 1e6;
   struct traj_eval ev = plan_current_goal(&planner, t);
@@ -252,8 +247,7 @@ void crtpCommanderHighLevelGetSetpoint(setpoint_t* setpoint, const state_t *stat
   }
 }
 
-void crtpCommanderHighLevelTask(void * prm)
-{
+void crtpCommanderHighLevelTask(void * prm) {
   int ret;
   CRTPPacket p;
   crtpInitTaskQueue(CRTP_PORT_SETPOINT_HL);
@@ -261,8 +255,7 @@ void crtpCommanderHighLevelTask(void * prm)
   while(1) {
     crtpReceivePacketBlock(CRTP_PORT_SETPOINT_HL, &p);
 
-    switch(p.data[0])
-    {
+    switch (p.data[0]) {
       case COMMAND_SET_GROUP_MASK:
         ret = set_group_mask((const struct data_set_group_mask*)&p.data[1]);
         break;
@@ -296,15 +289,13 @@ void crtpCommanderHighLevelTask(void * prm)
   }
 }
 
-int set_group_mask(const struct data_set_group_mask* data)
-{
+int set_group_mask(const struct data_set_group_mask* data) {
   group_mask = data->groupMask;
 
   return 0;
 }
 
-int takeoff(const struct data_takeoff* data)
-{
+int takeoff(const struct data_takeoff* data) {
   int result = 0;
   if (isInGroup(data->groupMask)) {
     xSemaphoreTake(lockTraj, portMAX_DELAY);
@@ -315,8 +306,7 @@ int takeoff(const struct data_takeoff* data)
   return result;
 }
 
-int land(const struct data_land* data)
-{
+int land(const struct data_land* data) {
   int result = 0;
   if (isInGroup(data->groupMask)) {
     xSemaphoreTake(lockTraj, portMAX_DELAY);
@@ -327,8 +317,7 @@ int land(const struct data_land* data)
   return result;
 }
 
-int stop(const struct data_stop* data)
-{
+int stop(const struct data_stop* data) {
   int result = 0;
   if (isInGroup(data->groupMask)) {
     xSemaphoreTake(lockTraj, portMAX_DELAY);
@@ -338,8 +327,7 @@ int stop(const struct data_stop* data)
   return result;
 }
 
-int go_to(const struct data_go_to* data)
-{
+int go_to(const struct data_go_to* data) {
   int result = 0;
   if (isInGroup(data->groupMask)) {
     struct vec hover_pos = mkvec(data->x, data->y, data->z);
@@ -351,8 +339,7 @@ int go_to(const struct data_go_to* data)
   return result;
 }
 
-int start_trajectory(const struct data_start_trajectory* data)
-{
+int start_trajectory(const struct data_start_trajectory* data) {
   int result = 0;
   if (isInGroup(data->groupMask)) {
     if (data->trajectoryId < NUM_TRAJECTORY_DEFINITIONS) {
@@ -387,8 +374,7 @@ int start_trajectory(const struct data_start_trajectory* data)
   return result;
 }
 
-int define_trajectory(const struct data_define_trajectory* data)
-{
+int define_trajectory(const struct data_define_trajectory* data) {
   if (data->trajectoryId >= NUM_TRAJECTORY_DEFINITIONS) {
     return ENOEXEC;
   }

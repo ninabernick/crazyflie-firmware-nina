@@ -125,48 +125,38 @@ int crtpReceivePacketBlock(CRTPPort portId, CRTPPacket *p) {
 }
 
 
-int crtpReceivePacketWait(CRTPPort portId, CRTPPacket *p, int wait)
-{
+int crtpReceivePacketWait(CRTPPort portId, CRTPPacket *p, int wait) {
   ASSERT(queues[portId]);
   ASSERT(p);
   
   return xQueueReceive(queues[portId], p, M2T(wait));
 }
 
-int crtpGetFreeTxQueuePackets(void)
-{
+int crtpGetFreeTxQueuePackets(void) {
   return (CRTP_TX_QUEUE_SIZE - uxQueueMessagesWaiting(txQueue));
 }
 
-void crtpTxTask(void *param)
-{
+void crtpTxTask(void *param) {
   CRTPPacket p;
 
-  while (true)
-  {
-    if (link != &nopLink)
-    {
-      if (xQueueReceive(txQueue, &p, portMAX_DELAY) == pdTRUE)
-      {
+  while (true) {
+    if (link != &nopLink) {
+      if (xQueueReceive(txQueue, &p, portMAX_DELAY) == pdTRUE) {
         // Keep testing, if the link changes to USB it will go though
-        while (link->sendPacket(&p) == false)
-        {
+        while (link->sendPacket(&p) == false) {
           // Relaxation time
           vTaskDelay(M2T(10));
         }
         stats.txCount++;
         updateStats();
       }
-    }
-    else
-    {
+    } else {
       vTaskDelay(M2T(10));
     }
   }
 }
 
-void crtpRxTask(void *param)
-{
+void crtpRxTask(void *param) {
   CRTPPacket p;
 
   while (true) {
@@ -187,8 +177,7 @@ void crtpRxTask(void *param)
         stats.rxCount++;
         updateStats();
       }
-    }
-    else {
+    } else {
       vTaskDelay(M2T(10));
     }
   }

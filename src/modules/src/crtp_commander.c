@@ -92,6 +92,6 @@ static void commanderCrtpDebug(CRTPPacket* pk) {
 }
 
 static void commanderSetText(CRTPPacket* pk) {
-  struct textContent_t *ct = (struct textContent_t *)(char*)pk;
+  textContent_t *ct = (textContent_t *)(char*)pk;
   screenTextSet(ct);
 }
