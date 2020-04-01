@@ -242,7 +242,7 @@ static void stabilizerTask(void* param) {
   DEBUG_PRINT("Wait for sensor calibration...\n");
 
   // Wait for sensors to be calibrated
-  lastWakeTime = xTaskGetTickCount ();
+  lastWakeTime = xTaskGetTickCount();
   while(!sensorsAreCalibrated()) {
     vTaskDelayUntil(&lastWakeTime, F2T(RATE_MAIN_LOOP));
   }

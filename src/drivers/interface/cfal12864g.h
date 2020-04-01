@@ -100,13 +100,26 @@
 #define CFAL12864G_SPI_TX_DMA_CHANNEL      DMA_Channel_0
 #define CFAL12864G_SPI_TX_DMA_FLAG_TCIF    DMA_FLAG_TCIF7
 
-#define SCREEN_FRESH_RATE_HZ            30
+
+#define RATE_1000_HZ 1000
+#define RATE_500_HZ 500
+#define RATE_250_HZ 250
+#define RATE_100_HZ 100
+#define RATE_50_HZ 50
+#define RATE_30_HZ 30
+
+#define RATE_MAIN_LOOP 					RATE_1000_HZ
+#define SCREEN_FRESH_RATE            	RATE_30_HZ
+#define RATE_DO_EXECUTE(RATE_HZ, TICK) ((TICK % (RATE_MAIN_LOOP / RATE_HZ)) == 0)
 
 #define MAX_CONTENT_NUMBER				31
-struct textContent_t {
+typedef struct textContent_s {
   uint8_t num;
   char ct[MAX_CONTENT_NUMBER];
-};
+} textContent_t;
+
+
+
 
 void screenCFAL12864GInit(void);
 void screenTextSet(textContent_t *ct);

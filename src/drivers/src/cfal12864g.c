@@ -54,8 +54,8 @@
 #define SET_SCK   GPIO_SetBits(CFAL12864G_GPIO_SPI_PORT, CFAL12864G_GPIO_SPI_SCK)
 
 /* Defines and buffers for full duplex SPI DMA transactions */
-#define SPI_MAX_DMA_TRANSACTION_SIZE    15
-static uint8_t spiTxBuffer[SPI_MAX_DMA_TRANSACTION_SIZE + 1];
+#define SPI_DMA_BUFFER_SIZE    (8*128)
+static uint8_t SPITxBuffer[SPI_DMA_BUFFER_SIZE + 1];
 
 static bool isInit = false;
 
@@ -92,7 +92,7 @@ void SetBrightness(uint8_t brightness) {
   SPISendCommand(brightness);
 }
 
-void CFAL12864GInit(uint8_t brightness = 255) {
+void CFAL12864GInit(uint8_t brightness) {
   // thump the hardware reset line.
   CFAL12864G_ms_delay(10);
   CLR_RESET;
@@ -183,7 +183,7 @@ void CFAL12864GInit(uint8_t brightness = 255) {
 //   return SPI_I2S_ReceiveData(CFAL12864G_SPI);
 // }
 
-
+/*
 static void spiDMATransaction(uint8_t reg_addr, uint8_t *reg_data, uint16_t len) {
   ASSERT(len < SPI_MAX_DMA_TRANSACTION_SIZE);
 
@@ -227,7 +227,7 @@ static void spiDMATransaction(uint8_t reg_addr, uint8_t *reg_data, uint16_t len)
   // TODO: Avoid this memcpy either by figuring out how to configure the STM SPI to discard the byte or handle it higher up
   memcpy(reg_data, &spiRxBuffer[1], len);
 }
-
+*/
 /* Initialisation */
 void SPIInit(void) {
   if (isInit)
@@ -283,7 +283,7 @@ void SPIInit(void) {
   SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4; //~10.5 MHz
   SPI_Init(CFAL12864G_SPI, &SPI_InitStructure);
   /* Enable the SPI  */
-  SPI_Cmd(CFAL12864G_SPI, ENABLE);
+  // SPI_Cmd(CFAL12864G_SPI, ENABLE);
 }
 
 void SPIDMAInit(void) {
@@ -295,9 +295,9 @@ void SPIDMAInit(void) {
   /* Configure DMA Initialization Structure */
   DMA_InitStructure.DMA_Channel = CFAL12864G_SPI_TX_DMA_CHANNEL;
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&(CFAL12864G_SPI->DR));
-  DMA_InitStructure.DMA_Memory0BaseAddr = 0; // set later
+  DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)&spiTxBuffer[0];
   DMA_InitStructure.DMA_DIR = DMA_DIR_MemoryToPeripheral;
-  DMA_InitStructure.DMA_BufferSize = 0; // set later
+  DMA_InitStructure.DMA_BufferSize = SPI_DMA_BUFFER_SIZE;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
   DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
@@ -312,61 +312,19 @@ void SPIDMAInit(void) {
   DMA_Cmd(CFAL12864G_SPI_TX_DMA_STREAM, DISABLE);
   DMA_Init(CFAL12864G_SPI_TX_DMA_STREAM, &DMA_InitStructure);
 
+  DMA_Cmd(CFAL12864G_SPI_TX_DMA_STREAM,ENABLE);
+  // Enable SPI DMA requests
+  SPI_I2S_DMACmd(CFAL12864G_SPI, SPI_I2S_DMAReq_Tx, ENABLE);
+  // Enable peripheral to begin the transaction
+  SPI_Cmd(CFAL12864G_SPI, ENABLE);
+
   // Configure interrupts
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = NVIC_HIGH_PRI;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  // NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = NVIC_HIGH_PRI;
+  // NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  // NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 
-  NVIC_InitStructure.NVIC_IRQChannel = CFAL12864G_SPI_TX_DMA_IRQ;
-  NVIC_Init(&NVIC_InitStructure);
-
-  spiTxDMAComplete = xSemaphoreCreateBinary();
-}
-
-static void screenTask(void *param) {
-  systemWaitStart();
-
-  /* wait an additional second the keep bus free
-   * this is only required by the z-ranger, since the
-   * configuration will be done after system start-up */
-  //vTaskDelayUntil(&lastWakeTime, M2T(1500));
-  while (1) {
-    if (pdTRUE == xSemaphoreTake(sensorsDataReady, portMAX_DELAY)) {
-      sensorData.interruptTimestamp = imuIntTimestamp;
-
-      if (gyroBiasFound) {
-         processAccScale(accelRaw.x, accelRaw.y, accelRaw.z);
-      }
-      
-
-      /* Acelerometer */
-      accScaled.x = accelRaw.x * SENSORS_CFAL12864G_G_PER_LSB_CFG / accScale;
-      accScaled.y = accelRaw.y * SENSORS_CFAL12864G_G_PER_LSB_CFG / accScale;
-      accScaled.z = accelRaw.z * SENSORS_CFAL12864G_G_PER_LSB_CFG / accScale;
-      sensorsAccAlignToGravity(&accScaled, &sensorData.acc);
-      applyAxis3fLpf((lpf2pData*)(&accLpf), &sensorData.acc);
-    }
-
-    if (isBarometerPresent) {
-      static uint8_t baroMeasDelay = SENSORS_DELAY_BARO;
-      if (--baroMeasDelay == 0) {
-        uint8_t sensor_comp = BMP3_PRESS | BMP3_TEMP;
-        struct bmp3_data data;
-        baro_t* baro388 = &sensorData.baro;
-        /* Temperature and Pressure data are read and stored in the bmp3_data instance */
-        bmp3_get_sensor_data(sensor_comp, &data, &bmp388Dev);
-        sensorsScaleBaro(baro388, data.pressure, data.temperature);
-        baroMeasDelay = baroMeasDelayMin;
-      }
-    }
-    xQueueOverwrite(accelerometerDataQueue, &sensorData.acc);
-    xQueueOverwrite(gyroDataQueue, &sensorData.gyro);
-    if (isBarometerPresent) {
-      xQueueOverwrite(barometerDataQueue, &sensorData.baro);
-    }
-
-    xSemaphoreGive(dataReady);
-  }
+  // NVIC_InitStructure.NVIC_IRQChannel = CFAL12864G_SPI_TX_DMA_IRQ;
+  // NVIC_Init(&NVIC_InitStructure);
 }
 
 QueueHandle_t textContentQueue;
@@ -384,6 +342,21 @@ void screenTextSet(textContent_t *ct) {
 
 bool screenTextGet(textContent_t *ct) {
   return (pdTRUE == xQueueReceive(textContentQueue, ct, 0));
+}
+
+static void screenTask(void *param) {
+  systemWaitStart();
+  uint32_t tick = 0;
+  /* wait an additional second the keep bus free
+   * this is only required by the z-ranger, since the
+   * configuration will be done after system start-up */
+  //vTaskDelayUntil(&lastWakeTime, M2T(1500));
+  while (1) {
+    if (RATE_DO_EXECUTE(SCREEN_FRESH_RATE, tick)) {
+
+    }
+    tick++;
+  }
 }
 
 void screenCFAL12864GInit(void) {
