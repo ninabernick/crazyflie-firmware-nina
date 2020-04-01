@@ -283,7 +283,7 @@ void SPIInit(void) {
   SPI_InitStructure.SPI_Direction = SPI_Direction_1Line_Tx;
   SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
   SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
-  SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
+  SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
   SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
   SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
   SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8; //~4: 10.5 MHz
@@ -372,10 +372,6 @@ void refreshContent() {
     SetAddress(0, page);
     // Move across the columns, alternating the two data
     // Select the LCD's data register
-    SET_RS;
-
-    // SET_MOSI;
-    // SET_SCK;
     SPI_Cmd(CFAL12864G_SPI, DISABLE);
 
     CFAL12864G_SPI_TX_DMA_STREAM->M0AR = (uint32_t) SPITxBuffer[page];
@@ -387,6 +383,7 @@ void refreshContent() {
     DMA_Cmd(CFAL12864G_SPI_TX_DMA_STREAM, ENABLE);
     SPI_I2S_DMACmd(CFAL12864G_SPI, SPI_I2S_DMAReq_Tx, ENABLE);
 
+    SET_RS; // key for corrent settings, put SET_RS here !!!
     SPI_Cmd(CFAL12864G_SPI, ENABLE);
     xSemaphoreTake(SPITxDMAComplete, portMAX_DELAY);
 
