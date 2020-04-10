@@ -173,7 +173,7 @@ void motorsInitIFlight(const MotorPerifDef** motorMapSelect) {
     motorMap[i]->ocInit(motorMap[i]->tim, &TIM_OCInitStructure);
     motorMap[i]->preloadConfig(motorMap[i]->tim, TIM_OCPreload_Enable);
     TIM_DMACmd(motorMap[i]->tim, motorMap[i]->dmaSource, ENABLE);
-    //MOTORS_TIM_DBG_CFG(motorMap[i]->timDbgStop, ENABLE);
+    // MOTORS_TIM_DBG_CFG(motorMap[i]->timDbgStop, ENABLE);
     DMA_Cmd(motorMap[i]->dmaXStreamY, ENABLE);
   }
 

@@ -43,12 +43,14 @@ static const float thrustScale = 1000.0f;
 #define POSHOLD_LPF_ENABLE true
 
 /* CF2 */
-#define thrustBase  36000
-#define thrustMin   20000
+// #define thrustBase  36000
+// #define thrustMin   20000
 
 /* iFlight with 2S */
 // #define thrustBase  30000
 // #define thrustMin   20000
+#define thrustBase  32000
+#define thrustMin   20000
 
 /* iFlight with 3S */
 //#define thrustBase  20000
@@ -65,12 +67,12 @@ static const float thrustScale = 1000.0f;
 #define PID_Y_RATE_KD  0.0
 #define PID_Y_RATE_INTEGRATION_LIMIT   25.0
 
-#define PID_Z_RATE_KP  25.0
-#define PID_Z_RATE_KI  15.0
-#define PID_Z_RATE_KD  1.0
-// #define PID_Z_RATE_KP  7.0
-// #define PID_Z_RATE_KI  2.0
-// #define PID_Z_RATE_KD  0.3
+// #define PID_Z_RATE_KP  25.0
+// #define PID_Z_RATE_KI  15.0
+// #define PID_Z_RATE_KD  1.0
+#define PID_Z_RATE_KP  7.0
+#define PID_Z_RATE_KI  2.0
+#define PID_Z_RATE_KD  0.3
 #define PID_Z_RATE_INTEGRATION_LIMIT   30.0
 
 #define PID_X_KP  2.0

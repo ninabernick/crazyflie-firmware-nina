@@ -147,7 +147,7 @@ void systemTask(void *arg) {
 #endif
 
 #ifdef ENABLE_UART1
-  uart1Init(9600);
+  // uart1Init(9600);
 #endif
 #ifdef ENABLE_UART2
   uart2Init(115200);
