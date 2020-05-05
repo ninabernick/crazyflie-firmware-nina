@@ -68,6 +68,8 @@
 #define SSD1309_16_LOCK_PARAMETER                     (0x16)
 #define SSD1309_12_UNLOCK_PARAMETER                   (0x12)
 
+#define FONT_08X08_BASE 32
+
 /* Defines for the SPI and GPIO pins used to drive the SPI Flash */
 // use transmit-only master mode
 #define CFAL12864G_SPI                     SPI3
@@ -118,8 +120,12 @@ typedef struct textContent_s {
   char ct[MAX_CONTENT_NUMBER];
 } textContent_t;
 
-
-
+typedef struct word_union_s {
+  union {
+    uint16_t as_word;
+    uint8_t as_bytes[2];
+  };
+} word_union_t;
 
 void screenCFAL12864GInit(void);
 void screenTextSet(textContent_t *ct);

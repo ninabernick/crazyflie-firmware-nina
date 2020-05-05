@@ -64,8 +64,9 @@ uint32_t inToOutLatency;
 // State variables for the stabilizer
 static setpoint_t setpoint;
 static sensorData_t sensorData;
-static state_t state;
 static control_t control;
+// make it globally available
+state_t state;
 
 static StateEstimatorType estimatorType;
 static ControllerType controllerType;

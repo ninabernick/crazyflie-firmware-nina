@@ -164,7 +164,7 @@ void systemTask(void *arg) {
   estimator = deckGetRequiredEstimator();
 
   // guojun: add screen
-  screenCFAL12864GInit();
+  // screenCFAL12864GInit();
 
   stabilizerInit(estimator);
 
