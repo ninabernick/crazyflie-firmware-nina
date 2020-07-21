@@ -3,13 +3,13 @@ stm32f4xx_usart.o: \
  src/lib/STM32F4xx_StdPeriph_Driver/inc/stm32f4xx_usart.h \
  src/lib/CMSIS/STM32F4xx/Include/stm32f4xx.h \
  vendor/CMSIS/CMSIS/Include/core_cm4.h \
- /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h \
- /usr/arm-none-eabi/include/stdint.h \
- /usr/arm-none-eabi/include/machine/_default_types.h \
- /usr/arm-none-eabi/include/sys/features.h \
- /usr/arm-none-eabi/include/_newlib_version.h \
- /usr/arm-none-eabi/include/sys/_intsup.h \
- /usr/arm-none-eabi/include/sys/_stdint.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/stdint.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/machine/_default_types.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/features.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/_newlib_version.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/_intsup.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/_stdint.h \
  vendor/CMSIS/CMSIS/Include/core_cmInstr.h \
  vendor/CMSIS/CMSIS/Include/cmsis_gcc.h \
  vendor/CMSIS/CMSIS/Include/core_cmFunc.h \
@@ -48,19 +48,19 @@ src/lib/CMSIS/STM32F4xx/Include/stm32f4xx.h:
 
 vendor/CMSIS/CMSIS/Include/core_cm4.h:
 
-/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h:
 
-/usr/arm-none-eabi/include/stdint.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/stdint.h:
 
-/usr/arm-none-eabi/include/machine/_default_types.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/machine/_default_types.h:
 
-/usr/arm-none-eabi/include/sys/features.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/features.h:
 
-/usr/arm-none-eabi/include/_newlib_version.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/_newlib_version.h:
 
-/usr/arm-none-eabi/include/sys/_intsup.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/_intsup.h:
 
-/usr/arm-none-eabi/include/sys/_stdint.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/_stdint.h:
 
 vendor/CMSIS/CMSIS/Include/core_cmInstr.h:
 

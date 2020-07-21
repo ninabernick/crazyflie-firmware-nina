@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python
 
 # Written by Antonio Galea - 2010/11/18
 # Distributed under Gnu LGPL 3.0

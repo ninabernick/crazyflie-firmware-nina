@@ -1,13 +1,13 @@
 crtp_commander.o: src/modules/src/crtp_commander.c \
- /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdbool.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/lib/gcc/arm-none-eabi/7.3.1/include/stdbool.h \
  src/modules/interface/crtp_commander.h \
- /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h \
- /usr/arm-none-eabi/include/stdint.h \
- /usr/arm-none-eabi/include/machine/_default_types.h \
- /usr/arm-none-eabi/include/sys/features.h \
- /usr/arm-none-eabi/include/_newlib_version.h \
- /usr/arm-none-eabi/include/sys/_intsup.h \
- /usr/arm-none-eabi/include/sys/_stdint.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/stdint.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/machine/_default_types.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/features.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/_newlib_version.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/_intsup.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/_stdint.h \
  src/modules/interface/stabilizer_types.h src/hal/interface/imu_types.h \
  src/modules/interface/crtp.h src/modules/interface/commander.h \
  src/config/config.h src/drivers/interface/nrf24l01.h \
@@ -15,7 +15,7 @@ crtp_commander.o: src/modules/src/crtp_commander.c \
  src/hal/interface/usec_time.h src/modules/interface/crtp.h \
  src/modules/interface/log.h src/utils/interface/debug.h \
  src/modules/interface/console.h src/utils/interface/eprintf.h \
- /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h \
  src/drivers/interface/cfal12864g.h src/drivers/interface/motors.h \
  src/config/stm32fxxx.h src/lib/CMSIS/STM32F4xx/Include/stm32f4xx.h \
  vendor/CMSIS/CMSIS/Include/core_cm4.h \
@@ -52,23 +52,23 @@ crtp_commander.o: src/modules/src/crtp_commander.c \
  src/lib/STM32F4xx_StdPeriph_Driver/inc/stm32f4xx_dcmi.h \
  src/lib/STM32F4xx_StdPeriph_Driver/inc/stm32f4xx_fsmc.h
 
-/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdbool.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/lib/gcc/arm-none-eabi/7.3.1/include/stdbool.h:
 
 src/modules/interface/crtp_commander.h:
 
-/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h:
 
-/usr/arm-none-eabi/include/stdint.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/stdint.h:
 
-/usr/arm-none-eabi/include/machine/_default_types.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/machine/_default_types.h:
 
-/usr/arm-none-eabi/include/sys/features.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/features.h:
 
-/usr/arm-none-eabi/include/_newlib_version.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/_newlib_version.h:
 
-/usr/arm-none-eabi/include/sys/_intsup.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/_intsup.h:
 
-/usr/arm-none-eabi/include/sys/_stdint.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/_stdint.h:
 
 src/modules/interface/stabilizer_types.h:
 
@@ -98,7 +98,7 @@ src/modules/interface/console.h:
 
 src/utils/interface/eprintf.h:
 
-/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h:
 
 src/drivers/interface/cfal12864g.h:
 

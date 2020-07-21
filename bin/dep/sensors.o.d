@@ -1,13 +1,13 @@
 sensors.o: src/hal/src/sensors.c src/hal/interface/sensors.h \
  src/modules/interface/stabilizer_types.h \
- /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h \
- /usr/arm-none-eabi/include/stdint.h \
- /usr/arm-none-eabi/include/machine/_default_types.h \
- /usr/arm-none-eabi/include/sys/features.h \
- /usr/arm-none-eabi/include/_newlib_version.h \
- /usr/arm-none-eabi/include/sys/_intsup.h \
- /usr/arm-none-eabi/include/sys/_stdint.h \
- /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdbool.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/stdint.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/machine/_default_types.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/features.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/_newlib_version.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/_intsup.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/_stdint.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/lib/gcc/arm-none-eabi/7.3.1/include/stdbool.h \
  src/hal/interface/imu_types.h src/platform/platform.h \
  src/drivers/interface/motors.h src/config/config.h \
  src/drivers/interface/nrf24l01.h src/drivers/interface/nRF24L01reg.h \
@@ -48,7 +48,7 @@ sensors.o: src/hal/src/sensors.c src/hal/interface/sensors.h \
  src/lib/STM32F4xx_StdPeriph_Driver/inc/stm32f4xx_fsmc.h \
  src/utils/interface/debug.h src/modules/interface/console.h \
  src/utils/interface/eprintf.h \
- /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h \
  src/hal/interface/sensors_bmi088_bmp388.h src/hal/interface/sensors.h \
  src/hal/interface/sensors_bmi088_spi_bmp388.h \
  src/hal/interface/sensors_mpu9250_lps25h.h
@@ -57,21 +57,21 @@ src/hal/interface/sensors.h:
 
 src/modules/interface/stabilizer_types.h:
 
-/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h:
 
-/usr/arm-none-eabi/include/stdint.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/stdint.h:
 
-/usr/arm-none-eabi/include/machine/_default_types.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/machine/_default_types.h:
 
-/usr/arm-none-eabi/include/sys/features.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/features.h:
 
-/usr/arm-none-eabi/include/_newlib_version.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/_newlib_version.h:
 
-/usr/arm-none-eabi/include/sys/_intsup.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/_intsup.h:
 
-/usr/arm-none-eabi/include/sys/_stdint.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/_stdint.h:
 
-/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdbool.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/lib/gcc/arm-none-eabi/7.3.1/include/stdbool.h:
 
 src/hal/interface/imu_types.h:
 
@@ -165,7 +165,7 @@ src/modules/interface/console.h:
 
 src/utils/interface/eprintf.h:
 
-/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/lib/gcc/arm-none-eabi/7.3.1/include/stdarg.h:
 
 src/hal/interface/sensors_bmi088_bmp388.h:
 

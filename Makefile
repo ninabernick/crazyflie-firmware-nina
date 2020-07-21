@@ -14,7 +14,7 @@ OPENOCD           ?= openocd
 OPENOCD_INTERFACE ?= interface/stlink-v2.cfg
 OPENOCD_CMDS      ?=
 CROSS_COMPILE     ?= arm-none-eabi-
-PYTHON2           ?= python2
+PYTHON            ?= python
 DFU_UTIL          ?= dfu-util
 CLOAD             ?= 1
 DEBUG             ?= 0
@@ -160,6 +160,7 @@ PROJ_OBJ += crtp_commander_generic.o crtp_localization_service.o
 PROJ_OBJ += crtp_commander_poshold.o
 PROJ_OBJ += attitude_pid_controller.o sensfusion6.o stabilizer.o
 PROJ_OBJ += position_estimator_altitude.o poshold_controller_pid.o #position_controller_pid.o
+PROJ_OBJ += h_inf_position_controller.o
 PROJ_OBJ += estimator.o estimator_complementary.o
 PROJ_OBJ += controller.o controller_pid.o controller_mellinger.o
 PROJ_OBJ += power_distribution_$(POWER_DISTRIBUTION).o
@@ -355,7 +356,7 @@ endif
 
 print_version:
 	@echo "Build for the $(PLATFORM_NAME_$(PLATFORM))!"
-	@$(PYTHON2) tools/make/versionTemplate.py --print-version
+	@$(PYTHON) tools/make/versionTemplate.py --print-version
 ifeq ($(CLOAD), 1)
 	@echo "Crazyloader build!"
 endif
@@ -412,7 +413,7 @@ prep:
 	@$(CC) $(CFLAGS) -dM -E - < /dev/null
 
 check_submodules:
-	@$(PYTHON2) tools/make/check-for-submodules.py
+	@$(PYTHON) tools/make/check-for-submodules.py
 
 include tools/make/targets.mk
 

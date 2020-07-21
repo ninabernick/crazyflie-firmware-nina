@@ -6,6 +6,7 @@
 #include "sensfusion6.h"
 #include "poshold_controller.h"
 #include "controller_pid.h"
+#include "h_inf_position_controller.h"
 
 // #include "position_controller.h"
 
@@ -21,10 +22,13 @@ static bool tiltCompensationEnabled = false;
 static attitude_t attitudeDesired;
 static attitude_t rateDesired;
 static float actuatorThrust;
+static float hinfThrust;
+static attitude_t attitudeDesiredHinf;
 
 void controllerPidInit(void) {
   attitudeControllerInit(ATTITUDE_UPDATE_DT);
   posHoldControllerInit(POSHOLD_UPDATE_DT);
+  hinfPositionControllerInit(POSHOLD_UPDATE_DT);
 }
 
 bool controllerPidTest(void) {
@@ -56,7 +60,9 @@ void controllerPid(control_t *control, setpoint_t *setpoint,
 
   // leo: add position hold control
   if (RATE_DO_EXECUTE(POSHOLD_RATE, tick)) {
+    hinfPositionController(&hinfThrust, &attitudeDesiredHinf, setpoint, state);
     posHoldController(&actuatorThrust, &attitudeDesired, setpoint, state);
+
   }
 
   if (RATE_DO_EXECUTE(ATTITUDE_RATE, tick)) {
@@ -121,9 +127,7 @@ LOG_ADD(LOG_FLOAT, actuatorThrust, &actuatorThrust)
 LOG_ADD(LOG_FLOAT, roll,      &attitudeDesired.roll)
 LOG_ADD(LOG_FLOAT, pitch,     &attitudeDesired.pitch)
 LOG_ADD(LOG_FLOAT, yaw,       &attitudeDesired.yaw)
-LOG_ADD(LOG_FLOAT, rollRate,  &rateDesired.roll)
-LOG_ADD(LOG_FLOAT, pitchRate, &rateDesired.pitch)
-LOG_ADD(LOG_FLOAT, yawRate,   &rateDesired.yaw)
+LOG_ADD(LOG_FLOAT, hinfThrust,       &hinfThrust)
 LOG_GROUP_STOP(controller)
 
 PARAM_GROUP_START(controller)

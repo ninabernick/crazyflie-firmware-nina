@@ -1,12 +1,13 @@
 usec_time.o: src/hal/src/usec_time.c src/hal/interface/usec_time.h \
- /usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h \
- /usr/arm-none-eabi/include/stdint.h \
- /usr/arm-none-eabi/include/machine/_default_types.h \
- /usr/arm-none-eabi/include/sys/features.h \
- /usr/arm-none-eabi/include/_newlib_version.h \
- /usr/arm-none-eabi/include/sys/_intsup.h \
- /usr/arm-none-eabi/include/sys/_stdint.h src/config/nvicconf.h \
- src/config/stm32fxxx.h src/lib/CMSIS/STM32F4xx/Include/stm32f4xx.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/stdint.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/machine/_default_types.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/features.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/_newlib_version.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/_intsup.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/_stdint.h \
+ src/config/nvicconf.h src/config/stm32fxxx.h \
+ src/lib/CMSIS/STM32F4xx/Include/stm32f4xx.h \
  vendor/CMSIS/CMSIS/Include/core_cm4.h \
  vendor/CMSIS/CMSIS/Include/core_cmInstr.h \
  vendor/CMSIS/CMSIS/Include/cmsis_gcc.h \
@@ -43,19 +44,19 @@ usec_time.o: src/hal/src/usec_time.c src/hal/interface/usec_time.h \
 
 src/hal/interface/usec_time.h:
 
-/usr/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/lib/gcc/arm-none-eabi/7.3.1/include/stdint.h:
 
-/usr/arm-none-eabi/include/stdint.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/stdint.h:
 
-/usr/arm-none-eabi/include/machine/_default_types.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/machine/_default_types.h:
 
-/usr/arm-none-eabi/include/sys/features.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/features.h:
 
-/usr/arm-none-eabi/include/_newlib_version.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/_newlib_version.h:
 
-/usr/arm-none-eabi/include/sys/_intsup.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/_intsup.h:
 
-/usr/arm-none-eabi/include/sys/_stdint.h:
+/usr/local/Cellar/gcc-arm-none-eabi/20180627/arm-none-eabi/include/sys/_stdint.h:
 
 src/config/nvicconf.h:
 
