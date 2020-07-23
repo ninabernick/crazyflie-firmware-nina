@@ -174,7 +174,7 @@ float altitudeADRCSimplified(float* thrust, float zDesired, float zActual, float
 
 
 }
-
+//have not tested this one yet
 float altitudeADRCPID(PidObject* pidZ, PidObject* pidZRate, float* thrust, float zDesired, float zActual, float zRateActual) {
     zSetpoint = zDesired;
     stateZ = zActual;

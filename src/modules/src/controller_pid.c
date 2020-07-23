@@ -99,7 +99,7 @@ void controllerPid(control_t *control, setpoint_t *setpoint,
 
     control->yaw = -control->yaw;
   }
-
+  //this is where you would put hinfThrust, but if you do the CF will try to take off before being told to and be out of control
   if (tiltCompensationEnabled) {
     control->thrust = actuatorThrust / sensfusion6GetInvThrustCompensationForTilt();
   } else {

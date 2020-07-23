@@ -43,7 +43,7 @@ static const float thrustScale = 1000.0f;
 #define POSHOLD_LPF_ENABLE true
 
 /* CF2 */
-#define thrustBase  36000
+#define thrustBase  40000
 #define thrustMin   20000
 
 /* iFlight with 2S */
@@ -57,12 +57,12 @@ static const float thrustScale = 1000.0f;
 //#define thrustMin   15000
 
 // PID coefficiencies
-#define PID_X_RATE_KP  25.0
+#define PID_X_RATE_KP  30.0
 #define PID_X_RATE_KI  2.0
 #define PID_X_RATE_KD  0.0
 #define PID_X_RATE_INTEGRATION_LIMIT   25.0
 
-#define PID_Y_RATE_KP  25.0
+#define PID_Y_RATE_KP  30.0
 #define PID_Y_RATE_KI  2.0
 #define PID_Y_RATE_KD  0.0
 #define PID_Y_RATE_INTEGRATION_LIMIT   25.0
@@ -70,22 +70,22 @@ static const float thrustScale = 1000.0f;
 // #define PID_Z_RATE_KP  25.0
 // #define PID_Z_RATE_KI  15.0
 // #define PID_Z_RATE_KD  1.0
-#define PID_Z_RATE_KP  7.0
+#define PID_Z_RATE_KP  15.0
 #define PID_Z_RATE_KI  2.0
-#define PID_Z_RATE_KD  0.3
+#define PID_Z_RATE_KD  0.5
 #define PID_Z_RATE_INTEGRATION_LIMIT   30.0
 
-#define PID_X_KP  2.0
+#define PID_X_KP  3.0
 #define PID_X_KI  0.5
-#define PID_X_KD  0.35
+#define PID_X_KD  0.35 //.35
 #define PID_X_INTEGRATION_LIMIT   2.0
 
-#define PID_Y_KP  2.0
+#define PID_Y_KP  3.0
 #define PID_Y_KI  0.5
-#define PID_Y_KD  0.35
+#define PID_Y_KD  0.35 //.35
 #define PID_Y_INTEGRATION_LIMIT   2.0
 
-#define PID_Z_KP  10.0
+#define PID_Z_KP  12.0
 #define PID_Z_KI  2.0
 #define PID_Z_KD  1.0
 #define PID_Z_INTEGRATION_LIMIT   2.0
